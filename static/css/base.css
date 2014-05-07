@@ -1,0 +1,148 @@
+/*
+  * @project:学而思培优搜课
+  * @function:全局通用样式
+  * @author:郭晓芳
+  * @date:2013-06-07
+*/
+body,html{ 
+    background:#f7f6f5;  color: #333;
+}
+body,button,input,select,textarea{
+	font:12px \5FAE\8F6F\96C5\9ED1,tahoma,arial,\5b8b\4f53;
+}
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+	margin:0;padding:0; margin:0;padding:0;font-family: "\5FAE\8F6F\96C5\9ED1","\5b8b\4f53","tahoma","arial";
+}
+header, footer, nav, section, article, aside, dialog, figure, menu { display:block }
+table{
+	border-collapse:collapse;border-spacing:0;
+}
+fieldset,img{
+	border:0;
+}
+ol,ul {
+	list-style:none;
+}
+a{
+    color: #666;
+	text-decoration:none;
+}
+a:hover {
+    color:#4d7ec1;
+	text-decoration:underline;
+}
+.fn-clear:after {
+	visibility:hidden;	
+	display:block;	
+	content:" ";	
+	clear:both;	
+	font-size:0;
+}
+.fn-clear {
+	zoom:1; /* for IE6 IE7 */
+	display:inline-block;
+	overflow:hidden;
+}
+.fn-left,.fn-right {
+	display:inline;
+}
+.clear{ 
+    clear:both;
+	height:0;
+	overflow:hidden; 
+}
+.fn-left {
+	float:left;
+}
+.fn-right {
+	float:right;
+}
+.relative{ 
+    position:relative;
+}
+/*Text alignment */
+.textL {
+	text-align:left;
+}
+.textR {
+	text-align:right;
+}
+.textC {
+	text-align:center;
+}
+/*margin-top */
+.mtop5{ margin-top:5px;}
+.mtop8{ margin-top:8px;}
+.mtop10{ margin-top:10px;}
+.mtop15{ margin-top:15px;}
+.mtop20{ margin-top:20px;}
+.mtop30{ margin-top:30px;}
+.mtop40{ margin-top:40px;}
+.mtop80{ margin-top:80px;}
+.m-middle{ margin:0 auto;}/*居中*/
+.mbtm10{ margin-bottom:10px;}
+
+/*margin-bottom */
+.mbtm20{ margin-bottom:20px;}
+
+/*padding*/
+.pdtop20{ padding-top:20px;}
+.pd20{ padding:20px;}
+.pd15{ padding:15px;}
+.pd25{ padding:25px 25px 40px 25px;}
+.pdright5{ padding-right:5px;}
+.pdright10{ padding-right:10px;}
+.pdright20{ padding-right:20px;}
+.pdright40{ padding-right:40px;}
+.pdtop8{ padding-top:8px;}
+.pdtop10{ padding-top:10px;}
+.pdtop40{ padding-top:40px;}
+.pdboth01{ padding:0 10px;}
+.pdboth02{ padding:0 20px;}
+.pdbtm30{ padding-bottom:30px;}
+.pdtb20{ padding:20px 0;}
+.pdl150{ padding-left:150px;}
+
+
+/*font-bold*/
+.ftbold{ font-weight:700;}
+
+/*font-color*/
+.ftblue{ color:#6b8db4;}
+.ftblue02{ color:#56a8dc;}
+.ftblue03{ color:#4d7ec1;}
+.ftblue04{ color:#162f51;}
+.ftgray01{ color:#999999;}
+.ftgray02{ color:#333333;}
+.ftgray03{ color:#666;}
+.ftred{ color:#FF0000;}
+.ftgreen{ color:#71bd57;}
+.ftorg01{ color:#ff9500;}
+
+
+
+/*font-size*/
+.ft12{ font-size:12px;}
+.ft14{ font-size:14px;}
+.ft16{ font-size:16px;}
+.ft18{ font-size:18px;}
+.ft20{ font-size:20px;}
+.ft24{ font-size:24px;}
+
+/*img border*/
+.imgBd01{ padding:5px; border:1px solid #cecece;}
+
+/*默认隐藏*/
+.hide{ display:none;}
+
+/*height*/
+.ht130{ height:130px;}
+
+/*width*/
+.wid100{width:100px;}
+.wid80{width:80px;}
+.wid300{width:300px;}
+.wid660{ width:660px;}
+.wid700{ width:700px;}
+
