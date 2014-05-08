@@ -1149,15 +1149,15 @@ _top:expression(eval(document.documentElement.scrollTop+document.documentElement
 @ subsection table-style
 */
 .table-setClass th,.table-setClass td,.table-setClass02 th,.table-setClass02 td{
-    height:36px;
-	padding:0 18px;
-	text-align:center;
+    height:20px;
+	padding:0 2px;
+	text-align:left;
 	border-bottom:1px solid #d2d2d2;
 }
-.table-setClass02 th,.table-setClass02 td{ padding:0 10px;}
+.table-setClass02 th,.table-setClass02 td{ padding:0 5px;}
 .table-setClass td,.table-setClass02 td{
-    padding:5px 18px;
-	height:45px;
+    padding:0px 2px;
+	height:50px;
     border-bottom:1px solid #d2d2d2;
 }
 .table-setClass02 td{ padding:0 10px;}
@@ -1192,7 +1192,7 @@ _top:expression(eval(document.documentElement.scrollTop+document.documentElement
 */
 
 .sk-btn-gray01{
-	width:40px;
+	width:50px;
 	height:30px;
 	background:url(images/sk-sprite01.png) no-repeat -110px -390px;
 	border:1px solid #cecece;

@@ -90,47 +90,50 @@ DD_belatedPNG.fix(B);
               <section class="s-main-box">
                  <div class="s-r-list">
                     <div>
-                        <table class="table-setClass" width="100%">
+                        {% if not grades %}
+                            <div style="height: 265px">
+                                <center><h3>没有可选课表</h3></center>
+                            </div>
+                        {% else %}
+                            <table class="table-setClass" width="100%">
                             <thead>
-                                <th>课程</th>
-                                <th>老师</th>
-                                <th>上课时间</th>
-                                <th>课时</th>
-                                <th>上课日期-2014年</th>
-                                <th>&nbsp;</th>
+                                <th width="10%">课程</th>
+                                <th width="10%">老师</th>
+                                <th width="5%">时间</th>
+                                <th width="5%">课时</th>
+                                <th >上课日期-2014年</th>
+                                <th >&nbsp;</th>
                             </thead>
-                            {% for x in range(10) %}
-                            <tr>
-                                <td>Anna black</td>
-                                <td>Anna black</td>
-                                <td><a class="link"><b>09:00</b></a></td>
-                                <td>33分钟</td>
+                            {% for grade in grades %}
+                            <tr >
                                 <td>
-                                    2014年：
-                                    <button class="sk-btn-gray01"><b>7月10</b></button>
-                                    <button class="sk-btn-gray01"><b>7月12</b></button>
-                                    <button class="sk-btn-gray01"><b>7月14</b></button>
-                                    <button class="sk-btn-gray01"><b>7月16</b></button>
-                                    <button class="sk-btn-gray01"><b>7月18</b></button>
-                                    <button class="sk-btn-gray01"><b>7月20</b></button>
-                                    <button class="sk-btn-gray01"><b>7月22</b></button>
-                                    <button class="sk-btn-gray01"><b>7月24</b></button>
-                                    <button class="sk-btn-gray01"><b>7月26</b></button>
-                                    <button class="sk-btn-gray01"><b>7月28</b></button>
+                                    <a href="/get/course?courseId={{ grade.course_id }}" title="{{ grade.course_name }}">
+                                        {{ len(grade.course_name) > 4 and grade.course_name[:4] + "..." or grade.course_name }}
+                                    </a>
+                                </td>
+                                <td><a href="/get/teacher?teacherId={{ grade.teacher_id }}">{{ grade.teacher_name }} </a></td>
+                                <td><a class="link"><b>{{ grade.start_time[:-3] }}</b></a></td>
+                                <td>{{ grade.period }}分钟</td>
+                                <td>
+                                    {% for c in grade.classes %}
+                                    <button class="sk-btn-gray01"><b>{{ c.date[5:].replace("-", "月") }}</b></button>
+                                    {% end %}
                                 </td>
                                 <td><span class="sk-bm-btn01" ><a href="javascript:;">报名</a></span></td>
                             </tr>
                            {% end %}
                         </table>
-
+                        {% end %}
                     </div>
 
                  </div>
 
+                 {% if len(grades) > 10 %}
                  <!-- 分页 begin -->
                  <div class="pagination mtop40">
                      <a href="#" class="prev-page" title="上一页">prev</a><span class="current">1</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a>...<a href="#">99</a><a href="#">100</a><a href="#" class="next-page" title="下一页">next</a>
                  </div>
+                 {% end %}
                  <!-- 分页 end -->
 
               </section>

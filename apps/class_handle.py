@@ -7,7 +7,6 @@ from collections import OrderedDict
 
 import tornado.web
 from torndb import Row
-from tornado.log import gen_log as logger
 from utils import route
 
 
@@ -130,9 +129,9 @@ def set_for_list(dc, value):
     """
         设置聚合信息给选课列表
     """
-    old = dc.get(value.grade_id)
+    old = dc.get(value.class_id)
     clazz = Row()
-    clazz["id"] = value.class_id
+    clazz["time_id"] = value.time_id
     clazz["date"] = str(value.class_date)
     clazz["time"] = str(value.start_time)
 
@@ -141,12 +140,17 @@ def set_for_list(dc, value):
         classes.append(clazz)
     else:
         new = Row()
-        new["teacher_id"] = value.teacher_id
         new["course_id"] = value.course_id
-        new["grade_id"] = value.grade_id
+        new["course_name"] = value.course_name
+        new["class_id"] = value.class_id
+        new["class_root"] = value.class_room
+        new["teacher_id"] = value.teacher_id
+        new["teacher_name"] = value.teacher_name
+        new["student_id"] = value.student_id
         new["period"] = value.period
+        new["start_time"] = str(value.start_time)
         new["classes"] = [clazz]
-        dc[value.grade_id] = new
+        dc[value.class_id] = new
 
 
 def aggregate_by_grade(rows, set_method):
@@ -160,8 +164,8 @@ def aggregate_by_grade(rows, set_method):
 
 #=======================Api to speiyou.com=============
 
-@route("/api/course/add", name="Add Course")
-class APIAddCourseHandle(BaseHandler):
+@route("/api/class/add", name="Add Classes")
+class APIAddClassHandle(BaseHandler):
     """
         开课请求接口
         调用方式：post 参数，json格式
@@ -190,9 +194,21 @@ class APIAddCourseHandle(BaseHandler):
 class APICancelClassHandle(BaseHandler):
     """
     撤销锁定课程
+    学员uid
+    排课id
+    班级名称
     """
     def get(self):
-        pass
+        student_id = self.get_argument("uid")
+        grade_id = self.get_argument("planId")
+        course_id = self.get_argument("claId")
+        if student_id and grade_id and course_id:
+            self.db.execute_rowcount("UPDATE student_class SET status=%s WHERE student_id=%s",
+                                     GRADEStatus.REFUND, student_id)
+            self.db.execute_rowcount("UPDATE student_class SET status=%s WHERE student_id=%s")
+
+        else:
+            self.write({"rls": False, "msg": "请求参数不对"})
 
 
 @route("/api/class/payed")
@@ -219,19 +235,23 @@ def notify_():
 
 
 #======================== 选课调课logic ==============
-@route("/grade")
+@route("/timetable")
 class GradeHandle(BaseHandler):
     """
     选课列表
+    需要学生ID
+    课程ID
+
     """
     def get(self):
+
         #分页暂时不考虑和关联查询
         status = self.get_argument("status", GRADEStatus.NORMAL)
-        rows = self.db.query("SELECT * FROM grade g JOIN class c ON(g.class_id=c.class_id) "
-                             "WHERE g.status=%s", status)
-        grades = aggregate_by_grade(rows, set_for_list)
-        self.render("grade_list.html", grades=grades.values())
-
+        course_id = self.get_argument("courseId", 1)
+        rows = self.db.query("SELECT * FROM timetable WHERE class_status=%s AND course_id=%s", status, course_id)
+        timetable = aggregate_by_grade(rows, set_for_list)
+        self.render("grade_list.html", grades=timetable.values())
+        # self.write(timetable)
 
 
 @route("/grade/(\d+)/order/(.*)$", name="Order class")
@@ -334,4 +354,5 @@ class TestClassHandle(BaseHandler):
 @route("/admin", name="Admin Manager")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
-        pass
+        print self.request.headers.get("Name")
+        self.write("aa")
