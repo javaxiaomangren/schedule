@@ -148,7 +148,6 @@ def set_for_list(dc, value):
         new = Row()
         new["course_id"] = value.course_id
         new["course_name"] = value.course_name
-        print value.course_name
         new["class_id"] = value.class_id
         new["class_root"] = value.class_room
         new["teacher_id"] = value.teacher_id
