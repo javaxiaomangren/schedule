@@ -14,8 +14,23 @@ CREATE TABLE `timetable` (
   `time_status` tinyint(4) DEFAULT '0',
   `check_roll` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`time_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `course` (
+  `id` varchar(45) NOT NULL COMMENT '班级id',
+  `class_count` int(11) NOT NULL COMMENT '总课次',
+  `every_hours` int(11) NOT NULL COMMENT '课时',
+  `start_date` varchar(32) NOT NULL COMMENT '开课时间',
+  `end_date` varchar(32) NOT NULL COMMENT '结课时间',
+  `frequency` int(11) NOT NULL COMMENT '上课频率(天为单位)',
+  `year` varchar(10) NOT NULL COMMENT '年份',
+  `term_name` varchar(45) NOT NULL COMMENT '学期类型',
+  `max_person` int(11) NOT NULL COMMENT '班级最大人数',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '请求时间',
+  `finished` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否完成',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*
 -- Query: SELECT * FROM schedule.timetable

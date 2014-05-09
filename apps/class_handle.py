@@ -76,6 +76,12 @@ def message(flag="success", code=200, msg="Success"):
     return ms
 
 
+def select_class(db, course_id, class_id, student_id, status1, status2):
+    db.execute_rowcount("UPDATE timetable SET student_id=%s, status=%s "
+                        "WHERE course_id=%s AND class_id=%s AND class_status=%s",
+                        student_id, course_id, class_id, status2, status1)
+
+
 def update_grade_status(db, grade_id, status):
     """
         更新班级状态
@@ -190,43 +196,27 @@ class APIAddClassHandle(BaseHandler):
             self.write({"rlt": False, "msg": traceback.format_exc()})
 
 
-@route("/api/class/cancel")
+@route("/api/class/notify")
 class APICancelClassHandle(BaseHandler):
     """
-    撤销锁定课程
+    撤销锁定课程, 支付， 退款
     学员uid
     排课id
     班级名称
+    status
     """
     def get(self):
         student_id = self.get_argument("uid")
-        grade_id = self.get_argument("planId")
+        class_id = self.get_argument("planId")
         course_id = self.get_argument("claId")
-        if student_id and grade_id and course_id:
-            self.db.execute_rowcount("UPDATE student_class SET status=%s WHERE student_id=%s",
-                                     GRADEStatus.REFUND, student_id)
-            self.db.execute_rowcount("UPDATE student_class SET status=%s WHERE student_id=%s")
-
+        status = self.get_argument("status")
+        if student_id and class_id and course_id and status:
+            self.db.execute_rowcount("UPDATE timetable SET status=%s "
+                                     "WHERE student_id=%s AND course_id=%s AND class_id=%s",
+                                     status, student_id, course_id, class_id)
+            self.write({"rlt": True, "msg": "Success"})
         else:
-            self.write({"rls": False, "msg": "请求参数不对"})
-
-
-@route("/api/class/payed")
-class APICancelClassHandle(BaseHandler):
-    """
-    订单支付，接收通知，写入学生－课程表
-    """
-    def get(self):
-        pass
-
-
-@route("/api/class/refund")
-class APICancelClassHandle(BaseHandler):
-    """
-    接收退款通知
-    """
-    def get(self):
-        pass
+            self.write({"rlt": False, "msg": "请求参数不对"})
 
 
 #======================== 调用speiyou.com的接口========
@@ -235,7 +225,7 @@ def notify_():
 
 
 #======================== 选课调课logic ==============
-@route("/timetable")
+@route("/timetable/list")
 class GradeHandle(BaseHandler):
     """
     选课列表
@@ -254,64 +244,80 @@ class GradeHandle(BaseHandler):
         # self.write(timetable)
 
 
-@route("/grade/(\d+)/order/(.*)$", name="Order class")
-class GradeOrderHandle(BaseHandler):
+@route("/timetable/(\d+)/select/(\d+)/(\d+)", name="select class table")
+class SelectClassHandle(BaseHandler):
     """
-        Order class, It just lock this class. Disappear from the class list page.
-        It will be released or ordered while get a notification from speiyou.com
-        status: 0 means release, 2 payed, 3 refunded
-        Invoke example:
-            Lock class:
-                http://host:port/grade/1/order/1
-            Release or order Success:
-                http://host:port/grade/1/order/1?status=2
-
+    选课
     """
+    def get(self, student_id, course_id, class_id):
+        if student_id and course_id and class_id:
+            select_class(self.db, course_id, class_id, student_id, GRADEStatus.APPOINTED, GRADEStatus.NORMAL)
+            rows = self.db.query("SELECT * FROM timetable "
+                                 "WHERE class_status=%s AND course_id=%s AND class_id=%s AND student_id=%s",
+                                 GRADEStatus.APPOINTED, course_id, class_id, student_id)
+            timetable = aggregate_by_grade(rows, set_for_list)
+            self.write(timetable)
 
-    def get(self, grade_id, student_id):
+#
+#
+# @route("/timetable/(\d+)/order/(.*)$", name="Order class")
+# class ClassOrderHandle(BaseHandler):
+#     """
+#         Order class, It just lock this class. Disappear from the class list page.
+#         It will be released or ordered while get a notification from speiyou.com
+#         status: 0 means release, 2 payed, 3 refunded
+#         Invoke example:
+#             Lock class:
+#                 http://host:port/grade/1/order/1
+#             Release or order Success:
+#                 http://host:port/grade/1/order/1?status=2
+#
+#     """
+#
+#     def get(self, class_id, student_id):
+#         course_id = self.get_argument("course_id")
+#         try:
+#             status = int(self.get_argument("status"))
+#         except:
+#             self.write(message("Error", 400, "Request Parameter Error"))
+#             return
+#
+#         #todo check permission, 401
+#
+#         if student_id and grade_id:
+#             if status:
+#                 #========== Release this Class ==================
+#                 if status == GRADEStatus.NORMAL:
+#                     update_grade_status(self.db, grade_id, status)
+#                     #TODO update cache
+#                     # maybe there need a table to record student's operation. TODO
+#                     self.write(message(msg="release class %s success" % grade_id))
+#                 elif status == GRADEStatus.APPOINTED:
+#                     update_grade_status(self.db, grade_id, status)
+#                     # TODO Update cache
+#                     # TODO notify speiyou.com
+#                     self.write("Jump to the pay page")
+#
+#                 #========= Class was payed ======================
+#                 elif status == GRADEStatus.PAYED:
+#                     update_grade_status(self.db, grade_id, status)
+#                     #TODO INSERT INTO STUDENT_CLASS TABLE
+#                     self.write("Student %s has bout grade %s ", student_id, grade_id)
+#
+#                 #========= The student refunded this class =========
+#                 elif status == GRADEStatus.REFUND:
+#                     update_grade_status(self.db, grade_id, status)
+#                     #TODO UPDATE CLASS STATUS
+#
+# #========= Bad Request =========
+#                 else:
+#                     self.write(message(flag="Error", code=402, msg="Bad Request unknown value of status"))
+#         else:
+#             self.write(message("Error", 400, "Request Parameter Error, Student and Grade must be specific"))
 
-        try:
-            status = int(self.get_argument("status"))
-        except:
-            self.write(message("Error", 400, "Request Parameter Error"))
-            return
 
-        #todo check permission, 401
-
-        if student_id and grade_id:
-            if status:
-                #========== Release this Class ==================
-                if status == GRADEStatus.NORMAL:
-                    update_grade_status(self.db, grade_id, status)
-                    #TODO update cache
-                    # maybe there need a table to record student's operation. TODO
-                    self.write(message(msg="release class %s success" % grade_id))
-                elif status == GRADEStatus.APPOINTED:
-                    update_grade_status(self.db, grade_id, status)
-                    # TODO Update cache
-                    # TODO notify speiyou.com
-                    self.write("Jump to the pay page")
-
-                #========= Class was payed ======================
-                elif status == GRADEStatus.PAYED:
-                    update_grade_status(self.db, grade_id, status)
-                    #TODO INSERT INTO STUDENT_CLASS TABLE
-                    self.write("Student %s has bout grade %s ", student_id, grade_id)
-
-                #========= The student refunded this class =========
-                elif status == GRADEStatus.REFUND:
-                    update_grade_status(self.db, grade_id, status)
-                    #TODO UPDATE CLASS STATUS
-
-#========= Bad Request =========
-                else:
-                    self.write(message(flag="Error", code=402, msg="Bad Request unknown value of status"))
-        else:
-            self.write(message("Error", 400, "Request Parameter Error, Student and Grade must be specific"))
-
-
-@route("/grade/(\d+)/change/(\d+)/(\d+)", name="Change Grade")
-class ChangeGradeHandle(BaseHandler):
+@route("/class/(\d+)/change/(\d+)/(\d+)", name="Change Grade")
+class ChangeClassHandle(BaseHandler):
     """
     转班
     """
