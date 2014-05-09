@@ -244,6 +244,12 @@ class GradeHandle(BaseHandler):
         # self.write(timetable)
 
 
+@route("/timetable/myclass")
+class MyClassHandler(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render("my_class.htlm")
+
+
 @route("/timetable/(\d+)/select/(\d+)/(\d+)", name="select class table")
 class SelectClassHandle(BaseHandler):
     """
