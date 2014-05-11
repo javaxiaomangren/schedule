@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4> 标签列表</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <colgroup>
+      <col class="col-xs-1">
+      <col class="col-xs-1">
+      <col class="col-xs-1">
+      <col class="col-xs-9">
+    </colgroup>
+    <tbody>
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>名称</th>
+      <th>操作</th>
+      <th>&nbsp;</th>
+    </tr>
+    </thead>
+    {% for i, e in enumerate(entries) %}
+    <tr>
+      <td>{{ e.id }}</td>
+      <td>{{ escape(e.tag_name) }}</td>
+      <td><a href="/admin/{{ e.id }}/tags/del"  onclick="return window.confirm('确定要删除吗？')">delete</a></td>
+      <td>&nbsp;</td>
+    </tr>
+    {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}

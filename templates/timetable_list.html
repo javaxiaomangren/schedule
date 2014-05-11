@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>学而思培优-选课</title>
+
+<link rel="stylesheet" href="{{ static_url('css/base.css') }}"/>
+<link href="{{ static_url('css/sk-main.css') }}" rel="stylesheet"/>
+<script type="text/javascript">
+    function search2(page) {
+        document.getElementById("pageNo").value = page
+        document.forms[0].submit()
+        return true
+    }
+</script>
+
+
+<!--[if IE]>
+<script type="text/javascript" src="js/html5.js"></script>
+<![endif]-->
+<!--[if IE 6]> 
+<script type="text/javascript">var _belatedPNG=[".fixpng"];</script>
+<![endif]-->
+<!--[if IE 6]>
+<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
+<script type="text/javascript">
+(function(){
+var A=(typeof _belatedPNG!="undefined")?_belatedPNG:[];
+var B=[].concat(A).join(",");
+DD_belatedPNG.fix(B);
+})();
+</script>
+<![endif]-->
+
+</head>
+
+<body >
+  <!-- sk-header begin -->
+  <header id="sk-header">
+      <div class="sk-wrapper">
+         <div class="sk-top-bar">
+         </div>
+         <div class="clear"></div>
+         <h1 class="sk-logo"><span class="fn-left"><a href="timetable_list.html"><img src="{{ static_url('images/pylogo-sk.png') }}" width="229" height="56" alt="学而思培优-选课" title="学而思培优-选课"/></a></span><span class="fn-left sk-logo-font">选课</span></h1>
+         <div class="sk-search-bar">
+         </div>
+         <div class="clear"></div>
+      </div>
+</header>
+  <!-- sk-header end -->
+
+  <!-- sk-content end -->
+  <section class="sk-content relative">
+      <div class="bar-blue01"></div>
+      <section class="relative sk-wrapper mtop45">
+        <!-- search-bar begin -->
+        <div id="search-bar">
+          <ul class="search-bar-left">
+              <form action="/api/class/timetable/list" method="GET" id="searchForm">
+                  <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
+                  <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
+                  <input type="hidden" id="oldPlanId" name="oldPlanId" value="{{ args.get('oldPlanId', '') }}"/>
+                  <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
+                  <li><b>老师： </b>
+                      <input type="text" name="teacherName" id="teacherName" value="{{ args.get('teacherName', '') }}"/>
+                  </li>
+                  <li>
+                      <b>上课时间：</b>
+                      <select name="timeInterval" id="timeInterval">
+                          <option value="0" selected>--全天--</option>
+                          <option value="05:00-09:00" disabled>--上午----</option>
+                          <option value="05:00-09:00">05:00-09:00</option>
+                          <option value="09:00-12:00">09:00-12:00</option>
+                          <option value="12:00-23:00" disabled>--下午----</option>
+                          <option value="12:00-14:00">12:00-14:00</option>
+                          <option value="4:00-18:00">14:00-18:00</option>
+                          <option value="18:00-20:00">18:00-20:00</option>
+                          <option value="20:00-23:00">20:00-23:00</option>
+                      </select>
+                      <script language="JavaScript" type="text/javascript">
+                          value = "{{ args.get('timeInterval', '') }}"
+                          options = document.getElementById("timeInterval")
+                          for(var i = 0; i < options.length; i++){
+                              if (options[i].value === value){
+                                  options[i].selected = true
+                              }
+                          }
+
+                      </script>
+                  </li>
+                  <li><input type="submit" value="查询"/></li>
+
+              </form>
+               <!--<li><b>班级类型：</b>长期班</li>-->
+          </ul>
+          <div class="clear"></div>
+        </div>
+        <!-- search-bar end -->
+
+        <section class="sk-wrapper02">
+
+           <div class="spaceLine01">a</div>
+
+           <div class="s-box mtop20">
+              <!-- 搜课列表 begin -->
+              <section class="s-main-box">
+                 <div class="s-r-list">
+                    <div>
+                        {% if not entries %}
+                            <div style="height: 265px">
+                                <center><h3>没有可选课表</h3></center>
+                            </div>
+                        {% else %}
+                            <table class="table-setClass" width="100%">
+                            <thead>
+                                <th width="10%">课程</th>
+                                <th width="10%">老师</th>
+                                <th width="5%">时间</th>
+                                <th width="5%">课时</th>
+                                <th >上课日期-2014年</th>
+                                <th >&nbsp;</th>
+                            </thead>
+                            {% for entry in entries %}
+                                <tr >
+                                <td>
+                                    <a href="/get/course?courseId={{ entry.course_id }}" title="{{ entry.course_name }}">
+                                        英语口语
+                                        <!--{{ len(entry.course_name) > 4 and entry.course_name[:4] + "..." or entry.course_name }}-->
+                                    </a>
+                                </td>
+                                <td><a href="/get/teacher?teacherId={{ entry.teacher_id }}">{{ entry.teacher_name }} </a></td>
+                                <td><a class="link"><b>{{ entry.start_time[:-3] }}</b></a></td>
+                                <td>{{ entry.period }}分钟</td>
+                                <td>
+                                    {% for c in entry.classes %}
+                                    <button class="sk-btn-gray01"><b>{{ c.date[5:].replace("-", "月") }}</b></button>
+                                    {% end %}
+                                </td>
+                                <td>
+                                    {% if args.get('oldPlanId') %}
+                                    <span class="sk-bm-btn01" ><a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}&oldPlanId={{ args.get('oldPlanId') }}"
+                                        onclick="return window.confirm('您要转到的是:{{ entry.teacher_name }}老师的班级, {{ entry.time_desc }}, 确定要约这个时间吗？')">转班</a></span>
+                                    {% else %}
+                                    <span class="sk-bm-btn01" ><a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
+                                                                  onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a></span>
+                                    {% end %}
+                                </td>
+                            </tr>
+                            {% end %}
+                        </table>
+                            {% if page_count > 1%}
+                                 <div class="pagination mtop40">
+                                    {% if page_no > 1 %}
+                                        <a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">prev</a>
+                                    {% end %}
+                                     {% for p in range(1, page_count + 1) %}
+                                        {% if p == page_no %}
+                                            <span class="current">{{ page_no }}</span>
+                                        {% else %}
+                                            <a  href='javascript:;' onclick='search2({{ p }})'>{{ p }}</a>
+                                        {% end %}
+                                     {% end %}
+                                     {% if page_no < page_count %}
+                                        <a href='javascript:;' onclick='search2({{ page_no + 1 }})' class="next-page" title="下一页">next</a>
+                                     {% end %}
+                                </div>
+                            {% end %}
+                        {% end %}
+                    </div>
+
+                 </div>
+
+              </section>
+              <!-- 查询结果 end -->
+
+              <div class="clear"></div>
+           </div>
+        </section>
+
+        
+      </section>
+</section>
+  
+  <!-- sk-footer begin -->
+  <footer id="sk-footer">
+     <p>咨询电话：010-82618899 62164116  京ICP备09032638号-4</p>
+     <p>Copyright @ 2004 – 2013 Xueersi.All Rights Reserved.学而思教育 版权所有</p>
+  </footer>
+  <!-- sk-footer end -->
+  
+  <!--go-top begin-->
+  <div id="go_top" class="go_top"><a href="javascript:;" class="goTop fixpng" title="返回顶部"></a></div>
+  <!--go-top end-->
+
+  </div>
+</body>
+</html>

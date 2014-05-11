@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  {% block title %}
+  <title>{{ escape(handler.settings["site_title"]) }}</title>
+  {% end %}
+  {% block extra_head %}
+  {% end %}
+  <!-- Bootstrap core CSS -->
+  <link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="{{ static_url('css/customer.css') }}" rel="stylesheet">
+  <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" style="background-color: #31b0d5">
+  <a class="navbar-brand" href="#" style="color: #ffffff">约课系统中间接口管理</a>
+</div>
+<!-- header -->
+
+<div class="page-body">
+  <div class="row">
+    <div class="col-md-2">
+      {% block left %}
+      <div class="panel panel-default">
+        <!--<div class="panel-heading">Welcome</div>-->
+        <div class="panel-body panel-left">
+          <ul class="nav .bs-sidenav">
+            <li>
+              <a href="/admin/course/tasks">排课任务</a>
+            </li>
+            <li>
+              <ul class="nav">
+                <li><a href="/admin/class/add">录入排课信息</a></li>
+                <!--<li><a href="/admin/category/">添加</a></li>-->
+              </ul>
+            </li>
+
+            <li><a href="">转班信息</a></li>
+            <li><a href="">调课信息</a></li>
+            <li><a href="">老师请假</a></li>
+            <li><a href="">考勤</a></li>
+            <li><a href="">短信平台</a></li>
+          </ul>
+        </div>
+
+      </div>
+      {% end %}
+    </div>
+    <!-- left -->
+
+    <div class="col-xl-12 col-md-10">
+      <div class="panel">
+        <div class="panel-heading">
+          {% block location_title %}
+          <h4> Welcome</h4>
+          <hr/>
+          {% end %}
+        </div>
+        <div class="panel-body">
+          {% block main %}
+
+          {% end %}
+        </div>
+      </div>
+    </div>
+    <!-- right main content body-->
+  </div>
+  <!-- row -->
+</div>
+<!-- page-body -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{{ static_url('js/jquery.validate.min.js') }}"></script>
+<script src="{{ static_url('js/bootstrap.min.js') }}"></script>
+<script src="{{ static_url('js/customer.js') }}"></script>
+{% block extra_js %} {% end %}
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4> 添加保险公司</h4>
+<hr/>
+{% end %}
+{% block main %}
+<div id="Main">
+  <form class="form-horizontal" id="company-form" role="form" method="post" action="/admin/company/save"
+        enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="companyName" class="col-sm-2 control-label">公司名称:</label>
+
+      <div class="col-sm-4">
+        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="公司名称">
+      </div>
+    </div>
+
+    <!-- logo -->
+    <div class="form-group">
+      <label for="logo" class="col-sm-2 control-label">公司LOGO:</label>
+
+      <div class="col-sm-4">
+        <input type="file" class="form-control" id="logo" name="logo"
+               placeholder="公司logo"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-3">&nbsp;</div>
+      <div class="col-sm-3">
+        <button type="submit" class="btn btn-info">保 存</button>
+        &nbsp;
+        <button type="reset" class="btn btn-info">重 置</button>
+      </div>
+    </div>
+  </form>
+</div> <!-- Mian -->
+{% end %}
+
+
+{% block extra_js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+
+    $('#company-form').validate(
+        {
+          rules: {
+            companyName: {
+              minlength: 2,
+              required: true
+            }
+//                        ,
+//                        email: {
+//                            required: true,
+//                            email: true
+//                        },
+//                        subject: {
+//                            minlength: 2,
+//                            required: true
+//                        },
+//                        message: {
+//                            minlength: 2,
+//                            required: true
+//                        }
+          },
+          highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+          },
+          success: function (element) {
+            element.text('OK!').addClass('valid')
+                .closest('.form-group').removeClass('has-error').addClass('has-success');
+          }
+        });
+  }); //
+</script>
+{% end %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4> 条款列表</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <colgroup>
+      <col class="col-xs-1">
+      <col class="col-xs-2">
+      <col class="col-xs-4">
+      <col class="col-xs-1">
+      <col class="col-xs-1">
+      <col class="col-xs-3">
+    </colgroup>
+    <tbody>
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>名称</th>
+      <th>描述</th>
+      <th>所属分类</th>
+      <th>操作</th>
+      <th>&nbsp;</th>
+    </tr>
+    </thead>
+    {% for i, e in enumerate(entries) %}
+    <tr>
+      <td>{{ e.id }}</td>
+      <td>{{ escape(e.clause_name) }}</td>
+      {% if len(e.description) > 20 %}
+      <td><a href="javascript:void(0)" title="{{ e.description }}">{{ e.description[0:30]+'......' }}</a></td>
+      {% else %}
+      <td>{{ e.description }}</td>
+      {% end %}
+      <td>{{ e.category_name or '' }}</td>
+      <td><a href="/admin/{{ e.id }}/clause/del" onclick="return window.confirm('确认删除？')">delete</a></td>
+      <td>&nbsp;</td>
+    </tr>
+    {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}

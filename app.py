@@ -28,7 +28,7 @@ define("debug", default=True, help="Show all routed URLs", type=bool)
 class Application(tornado.web.Application):
     def __init__(self, mysql_database=None):
         settings = dict(
-            site_title=u"Insurance search",
+            site_title=u"约课系统中间接口管理",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"GradeEntry": GradeEntry},
@@ -47,7 +47,9 @@ class Application(tornado.web.Application):
         self.static_path = settings["static_path"]
 
 #initialize handles
-__import__('apps', globals(), locals(), ["class_handle"], -1)
+__import__('apps', globals(), locals(), ["class_handle", "test"], -1)
+global x
+x = 1
 
 
 def main():
