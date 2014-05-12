@@ -1,5 +1,5 @@
 CREATE DATABASE `schedule` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
+USE schedule;
   CREATE TABLE `course` (
   `id` varchar(45) NOT NULL COMMENT '班级id',
   `class_count` int(11) NOT NULL COMMENT '总课次',
@@ -10,7 +10,7 @@ CREATE DATABASE `schedule` /*!40100 DEFAULT CHARACTER SET utf8 */;
   `year` varchar(10) NOT NULL COMMENT '年份',
   `term_name` varchar(45) NOT NULL COMMENT '学期类型',
   `max_person` int(11) NOT NULL COMMENT '班级最大人数',
-  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '请求时间',
+  `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '请求时间',
   `finished` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否完成',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
