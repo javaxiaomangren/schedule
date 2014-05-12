@@ -14,7 +14,7 @@ from apps.entry import GradeEntry
 from apps.utils import route
 
 
-define("port", default=8889, help="run on the given port", type=int)
+define("port", default=8081, help="run on the given port", type=int)
 define("mysql_host", default="127.0.0.1:3306", help="schedule database host")
 define("mysql_database", default="schedule", help="schedule database name")
 define("mysql_user", default="root", help="schedule database user")

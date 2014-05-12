@@ -104,7 +104,7 @@ DD_belatedPNG.fix(B);
                                 <td>{{ cc.period }}</td>
                                 <td>{{ cc.date }}</td>
                                 <td>
-                                        {{ TimeStatus.NAME.get(cc.time_status) }}
+                                        {{ TimeStatus.NAME.get(entry.class_status) }}
                                 </td>
                                 <td>
                                     {% if entry.class_status == 2 and entry.time_changed == 0 %}
