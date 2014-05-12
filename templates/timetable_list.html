@@ -124,8 +124,7 @@ DD_belatedPNG.fix(B);
                                 <tr >
                                 <td>
                                     <a href="/get/course?courseId={{ entry.course_id }}" title="{{ entry.course_name }}">
-                                        英语口语
-                                        <!--{{ len(entry.course_name) > 4 and entry.course_name[:4] + "..." or entry.course_name }}-->
+                                        {{ len(entry.course_name) > 10 and entry.course_name[:10] + "..." or entry.course_name }}
                                     </a>
                                 </td>
                                 <td><a href="/get/teacher?teacherId={{ entry.teacher_id }}">{{ entry.teacher_name }} </a></td>
