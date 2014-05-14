@@ -56,7 +56,7 @@ DD_belatedPNG.fix(B);
         <!-- search-bar begin -->
         <div id="search-bar">
           <ul class="search-bar-left">
-              <form action="/api/class/timetable/list" method="GET" id="searchForm">
+              <form action="{{ args.get('url')}}" method="GET" id="searchForm">
                   <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
                   <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
                   <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
@@ -129,13 +129,8 @@ DD_belatedPNG.fix(B);
                                     {% end %}
                                 </td>
                                 <td>
-                                    {% if args.get('change', 0) %}
-                                    <span class="sk-bm-btn01" ><a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}&oldPlanId={{ args.get('oldPlanId') }}"
-                                        onclick="return window.confirm('您要转到的是:{{ entry.teacher_name }}老师的班级, {{ entry.time_desc }}, 确定要约这个时间吗？')">转班</a></span>
-                                    {% else %}
                                     <span class="sk-bm-btn01" ><a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
-                                                                  onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a></span>
-                                    {% end %}
+                                                                  onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">转班</a></span>
                                 </td>
                             </tr>
                             {% end %}

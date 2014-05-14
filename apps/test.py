@@ -173,9 +173,9 @@ class AdminClassHandle(BaseHandler):
         self.db.execute("truncate table timetable")
         self.db.execute("truncate table timetable_bak")
 
-        courses = [(course_id, 10, 30, '2014-07-01', '2014-07-20', 2, '2014', course_id, 20 + course_id, 0)
-                   for course_id in range(1, 10)]
-        self.db.executemany(course, courses)
+        # courses = [(course_id, 10, 30, '2014-07-01', '2014-07-20', 2, '2014', course_id, 20 + course_id, 0)
+        #            for course_id in range(1, 10)]
+        # self.db.executemany(course, courses)
 
         teachers = [(tid, chr(tid) + 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(65, 91)]
         self.db.executemany(teacher, teachers)
@@ -199,6 +199,7 @@ class AdminClassHandle(BaseHandler):
                     class_time,30,class_date,0, 0,
                     "2014-07-01 到 2014-07-20 " + class_time + " 隔天上课"
                     ))
+
         self.db.executemany(timetable, timetables)
 
         timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-" + str(th1[0] - 60), "10:00", 30, 0) for th1 in teachers]
