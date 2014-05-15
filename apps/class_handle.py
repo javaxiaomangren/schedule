@@ -450,6 +450,7 @@ class TimetableSelectHandle(BaseHandler):
                             if rs:
                                 self.commit()
                             else:
+                                class_id = cid
                                 self.rollback()
                         self.auto_commit()
                     except:
@@ -462,13 +463,15 @@ class TimetableSelectHandle(BaseHandler):
                     rs = select_class(self.db, course_id, class_id, student_id,
                                       TimeStatus.APPOINTED, TimeStatus.NORMAL)
                     if not rs:
-                        self.write(message(False, "课程不存在，或者已被选了"))
+                        self.write(message(False, "%s 课程不存在，或者已被选了" % class_id))
                         return
                 except:
-                    self.write(message(False, "课程不存在，或者已被选了"))
+                    self.write(message(False, "课程 %s 不存在，或者已被选了" % class_id))
                     return
 
-            data = {"claId": course_id, "uid": student_id}
+            data = {"rlt": True, "msg": "success",
+                    "data": {"claId": course_id, "uid": student_id, "planId":class_id}
+            }
             self.write(data)
             #TODO 修改的报课中排课状态（是否已经选课）
 
