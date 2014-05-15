@@ -3,11 +3,13 @@ __author__ = 'windy'
 import traceback
 import httplib
 import ujson
+import json
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
 import tornado.web
 from torndb import Row
+import utils
 from utils import route
 
 
@@ -83,6 +85,20 @@ def message(rlt=True, msg="Success"):
     ms["rlt"] = rlt
     ms["msg"] = msg
     return ms
+
+
+def authorization(summary, plat, sys, md5):
+    if summary and plat and sys and md5:
+        m_md5 = utils.mk_md5(summary, plat, sys)
+        return md5 == m_md5
+    return None
+
+
+def get_param(request):
+    data = ujson.loads(request.body)
+    course_id = data.get("claId", None)
+    student_id = data.get("uid", None)
+    return course_id, student_id
 
 
 def select_class(db, course_id, class_id, student_id, status_new, status_old):
@@ -297,17 +313,27 @@ class APIAddClassHandle(BaseHandler):
     def post(self, *args, **kwargs):
         data = self.request.body
         try:
-            data = ujson.loads(data)
-        except:
+            data = json.loads(data)
+            p = Row(data)
+            try:
+                summary = p.claId+p.classCount+p.everyHours+p.startDate+p.endDate+p.frequency+p.year+p.termName+p.maxPersons
+                plat = self.request.headers.get("plat")
+                sys = self.request.headers.get("sys")
+                md5 = self.request.headers.get("md5")
+                if not authorization(summary, plat, sys, md5):
+                    return self.write(message(False, "authorization error"))
+            except AttributeError:
+                self.write(message(False, "authorization error"))
+        except :
+            print traceback.format_exc()
             self.write(message(False, "请求参数异常"))
             return
         try:
-            p = Row(data)
             self.db.execute_rowcount("REPLACE INTO course(claId, class_name,class_count, every_hours,"
                                      "start_date, end_date, frequency, year, term_name,"
                                      " max_person, create_date, finished) "
                                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 0)",
-                                     p.calId, p.claName, p.classCount, p.everyHours, p.startDate, p.endDate,
+                                     p.claId, p.claName, p.classCount, p.everyHours, p.startDate, p.endDate,
                                      p.frequency, p.year, p.termName, p.maxPersons)
             self.write(message())
         except AttributeError as ae:
@@ -328,7 +354,6 @@ class TimeTableListHandle(BaseHandler):
         checked = check_params(args, 5, ["claId", "uid", "teacherName", "timeInterval", "pageNo"])
         if not checked:
             self.write(message(False, "Bad Request"))
-            #TODO BAD PAGE
             return
 
         course_id = self.get_argument("claId", None)
@@ -408,28 +433,20 @@ class TimetableSelectHandle(BaseHandler):
                                 self.commit()
                             else:
                                 self.rollback()
-                                class_id = cid
                         self.auto_commit()
                     except:
                         self.rollback()
                         self.write(message(False, traceback.format_exc()))
                     finally:
                         self.auto_commit()
-
-                else:
-                    class_id = cid
             else:
                 rs = select_class(self.db, course_id, class_id, student_id,
                                   TimeStatus.APPOINTED, TimeStatus.NORMAL)
                 if not rs:
                     self.write(message(False, "该课程不能选了"))
                     return
-            data = {"calId": course_id, "planId": class_id, "uid": student_id}
-            ms = message()
-            ms["data"] = data
-            self.write(ms)
-            # self.redirect("/api/class/manage?uid=%s&claId=%s&planId=%s" % (student_id, course_id, class_id))
-            #TODO 跳转到培优网页面
+            data = {"claId": course_id, "uid": student_id}
+            self.write(data)
             #TODO 修改的报课中排课状态（是否已经选课）
 
         else:
@@ -681,13 +698,8 @@ class APIClassReleaseHandle(BaseHandler):
     撤销课表锁定-消息互通接口
     /api/class/release?claId=&uid
     """
-    def get(self):
-        checked = check_params(self.request.query_arguments, 2, ["uid", "claId"])
-        if not checked:
-            self.write(message(False, "请求参数不对"))
-            return
-        course_id = self.get_argument("claId", None)
-        student_id = self.get_argument("uid", None)
+    def post(self):
+        course_id, student_id = get_param(self.request)
         if course_id and student_id:
             rs = self.db.execute_rowcount("UPDATE timetable SET class_status=%s, student_id=Null "
                                           "WHERE course_id=%s AND student_id=%s"
@@ -707,13 +719,12 @@ class APIClassPayedHandle(BaseHandler):
     学生支付课程-消息互通接口
     /api/class/payed?claId=&uid=
     """
-    def get(self):
-        checked = check_params(self.request.query_arguments, 2, ["uid", "claId"])
-        if not checked:
-            self.write(message(False, "请求参数不对"))
-            return
-        course_id = self.get_argument("claId", None)
-        student_id = self.get_argument("uid", None)
+    def post(self):
+        data = ujson.loads(self.request.body)
+        course_id = data.get("claId", None)
+        student_id = data.get("uid", None)
+        stuName = data.get("stuName", None)
+        #TODO build username
         if course_id and student_id:
             try:
                 self.auto_commit(False)
@@ -746,13 +757,8 @@ class APIClassRefundHandle(BaseHandler):
      学生退费-消息互通接口
     /api/class/refund?claId=&uid=
     """
-    def get(self):
-        checked = check_params(self.request.query_arguments, 2, ["uid", "claId"])
-        if not checked:
-            self.write(message(False, "请求参数不对"))
-            return
-        course_id = self.get_argument("claId", None)
-        student_id = self.get_argument("uid", None)
+    def post(self):
+        course_id, student_id = get_param(self.request)
         if course_id and student_id:
             rs = self.db.execute_rowcount("UPDATE timetable SET class_status=%s, time_status=%s "
                                           "WHERE course_id=%s AND student_id=%s "

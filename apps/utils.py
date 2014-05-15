@@ -1,5 +1,12 @@
-#coding:utf8
+__author__ = 'windy'
+#!/usr/bin/env python
+#coding:UTF-8
 import tornado.web
+from urllib2 import Request, urlopen
+import httplib
+import ujson
+import hashlib
+from torndb import Row
 
 
 class route(object):
@@ -41,28 +48,6 @@ def route_redirect(from_, to, name=None):
     route._routes.append(tornado.web.url(from_, tornado.web.RedirectHandler, dict(url=to), name=name))
 
 
-class Transaction(object):
-    """
-        处理事务集合
-        db: torndb db connection
-        Usage:
-        with Transaction(db) as trans_db:
-            trans_db.execute(sql)
-            trans_db.commit()
-    """
-    def __init__(self, db):
-        self.tran_db = db
-
-    def __enter__(self):
-        """set up things and return things"""
-        self.tran_db._db.autocommit(False)
-        return self.tran_db
-
-    def __exit__(self, type, value, traceback):
-        """tear down things"""
-        self.tran_db.autocommit(True)
-
-
 def nice_bool(value):
     if type(value) is bool:
         return value
@@ -70,5 +55,25 @@ def nice_bool(value):
     return str(value).lower().strip() not in false
 
 
-def send_post():
-    pass
+def post_u8(data, url):
+    headers = {'Content-type': 'text/plain;charset=UTF-8'}
+    req = Request(url, data, headers)
+    return urlopen(req).read()
+
+
+def post2(data):
+    conn = httplib.HTTPConnection('10.19.1.130', 10087)
+    headers = {'Content-type': 'text/plain;charset=GBK'}
+    conn.request('POST', '/CPAPlatform/TransformData', data, headers)
+    response = conn.getresponse()
+    print response.read()
+    resp_data = response.read().decode('GBK').encode('UTF-8')
+    return Row(ujson.loads(resp_data))
+
+
+def mk_md5(summary, plat, sys, key="com.xes.employee"):
+    s = summary + plat + sys + key
+    #TODO md5 cache
+    return hashlib.md5(s.encode("UTF-8")).hexdigest()
+
+print mk_md5("a", "b", "c")
