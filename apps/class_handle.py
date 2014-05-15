@@ -774,7 +774,13 @@ class APIClassPayedHandle(BaseHandler):
                     self.write({"rlt": True, "msg": "Success", "data": data})
                     self.commit()
                 else:
-                    self.write(message(False,  "更新失败"))
+                    #todo remove query
+                    rows = self.db.query("SELECT * FROM timetable "
+                                         "WHERE course_id=%s AND student_id=%s "
+                                         "ORDER BY class_date, start_time, time_id",
+                                         course_id, student_id)
+                    data = aggregate_by_grade(rows, set_response).values()[0]
+                    self.write({"rlt": False, "msg": "更新失败", "data": data})
             except:
                 self.rollback()
             finally:
