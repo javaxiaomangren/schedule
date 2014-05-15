@@ -129,6 +129,8 @@ insert_record = """INSERT INTO timetable_record
                 class_changed FROM timetable WHERE time_id=%s
               """
 
+insert_record_all = "insert into timetable_record select x.*, NOW() from timetable x %s"
+
 
 def check_params(args, lens, keys):
     if len(args) > lens:
@@ -787,12 +789,18 @@ class APIClassRefundHandle(BaseHandler):
     def post(self):
         course_id, student_id = get_param(self.request)
         if course_id and student_id:
-            rs = self.db.execute_rowcount("UPDATE timetable SET class_status=%s, time_status=%s "
-                                          "WHERE course_id=%s AND student_id=%s "
-                                          "AND class_status=%s", TimeStatus.REFUND, TimeStatus.REFUND,
-                                          course_id, student_id, TimeStatus.PAYED)
+            where = " WHERE course_id=%s AND student_id=%s "
+            rs1 = self.db.execute_rowcount("UPDATE timetable SET class_status=%s, time_status=%s "
+                                           "WHERE course_id=%s AND student_id=%s "
+                                           "AND class_status=%s", TimeStatus.REFUND, TimeStatus.REFUND,
+                                           course_id, student_id, TimeStatus.PAYED)
+            rs2 = self.db.execute_rowcount(insert_record_all % where, course_id, student_id)
+            rs3 = self.db.execute_rowcount("UPDATE timetable SET class_status=0, time_status=0, "
+                                           "student_id=null, class_changed=0, time_changed=0, check_roll=0"
+                                           " WHERE course_id=%s AND student_id=%s "
+                                           , course_id, student_id)
 
-            if rs:
+            if rs1 and rs2 and rs3:
                 self.write(message())
             else:
                 self.write(message(False, "更新失败:"))
