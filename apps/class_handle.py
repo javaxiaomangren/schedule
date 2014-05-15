@@ -111,6 +111,15 @@ def select_class(db, course_id, class_id, student_id, status_new, status_old):
                                student_id, status_new, course_id, class_id, status_old)
 
 
+def get_by_id(db=None, course_id=0, student_id=0, class_id=0):
+    sql = "SELECT * FROM timetable WHERE course_id=%s " % course_id
+    if student_id:
+        sql += " AND student_id=%s" % student_id
+    elif class_id:
+        sql += " AND class_id=%s" % class_id
+    return db.query(sql)
+
+
 format_date = lambda x, y: "%s %s" % (x, y)
 insert_record = """INSERT INTO timetable_record
                 (time_id,course_id,course_name,class_id,class_room,teacher_id,teacher_name,student_id,
@@ -161,6 +170,7 @@ def check_class():
     2.只能转24小时以后的课程
     3.调课后的不参与转班
     """
+    #TODO
     return 1
 
 
@@ -254,6 +264,12 @@ def set_for_my(dc, value):
         dc[value.class_id] = new
 
 
+def set_for_change(old, new):
+    rs = OrderedDict()
+
+    return rs
+
+
 def aggregate_by_grade(rows, set_method):
     """
         聚合课程信息，聚合同一班级下的课程
@@ -324,7 +340,7 @@ class APIAddClassHandle(BaseHandler):
                     return self.write(message(False, "authorization error"))
             except AttributeError:
                 self.write(message(False, "authorization error"))
-        except :
+        except:
             print traceback.format_exc()
             self.write(message(False, "请求参数异常"))
             return
@@ -502,7 +518,13 @@ class ClassChangeQueryHandle(BaseHandler):
     转班
     """
     def get(self, *args, **kwargs):
-        pass
+        course_id = self.get_argument("c")
+        new_class_id = self.get_argument("np")
+        student_id = self.get_argument("u")
+        old_class = get_by_id(self.db, course_id=course_id, student_id=student_id)
+        new_class = get_by_id(db=self.db, course_id=course_id, class_id=new_class_id)
+        if old_class and new_class_id:
+            change_data = set_for_change(old_class[0], new_class[0])
 
         #if old_class_id:
         #     #TODO 转班

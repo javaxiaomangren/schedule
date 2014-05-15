@@ -2,6 +2,8 @@ __author__ = 'windy'
 #!/usr/bin/env python
 #coding:UTF-8
 import tornado.web
+import urllib
+import urllib2
 from urllib2 import Request, urlopen
 import httplib
 import ujson
@@ -61,6 +63,20 @@ def post_u8(data, url):
     return urlopen(req).read()
 
 
+def post(url, data):
+    req = Request(url)
+    data = urllib.urlencode(data)
+    #enable cookie
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+    response = opener.open(req, data)
+    return response.read()
+
+
+def get_with_header(headers, url):
+    req = Request(urllib.urlencode(url), headers)
+    return urlopen(req).read()
+
+
 def post2(data):
     conn = httplib.HTTPConnection('10.19.1.130', 10087)
     headers = {'Content-type': 'text/plain;charset=GBK'}
@@ -76,4 +92,10 @@ def mk_md5(summary, plat, sys, key="com.xes.employee"):
     #TODO md5 cache
     return hashlib.md5(s.encode("UTF-8")).hexdigest()
 
-print mk_md5("a", "b", "c")
+
+def test01():
+    uid = 1
+    claId = 1
+    summary = uid + claId
+    print get_with_header({}, "http://219.236.247.203/test")
+
