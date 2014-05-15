@@ -112,7 +112,7 @@ def select_class(db, course_id, class_id, student_id, status_new, status_old):
 
 
 def get_by_id(db=None, course_id=0, student_id=0, class_id=0):
-    sql = "SELECT * FROM timetable WHERE course_id=%s " % course_id
+    sql = "SELECT * FROM timetable WHERE course_id='%s' " % course_id
     if student_id:
         sql += " AND student_id=%s" % student_id
     elif class_id:
@@ -186,7 +186,7 @@ def set_response(dc, value):
     classes["startTime"] = str(value.start_time)
     classes["endTime"] = str(value.start_time + timedelta(minutes=value.period))
     classes["classroom"] = value.class_room
-    classes["status"] = TimeStatus.NAME.get(value.time_status)
+    classes["status"] = value.time_status
 
     if old:
         data_list = old.get("classes")
@@ -287,7 +287,7 @@ def update_class_status(db, course_id, class_id, student_id, old_status, new_sta
 
 
 def get_query_where(course_id, teacher_name, time_interval, **kwargs):
-    where = "WHERE class_status=0 AND course_id=%s AND time_status <> %s " \
+    where = "WHERE class_status=0 AND course_id='%s' AND time_status <> %s " \
             % (course_id, TimeStatus.TRAIL)
     if teacher_name:
         where += " AND teacher_name='%s' " % teacher_name.rstrip()
@@ -311,7 +311,7 @@ def query_timetables(db, course_id, where, page_no, page_size):
     class_ids = db.query(sql + where + limit)
     if class_ids:
         ids = ','.join(map(lambda x: str(x.class_id), class_ids))
-        query_sql = "SELECT * FROM timetable WHERE class_status=0 AND course_id=%s " \
+        query_sql = "SELECT * FROM timetable WHERE class_status=0 AND course_id='%s' " \
                     "AND class_id IN(%s) ORDER BY start_time" % (course_id, ids)
         rows = db.query(query_sql)
         return aggregate_by_grade(rows, set_for_list)
@@ -456,11 +456,16 @@ class TimetableSelectHandle(BaseHandler):
                     finally:
                         self.auto_commit()
             else:
-                rs = select_class(self.db, course_id, class_id, student_id,
-                                  TimeStatus.APPOINTED, TimeStatus.NORMAL)
-                if not rs:
-                    self.write(message(False, "该课程不能选了"))
+                try:
+                    rs = select_class(self.db, course_id, class_id, student_id,
+                                      TimeStatus.APPOINTED, TimeStatus.NORMAL)
+                    if not rs:
+                        self.write(message(False, "课程不存在，或者已被选了"))
+                        return
+                except:
+                    self.write(message(False, "课程不存在，或者已被选了"))
                     return
+
             data = {"claId": course_id, "uid": student_id}
             self.write(data)
             #TODO 修改的报课中排课状态（是否已经选课）

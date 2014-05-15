@@ -168,7 +168,7 @@ teacher = """
 @route("/test/init", name="init data")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
-        self.db.execute("truncate table course")
+        # self.db.execute("truncate table course")
         self.db.execute("truncate table teacher")
         self.db.execute("truncate table timetable")
         self.db.execute("truncate table timetable_bak")
@@ -177,32 +177,24 @@ class AdminClassHandle(BaseHandler):
         #            for course_id in range(1, 10)]
         # self.db.executemany(course, courses)
 
-        teachers = [(tid, chr(tid) + 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(65, 91)]
+        teachers = [(tid, 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(1, 101)]
         self.db.executemany(teacher, teachers)
 
         timetables = []
         for th in teachers:
-            t = th[0] - 55
-            if t > 20:
-                t -= 14
-            class_time = str(t) + ':00'
-            for c in range(1, 20, 2):
-                if c < 10:
-                    class_date = "2014-07-0" + str(c)
-                else:
-                    class_date = "2014-07-" + str(c)
-
+            for c in range(17, 32):
+                class_date = "2014-05-" + str(c)
                 timetables.append(
-                    (1, "Let you speak to England People",
-                    th[0] - 64, "MN000" + str(c) + str(th[0] - 63),
+                    ("8a8185ce45fea8070145feb4f1850006", "在线外教寒假班初中一年级英语初中培训班",
+                    th[0], "MN000" + str(th[0]),
                     th[0], th[1],
-                    class_time,30,class_date,0, 0,
-                    "2014-07-01 到 2014-07-20 " + class_time + " 隔天上课"
+                    "09:00:00",30,class_date,0, 0,
+                    "2014-05-17,2014-05-31 "
                     ))
 
         self.db.executemany(timetable, timetables)
 
-        timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-" + str(th1[0] - 60), "10:00", 30, 0) for th1 in teachers]
+        timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
 
         self.db.executemany(timetable_bak, timetable_baks)
 
