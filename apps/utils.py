@@ -161,6 +161,7 @@ def attendances(uid, cla_id, cuc_id, status):
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cuc_id, cla_id, status))
     return Row(ujson.loads(x))
 
+print attendances("133426", "8a8185ce4613b5b6014613cb4fcc0017", "197", "1")
 
 def sms(uid, content):
     """

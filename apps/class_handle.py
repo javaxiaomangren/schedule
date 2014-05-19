@@ -769,7 +769,7 @@ class APIClassRefundHandle(BaseHandler):
             if rs1 and rs2 and rs3:
                 self.write(message())
             else:
-                self.write(message(False, "更新失败:"))
+                self.write(message(False, "更新失败"))
 
         else:
             self.write(message(False, "请求参数不对"))
@@ -785,5 +785,5 @@ class APIClassRefundHandle(BaseHandler):
 #TODO 跨站伪造请求的防范
 # TODO 重排列班级
 #TODO 404，500
-
+#TODO 试听课程
 #TODO 查询被调课老师，class_id=-1， 放到调课列表
