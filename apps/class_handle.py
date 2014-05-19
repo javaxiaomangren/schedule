@@ -275,9 +275,15 @@ class MyClassHandler(BaseHandler):
             self.write(message(False, "Bad Request"))
             logger.info(message(False, "请求参数不对"))
             return
+
         student_id = self.get_argument("uid", None)
         course_id = self.get_argument("claId", None)
         if student_id and course_id:
+            # TODO remove
+            # summary = student_id + course_id
+            # if not authorization(summary, self.request.headers):
+            #     self.write(message(False, "authorization failed"))
+            #     return
             rows = self.db.query("SELECT * FROM timetable WHERE class_id > 0 AND student_id=%s AND course_id=%s "
                                  "ORDER BY class_date, start_time",
                                  student_id, course_id)
@@ -323,6 +329,8 @@ class TimetableSelectHandle(BaseHandler):
                                     rs_data = reg_plan_status(student_id, course_id)
                                     if not rs_data.rlt:
                                         self.write(message(False, "Invoke interface reg_plan_status field"))
+                                        logger.info("message %s " % rs_data.data)
+
                                         return
                                 except:
                                     logger.info(traceback)
@@ -348,26 +356,28 @@ class TimetableSelectHandle(BaseHandler):
 
             else:
                 try:
+                    self.auto_commit(False)
                     rs = select_class(self.db, course_id, class_id, student_id,
                                       TimeStatus.APPOINTED, TimeStatus.NORMAL)
                     if not rs:
                         self.write(message(False, "%s 课程不存在，或者已被选了" % class_id))
-                        logger.info("%s 课程不存在，或者已被选了, 非法访问" % class_id)
+                        logger.info("%s Class Not found, or selected" % class_id)
                         return
                     try:
                         rs_data = reg_plan_status(student_id, course_id)
                         if not rs_data.rlt:
                             self.write(message(False, "Invoke interface reg_plan_status field"))
+                            logger.info("Message %s" % rs_data.data)
                             return
                     except:
                         logger.info(traceback)
+                        self.rollback()
                         self.write(message(False, "Invoke interface reg_plan_status field"))
                         return
                     data = {"rlt": True,
                             "msg": "success",
                             "data": {"claId": course_id,
-                                     "uid": student_id,
-                                     "planId": class_id
+                                     "uid": student_id
                                 }
                             }
                     self.commit()
@@ -375,9 +385,11 @@ class TimetableSelectHandle(BaseHandler):
                     return
 
                 except:
-                    self.write(message(False, "课程 %s 不存在，或者已被选了" % class_id))
-                    logger.info("%s 课程不存在，或者已被选了, 非法访问" % class_id)
+                    self.write(message(False, "%s Class Not exist or is in used" % class_id))
+                    logger.info("%s Class Not Found " % class_id)
                     return
+                finally:
+                    self.auto_commit()
 
             self.write(message(False, "%s Can not select class again" % student_id))
         else:
@@ -456,7 +468,7 @@ class ClassChangeQueryHandle(BaseHandler):
                     old_class_id = old_class[0].class_id
 
                     for oid, nid in ids:
-                        params.append((None, -1, 0, 0, 0, 0, course_id, oid))
+                        params.append((None, -2, 0, 0, 0, 0, course_id, oid))
                         params.append((student_id, old_class_id, TimeStatus.PAYED,
                                        TimeStatus.PAYED, class_changed + 1, time_changed, course_id, nid))
                         #src_id, tar_id, cla_id, course_id, uid, flag
@@ -628,6 +640,8 @@ class TimetableTimeChangeHandle(BaseHandler):
                             rs_data = courses(student_id, course_id, [data])
                             if not rs_data.rlt:
                                 self.write(message(False, "Invoke interface courses field"))
+                                self.rollback()
+                                logger.info("Message %s" % rs_data.data)
                                 return
                         except:
                             logger.info(traceback)
@@ -771,3 +785,5 @@ class APIClassRefundHandle(BaseHandler):
 #TODO 跨站伪造请求的防范
 # TODO 重排列班级
 #TODO 404，500
+
+#TODO 查询被调课老师，class_id=-1， 放到调课列表

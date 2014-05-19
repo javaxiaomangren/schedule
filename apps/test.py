@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 import tornado.web
 from torndb import Row
-from utils import Route
+from utils import Route, cla_build_status
 import datetime
 
 
@@ -15,7 +15,7 @@ import datetime
 
 class TimeStatus(object):
     """
-      课程状态：0可预约，1已经支付，2完成，3请假，4退课，5补课, 6试听课程
+      课程状态：0可预约,1已经支付,2完成,3请假,4退课,5补课, 6试听课程
     """
     NORMAL = 0
     PAYED = 1
@@ -95,13 +95,10 @@ class AdminClassHandle(BaseHandler):
         self.render("test.html", entries=rows, students=range(10000, 10010))
 
 
-@Route("/test/time", name="test time")
+@Route("/test/base", name="test base")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
-        rows = self.db.query("SELECT start_time  from timetable limit 1")
-        for r in rows:
-            print r, r + datetime.timedelta(minutes=30)
-        self.write("hello")
+        self.render("base.html")
 
 
 course = """
@@ -179,14 +176,14 @@ class AdminClassHandle(BaseHandler):
 
         timetables = []
         for th in teachers:
-            for c in range(17, 32):
-                class_date = "2014-05-" + str(c)
+            for t in ['2014-05-20','2014-05-21','2014-05-22','2014-05-23','2014-05-24','2014-05-25','2014-05-26','2014-05-27','2014-05-28','2014-05-29','2014-05-30','2014-05-31','2014-06-01','2014-06-02','2014-06-03','2014-06-04','2014-06-05','2014-06-06']:
+                pass
                 timetables.append(
-                    ("8a8185ce45fea8070145feb4f1850006", "在线外教寒假班初中一年级英语初中培训班",
+                    ("8a8185ce4613b5b6014613cb4fcc0017", "在线外教寒假班",
                     th[0], "MN000" + str(th[0]),
                     th[0], th[1],
-                    "09:00:00",30,class_date,0, 0,
-                    "2014-05-17,2014-05-31 "
+                    "09:00:00", 30, t ,0, 0,
+                    "2014-05-20,2014-06-06 "
                     ))
 
         self.db.executemany(timetable, timetables)
@@ -194,7 +191,8 @@ class AdminClassHandle(BaseHandler):
         timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
 
         self.db.executemany(timetable_bak, timetable_baks)
-
+        data = cla_build_status("8a8185ce4613b5b6014613cb4fcc0017")
+        print data.data
         self.redirect("/test")
 
 

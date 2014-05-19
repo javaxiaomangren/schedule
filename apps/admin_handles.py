@@ -34,12 +34,29 @@ class QueryRecordsHandle(BaseHandler):
         self.render("admin/list_records.html", entries=rows)
 
 
-@Route("/admin/query/records/time", name="class change records")
+@Route("/admin/query/records/time", name="time change records")
 class QueryRecordsHandle(BaseHandler):
     def get(self):
         # course_id = self.get_argument("cid")
         rows = self.db.query("SELECT * FROM records WHERE flag=-1 ORDER BY uid")
         self.render("admin/list_records.html", entries=rows)
+
+
+@Route("/admin/query/change/time", name="Query teacher's time changed")
+class QueryRecordsHandle(BaseHandler):
+    def get(self):
+        # course_id = self.get_argument("cid")
+        rows = self.db.query("SELECT * FROM timetable WHERE class_id=-1")
+        self.render("admin/list_class_teachers.html", entries=rows)
+
+
+
+@Route("/admin/query/change/class", name="Query teacher's class changed")
+class QueryRecordsHandle(BaseHandler):
+    def get(self):
+        # course_id = self.get_argument("cid")
+        rows = self.db.query("SELECT * FROM timetable WHERE class_id=-2")
+        self.render("admin/list_class_teachers.html", entries=rows)
 
 
 

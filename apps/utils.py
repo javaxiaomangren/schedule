@@ -104,7 +104,7 @@ def mk_md5(summary, plat=_plat, sys=_sys, key="com.xes.employee"):
 # uid = "158023"
 
 
-def cla_build_status(uid, cla_id):
+def cla_build_status(cla_id):
     """
     http://phpapi.cakephp.com/huanxun/v1/cla_build_status.json
     修改班级构建状态
@@ -113,7 +113,6 @@ def cla_build_status(uid, cla_id):
     url = url_prefix + "/huanxun/v1/cla_build_status.json?claId=%s"
     summary = cla_id
     md5 = mk_md5(summary)
-    print "uid", uid
     print "claId", cla_id
     print "summary", summary
     print "md5", md5
