@@ -89,12 +89,13 @@ DD_belatedPNG.fix(B);
                                     <br/>
                                     </p>
                                 </div>
-                                 <div>{{ entry.teacher_name }}老师的班级,{{ entry.time_desc }}
+                                 <div>上课时间：{{ entry.time_desc }}
                                      {% if entry.class_status == 1 %}
                                      <a href="/api/class/timetable/list?claId={{ entry.course_id }}&uid={{ entry.student_id }}">重选</a>
                                      {% elif entry.can_change %}
-                                     <a href="/timetable/change/all/query?claId={{ entry.course_id }}&uid={{ entry.student_id }}&planId={{ entry.class_id }}">转班全部有效的</a>
-                                     <a href="/api/class/timetable/list?claId={{ entry.course_id }}&uid={{ entry.student_id }}&oldPlanId={{ entry.class_id }}">转班未调课的</a>
+                                     <a href="/timetable/change/all/query?claId={{ entry.course_id }}&uid={{ entry.student_id }}&planId={{ entry.class_id }}">转班</a>
+                                     {% else %}
+                                     <h2>你已经转班3次，或者没有课程可转班</h2>
                                      {% end %}
 
                                  </div>

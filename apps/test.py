@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 import tornado.web
 from torndb import Row
-from utils import route
+from utils import Route
 import datetime
 
 
@@ -75,10 +75,6 @@ class BaseHandler(tornado.web.RequestHandler):
                 "message": httplib.responses[status_code],
                 }
 
-    def initialize(self):
-        print "please define your initialize..............."
-
-
 #====================== Commons Methods ==========
 def message(rlt=True, code=200, msg="Success"):
     ms = Row()
@@ -89,7 +85,7 @@ def message(rlt=True, code=200, msg="Success"):
 
 
 #===============================后台管理=====================
-@route("/test", name="test")
+@Route("/test", name="test")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
         rows = self.db.query("SELECT distinct(class_id) , "
@@ -99,7 +95,7 @@ class AdminClassHandle(BaseHandler):
         self.render("test.html", entries=rows, students=range(10000, 10010))
 
 
-@route("/test/time", name="test time")
+@Route("/test/time", name="test time")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
         rows = self.db.query("SELECT start_time  from timetable limit 1")
@@ -165,13 +161,14 @@ teacher = """
 """
 
 
-@route("/test/init", name="init data")
+@Route("/test/init", name="init data")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
         # self.db.execute("truncate table course")
         self.db.execute("truncate table teacher")
         self.db.execute("truncate table timetable")
         self.db.execute("truncate table timetable_bak")
+        self.db.execute("truncate table records")
 
         # courses = [(course_id, 10, 30, '2014-07-01', '2014-07-20', 2, '2014', course_id, 20 + course_id, 0)
         #            for course_id in range(1, 10)]

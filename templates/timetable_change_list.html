@@ -129,7 +129,7 @@ DD_belatedPNG.fix(B);
                                     {% end %}
                                 </td>
                                 <td>
-                                    <span class="sk-bm-btn01" ><a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
+                                    <span class="sk-bm-btn01" ><a href="/timetable/change?u={{ args.get('uid') }}&c={{ args.get('claId') }}&np={{entry.class_id }}"
                                                                   onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">转班</a></span>
                                 </td>
                             </tr>

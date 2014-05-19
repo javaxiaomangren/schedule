@@ -8,10 +8,13 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import apps.class_handle
+import apps.admin_handles
+import apps.test
 from tornado.options import define, options
 from apps.entry import GradeEntry
 
-from apps.utils import route
+from apps.utils import Route
 
 
 define("port", default=8081, help="run on the given port", type=int)
@@ -37,7 +40,7 @@ class Application(tornado.web.Application):
             login_url="/auth/login",
             debug=options.debug,
         )
-        handles = route.get_routes()  # defined with route decorators
+        handles = Route.get_routes()  # defined with route decorators
         tornado.web.Application.__init__(self, handles, **settings)
         self.database = mysql_database and mysql_database or options.mysql_database
         self.db = torndb.Connection(
@@ -47,15 +50,13 @@ class Application(tornado.web.Application):
         self.static_path = settings["static_path"]
 
 #initialize handles
-__import__('apps', globals(), locals(), ["class_handle", "test"], -1)
-global x
-x = 1
+# __import__('apps', globals(), locals(), ["admin_handles" "class_handle", "test", "entry"], -1)
 
 
 def main():
     tornado.options.parse_command_line()
     if options.showurls:
-        for each in route.get_routes():
+        for each in Route.get_routes():
             print each._path.ljust(20), "mapping to RequestHandle-->", each.handler_class.__name__
     http_server = tornado.httpserver.HTTPServer(Application())
     print "Starting tornado server on port", options.port

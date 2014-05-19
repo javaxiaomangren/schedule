@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4> 选课列表</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <!--<colgroup>-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-9">-->
+    <!--</colgroup>-->
+    <tbody>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>学生Id</th>
+        <th>原课Id</th>
+        <th>目标课Id</th>
+        <th>排课Id</th>
+        <th>班级Id</th>
+        <th>操作时间</th>
+    </tr>
+    </thead>
+       {% for entry in entries %}
+           <tr>
+               <td>{{ entry.id }}</td>
+               <td>{{ entry.uid }}</td>
+               <td>{{ entry.src_id }}</td>
+               <td>{{ entry.tar_id }}</td>
+               <td>{{ entry.cla_id }}</td>
+               <td>{{ entry.course_id }}</td>
+               <td>{{ entry.create_date }} </td>
+           </tr>
+        {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}
