@@ -196,3 +196,41 @@ class AdminClassHandle(BaseHandler):
         self.redirect("/test")
 
 
+
+@Route("/test/course", name="init course")
+class AdminClassHandle(BaseHandler):
+    def get(self, *args, **kwargs):
+        course_id = self.get_argument("claId", None)
+        if not course_id:
+            return self.write("need a course Id ")
+        row = self.db.get("SELECT * FROM course WHERE claId=%s AND finished=0", course_id)
+        if not row:
+            self.render("200.html", entry=Row({"msg": "No data"}))
+            return
+
+        max_class = self.db.get("SELECT MAX(class_id) as max_id FROM timetable").max_id
+        start = datetime.datetime(*map(lambda x: int(x), row.start_date.split("-")))
+        end = datetime.datetime(*map(lambda x: int(x), row.end_date.split("-")))
+        persons = row.max_person
+        freq = row.frequency
+        counts = (end - start).days
+        params = []
+        for tid in range(10000, 10000 + persons, freq):
+            for c in range(0, counts + 1):
+                params.append((course_id,
+                               row.class_name,
+                               max_class,
+                               "ClassRoom" + str(max_class),
+                               tid,
+                               "Test-Teacher-" + str(tid),
+                               "09:00",
+                               30,
+                               start + datetime.timedelta(days=c),
+                               0,
+                               0,
+                               row.start_date + " to " + row.end_date))
+
+                max_class += 1
+        self.db.executemany_rowcount(timetable, params)
+        self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
+        self.render("200.html", entry=Row({"msg": "success"}))

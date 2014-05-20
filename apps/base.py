@@ -59,13 +59,21 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         pass
 
-    def get_error_html(self, status_code, **kwargs):
-        print "aaaa"
-        pass
 
     def write_error(self, status_code, **kwargs):
-        self.render("404.html")
 
+        print 'In get_error_html. status_code: ', status_code
+        if status_code in [403, 404, 500, 503]:
+            filename = '%d.html' % status_code
+            print 'rendering filename: ', filename
+            return self.render_string(filename, title="TITLE")
+
+        return "<html><title>%(code)d: %(message)s</title>" \
+                "<body class='bodyErrorPage'>%(code)d: %(message)s</body>"\
+                "</html>" % {
+                "code": status_code,
+                "message": httplib.responses[status_code],
+                }
 
 def authorization(summary, headers):
     """头部信息加密验证"""
