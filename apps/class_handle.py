@@ -328,13 +328,14 @@ class TimetableSelectHandle(BaseHandler):
                                 try:
                                     rs_data = reg_plan_status(student_id, course_id)
                                     if not rs_data.rlt:
-                                        self.write(message(False, "Invoke interface reg_plan_status field"))
+                                        self.write(message(False, "Invoke interface reg_plan_status field,"
+                                                                  " return false result"))
                                         logger.info("message %s " % rs_data.data)
 
                                         return
                                 except:
                                     logger.info(traceback)
-                                    self.write(message(False, "Invoke interface reg_plan_status field"))
+                                    self.write(message(False, "Invoke interface reg_plan_status field， exception"))
                                     return
                                 data = {"rlt": True, "msg": "success",
                                         "data": {"claId": course_id, "uid": student_id, "planId": class_id}
@@ -370,7 +371,7 @@ class TimetableSelectHandle(BaseHandler):
                             logger.info("Message %s" % rs_data.data)
                             return
                     except:
-                        logger.info(traceback)
+                        logger.info(traceback.format_exc())
                         self.rollback()
                         self.write(message(False, "Invoke interface reg_plan_status field"))
                         return
@@ -787,3 +788,5 @@ class APIClassRefundHandle(BaseHandler):
 #TODO 404，500
 #TODO 试听课程
 #TODO 查询被调课老师，class_id=-1， 放到调课列表
+
+#TODO 考勤排课
