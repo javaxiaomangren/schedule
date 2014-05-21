@@ -215,12 +215,14 @@ class AdminClassHandle(BaseHandler):
         freq = row.frequency
         counts = (end - start).days
         params = []
+        class_id = max_class and max_class or 1
         for tid in range(10000, 10000 + persons, freq):
+            class_room = "ClassRoom" + str(class_id)
             for c in range(0, counts + 1):
                 params.append((course_id,
                                row.class_name,
-                               max_class,
-                               "ClassRoom" + str(max_class),
+                               class_id,
+                               class_room,
                                tid,
                                "Test-Teacher-" + str(tid),
                                "09:00",
@@ -230,7 +232,17 @@ class AdminClassHandle(BaseHandler):
                                0,
                                row.start_date + " to " + row.end_date))
 
-                max_class += 1
+            class_id += 1
         self.db.executemany_rowcount(timetable, params)
         self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
-        self.render("200.html", entry=Row({"msg": "success"}))
+        data = cla_build_status(course_id)
+        msg = Row({"msg": "success"})
+        if data.rlt:
+            msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
+        self.render("200.html", entry=msg)
+
+
+@Route("/test/post")
+class TestPost(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render("test_time_list.html")
