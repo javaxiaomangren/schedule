@@ -57,8 +57,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return ns
 
     def get_current_user(self):
-        pass
-
+        return self.get_secure_cookie("user")
 
     def write_error(self, status_code, **kwargs):
 
@@ -74,6 +73,31 @@ class BaseHandler(tornado.web.RequestHandler):
                 "code": status_code,
                 "message": httplib.responses[status_code],
                 }
+
+
+@Route("/login", name="Login")
+class LoginHandle(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render("login.html", msg=None)
+
+    def post(self, *args, **kwargs):
+        user = self.get_argument("username")
+        passwd = self.get_argument("passwd")
+        row = self.db.get("SELECT password FROM user where username=%s", user)
+        md5 = mk_md5(passwd)
+        if row and row.password == unicode(md5):
+            self.set_secure_cookie("user", user)
+            self.render("admin/base.html")
+        else:
+            self.render("login.html", entry=Row({"msg": "Wrong login"}))
+
+
+@Route("/logout", name="Log Out")
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("user")
+        self.redirect(self.get_argument("next", "/login"))
+
 
 def authorization(summary, headers):
     """头部信息加密验证"""

@@ -1,5 +1,6 @@
 #coding:UTF-8
 from collections import OrderedDict
+from tornado.web import gen_log as logger
 
 __author__ = 'windy'
 #!/usr/bin/env python
@@ -99,11 +100,6 @@ def mk_md5(summary, plat=_plat, sys=_sys, key="com.xes.employee"):
     return hashlib.md5(s.encode("UTF-8")).hexdigest()
 
 
-# claId = "8a8185ce45fea8070145feb4f1850006"
-# regId : 8a8185ce45fea8070145fec2c9d0001a
-# uid = "158023"
-
-
 def cla_build_status(cla_id):
     """
     http://phpapi.cakephp.com/huanxun/v1/cla_build_status.json
@@ -113,9 +109,7 @@ def cla_build_status(cla_id):
     url = url_prefix + "/huanxun/v1/cla_build_status.json?claId=%s"
     summary = cla_id
     md5 = mk_md5(summary)
-    print "claId", cla_id
-    print "summary", summary
-    print "md5", md5
+    logger.info("Invoke %s ", url)
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % cla_id)
     return Row(ujson.loads(x))
 
@@ -128,11 +122,7 @@ def reg_plan_status(uid, cla_id):
     summary = uid + cla_id
     md5 = mk_md5(summary)
     url = url_prefix + "/huanxun/v1/reg_plan_status.json?uid=%s&claId=%s"
-    print "uid", uid
-    print "claId", cla_id
-    print "summary", summary
-    print "md5", md5
-    print url % (uid, cla_id)
+    logger.info("Invoke %s ", url)
 
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cla_id))
     return Row(ujson.loads(x))
@@ -151,17 +141,10 @@ def attendances(uid, cla_id, cuc_id, status):
     summary = uid + cuc_id + status
     md5 = mk_md5(summary)
     url = url_prefix + "/huanxun/v1/attendances.json?uid=%s&cucId=%s&claId=%s&Status=%s"
-    print "uid", uid
-    print "cucId", cuc_id
-    print "Status", status
-    print "summary", summary
-    print "md5", md5
-
-    print url % (uid, cuc_id, cla_id, status)
+    logger.info("Invoke %s ", url)
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cuc_id, cla_id, status))
     return Row(ujson.loads(x))
 
-# print attendances("133426", "8a8185ce4613b5b6014613cb4fcc0017", "197", "1")
 
 def sms(uid, content):
     """
@@ -170,11 +153,7 @@ def sms(uid, content):
     """
     md5 = mk_md5(uid)
     url = url_prefix + "/huanxun/v1/sms.json?uid=%s&content=%s"
-    print "uid", uid
-    print "summary", uid
-    print "md5", md5
-
-    print url % (uid, urllib.quote(content))
+    logger.info("Invoke %s ", url)
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, urllib.quote(content)))
     return Row(ujson.loads(x))
 
@@ -189,47 +168,13 @@ def courses(uid, cla_id, datas):
     result = dict()
     result["uid"] = uid
     result["claId"] = cla_id
-    # data = OrderedDict()
-    # data["sourceBeiliCucId"] = "17"
-    # data["sourceTeacherId"] = 2
-    # data["sourceCourseDate"] = "2014-05-18"
-    # data["sourceStartTime"] = "09:00:00"
-    # data["sourceEndTime"] = "09:30:00"
-    # data["sourceClassroom"] = "MN0002"
-    # data["sourceStatus"] = 0
-    # data["targetBeiliCucId"] = "33"
-    # data["targetTeacherId"] = 33
-    # data["targetCourseDate"] = "2014-08-24"
-    # data["targetStartTime"] = "10:00:00"
-    # data["targetEndTime"] = "10:30:00"
-    # data["targetClassroom"] = "MN001322"
-    # data["targetStatus"] = 6
-    # data1 = OrderedDict()
-    # data1["sourceBeiliCucId"] = "18"
-    # data1["sourceTeacherId"] = 2
-    # data1["sourceCourseDate"] = "2014-05-19"
-    # data1["sourceStartTime"] = "09:00:00"
-    # data1["sourceEndTime"] = "09:30:00"
-    # data1["sourceClassroom"] = "MN0002"
-    # data1["sourceStatus"] = 0
-    # data1["targetBeiliCucId"] = "38"
-    # data1["targetTeacherId"] = 38
-    # data1["targetCourseDate"] = "2014-08-29"
-    # data1["targetStartTime"] = "11:00:00"
-    # data1["targetEndTime"] = "11:30:00"
-    # data1["targetClassroom"] = "MN0013344"
-    # data1["targetStatus"] = 6
     data_str = ujson.dumps(datas)
     result["datas"] = data_str
     url = url_prefix + "/huanxun/v1/courses.json"
 
     summary = uid + cla_id
     md5 = mk_md5(summary)
-    print "uid", uid
-    print "claId", cla_id
-    print "summary", summary
-    print "md5", md5
-    print "data:", result
+    logger.info("Invoke %s ", url)
     x = post_u8(url, result, {"sys": _sys, "plat": _plat, "md5": md5})
     return Row(ujson.loads(x))
 

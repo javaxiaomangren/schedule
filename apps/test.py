@@ -4,13 +4,12 @@ import traceback
 import httplib
 import ujson
 from collections import OrderedDict
+from tornado.log import gen_log as logger
 
 import tornado.web
 from torndb import Row
 from utils import Route, cla_build_status
 import datetime
-
-
 
 
 class TimeStatus(object):
@@ -74,6 +73,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 "code": status_code,
                 "message": httplib.responses[status_code],
                 }
+
 
 #====================== Commons Methods ==========
 def message(rlt=True, code=200, msg="Success"):
@@ -196,7 +196,6 @@ class AdminClassHandle(BaseHandler):
         self.redirect("/test")
 
 
-
 @Route("/test/course", name="init course")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
@@ -216,9 +215,9 @@ class AdminClassHandle(BaseHandler):
         counts = (end - start).days
         params = []
         class_id = max_class and max_class or 1
-        for tid in range(10000, 10000 + persons, freq):
+        for tid in range(10000, 10000 + persons * 2):
             class_room = "ClassRoom" + str(class_id)
-            for c in range(0, counts + 1):
+            for c in range(0, counts + 1, freq):
                 params.append((course_id,
                                row.class_name,
                                class_id,
@@ -237,9 +236,22 @@ class AdminClassHandle(BaseHandler):
         self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
         data = cla_build_status(course_id)
         msg = Row({"msg": "success"})
-        if data.rlt:
+        if not data.rlt:
             msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
+            print(msg.data)
         self.render("200.html", entry=msg)
+
+
+@Route("/test/course/del", name="init course")
+class CourseDelHandle(BaseHandler):
+    def get(self, *args, **kwargs):
+        course_id = self.get_argument("claId", None)
+        if not course_id:
+            return self.write("need a course Id ")
+        self.db.execute("DELETE FROM timetable WHERE course_id = %s ", course_id)
+        self.db.execute("UPDATE course SET finished=0 WHERE claId=%s", course_id)
+
+        self.render("200.html", entry=Row({"msg": "success"}))
 
 
 @Route("/test/post")

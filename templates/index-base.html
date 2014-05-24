@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ {% block title %}
+  <title>{{ escape(handler.settings["site_title"]) }}</title>
+  {% end %}
+  {% block extra_head %}
+ {% end %}
+<link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ static_url('css/new.css') }}" rel="stylesheet">
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="head">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+       <div class="logo">
+         <span><img src="{{ static_url('images/pylogo-sk.png') }}" alt="学而思选课" title="学而思选课"></span>
+         <span class="logo_font">选课</span>
+       </div>
+      </div> 
+    </div>
+  </div>
+</div>
+<div class="bar">
+  <div class="container">
+    <div class="bar_content">
+        {% block bar_content %}
+        {% end %}
+    </div>
+  </div>
+</div>
+<div class="content" >
+    {% block content %}
+    <center>
+    <h1>Welcome !!</h1>
+        </center>
+    {% end %}
+
+</div>
+<div class="footer">
+     <p>咨询电话：010-82618899 62164116  京ICP备09032638号-4</p>
+     <p>Copyright @ 2004 – 2013 Xueersi.All Rights Reserved.学而思教育 版权所有</p>
+</div>
+
+
+</div>
+<script src="{{ static_url('js/jquery.min.js') }}"></script>
+<script src="{{static_url('js/bootstrap.min.js') }}"></script>
+{% block extra_js %} {% end %}
+</body>
+</html>

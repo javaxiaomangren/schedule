@@ -41,7 +41,7 @@
                <td>{{ entry.create_date }}</td>
                <td>
                    {% if entry.finished %}
-                   <div class="label-success">完成</div>
+                   <a href="/test/course/del?claId={{ entry.claId }}" class="link">撤销</a>
                    {% else %}
                    <a class="link" href="/test/course?claId={{ entry.claId }}">开班</a>
                    {% end %}

@@ -227,6 +227,12 @@ class APIAddClassHandle(BaseHandler):
             logger.info(message(False, "该课程已经存在 %s" % it))
 
 
+@Route("/", name="index")
+class IndexHandler(BaseHandler):
+    def get(self):
+        self.render("index-base.html")
+
+
 @Route("/api/class/timetable/list", name="List TimeTables ")
 class TimeTableListHandle(BaseHandler):
     """
@@ -255,7 +261,7 @@ class TimeTableListHandle(BaseHandler):
             if page_no < 1:
                 page_no = 1
             timetable = query_timetables(self.db, course_id, where, page_no, page_size)
-            self.render("timetable_list.html", entries=timetable.values(),
+            self.render("list_timetable.html", entries=timetable.values(),
                         args=args_value(args), page_count=page_count, page_no=page_no)
         else:
             self.write(message(False, "请求参数不对"))
@@ -328,30 +334,33 @@ class TimetableSelectHandle(BaseHandler):
                                 try:
                                     rs_data = reg_plan_status(student_id, course_id)
                                     if not rs_data.rlt:
-                                        self.write(message(False, "Invoke interface reg_plan_status field,"
-                                                                  " return false result"))
+                                        self.render("200.html", entry=message(False,
+                                                                              "Invoke interface reg_plan_status field"))
                                         logger.info("message %s " % rs_data.data)
-
                                         return
                                 except:
                                     logger.info(traceback)
-                                    self.write(message(False, "Invoke interface reg_plan_status field， exception"))
+                                    self.render("200.html",
+                                                entry=message(False, "Invoke interface reg_plan_status field"))
                                     return
-                                data = {"rlt": True, "msg": "success",
-                                        "data": {"claId": course_id, "uid": student_id, "planId": class_id}
-                                        }
+                                # data = {"rlt": True, "msg": "success",
+                                #         "data": {"claId": course_id, "uid": student_id, "planId": class_id}
+                                # }
                                 self.commit()
-                                self.write(data)
+                                self.render("200.html", entry=message())
                                 return
                             else:
                                 self.rollback()
-                                self.write(message(False, "选课失败"))
+                                self.render("200.html", entry=message(False, "选课失败"))
                                 return
+                        else:
+                            self.render("200.html", entry=message(False, "%s Can not select class again" % student_id))
                         self.auto_commit()
                     except:
                         self.rollback()
-                        self.write(message(False, traceback.format_exc()))
                         logger.info(message(False, traceback.format_exc()))
+                        self.render("200.html", entry=message(False, "选课失败"))
+                        return
                     finally:
                         self.auto_commit()
 
@@ -361,42 +370,41 @@ class TimetableSelectHandle(BaseHandler):
                     rs = select_class(self.db, course_id, class_id, student_id,
                                       TimeStatus.APPOINTED, TimeStatus.NORMAL)
                     if not rs:
-                        self.write(message(False, "%s 课程不存在，或者已被选了" % class_id))
+                        self.render("200.html", entry=message(False, "%s 课程不存在，或者已被选了" % class_id))
                         logger.info("%s Class Not found, or selected" % class_id)
                         return
                     try:
                         rs_data = reg_plan_status(student_id, course_id)
                         if not rs_data.rlt:
-                            self.write(message(False, "Invoke interface reg_plan_status field"))
+                            self.render("200.html", entry=message(False, "Invoke interface reg_plan_status field"))
                             logger.info("Message %s" % rs_data.data)
                             return
                     except:
                         logger.info(traceback.format_exc())
                         self.rollback()
-                        self.write(message(False, "Invoke interface reg_plan_status field"))
+                        self.render("200.html", entry=message(False, "Invoke interface reg_plan_status field"))
                         return
-                    data = {"rlt": True,
-                            "msg": "success",
-                            "data": {"claId": course_id,
-                                     "uid": student_id
-                                }
-                            }
+                    # data = {"rlt": True,
+                    #         "msg": "success",
+                    #         "data": {"claId": course_id,
+                    #                  "uid": student_id
+                    #         }
+                    # }
                     self.commit()
-                    self.write(data)
+                    self.render("200.html", entry=message())
                     return
 
                 except:
-                    self.write(message(False, "%s Class Not exist or is in used" % class_id))
                     logger.info("%s Class Not Found " % class_id)
+                    self.render("200.html", entry=message(False,  "%s Class Not exist or is in used" % class_id))
                     return
                 finally:
                     self.auto_commit()
 
-            self.write(message(False, "%s Can not select class again" % student_id))
-        else:
-            self.write(message(False, "请求参数不对"))
-            logger.info("请求参数不对 student_id=%s, class_id=%s" % student_id, class_id)
 
+        else:
+            logger.info("请求参数不对 student_id=%s, class_id=%s" % student_id, class_id)
+            self.render("200.html", entry=message(False,  "请求参数不对"))
 
 @Route("/timetable/change/all/query", name="Change class List")
 class ClassChangeQueryHandle(BaseHandler):
@@ -408,7 +416,7 @@ class ClassChangeQueryHandle(BaseHandler):
         args = self.request.query_arguments
         checked = check_params(args, 6, ["uid", "claId", "planId", "teacherName", "timeInterval", "pageNo"])
         if not checked:
-            self.write(message(False, "Bad Request Params"))
+            self.render("200.html", entry=message(False,  "请求参数有误"))
             return
         course_id = self.get_argument("claId", None)
         student_id = self.get_argument("uid", None)
@@ -438,7 +446,7 @@ class ClassChangeQueryHandle(BaseHandler):
                             args=args_value(args), page_count=0, page_no=page_no)
 
         else:
-            self.write(message(False, "请求参数不对"))
+            self.render("200.html", entry=message(False,  "请求参数不对"))
 
 
 @Route("/timetable/change", name="")
@@ -488,21 +496,21 @@ class ClassChangeQueryHandle(BaseHandler):
                         try:
                             rs_data = courses(student_id, course_id, datas)
                             if not rs_data.rlt:
-                                self.write(message(False, "Invoke interface courses field"))
+                                self.render("200.html", entry=message(False,  "Invoke interface courses field"))
                                 return
                         except:
                             logger.info(traceback)
                             self.rollback()
-                            self.write(message(False, "Invoke interface courses field"))
+                            self.render("200.html", entry=message(False,  "Invoke interface courses field"))
                             return
-                        # TODO return page 1
-                        self.write(message())
                         self.commit()
+                        self.render("200.html", entry=message())
+
                     else:
                         self.rollback()
                         raise tornado.web.HTTPError(404, log_message="No data will be update")
                 else:
-                    self.write(message(False, "不可以再转班了"))
+                    self.render("200.html", entry=message(False,  "不可以再转班了"))
         except:
             logger.info(traceback.format_exc())
             self.rollback()
@@ -521,7 +529,7 @@ class BakTimeListHandle(BaseHandler):
         checked = check_params(self.request.query_arguments, 7,
                                ["uid", "claId", "planId", "timeId", "teacherName", "timeInterval", "pageNo"])
         if not checked:
-            self.write(message(False, "参数不对"))
+            self.render("200.html", entry=message(False,  "请求参数不对"))
             return
         else:
             student_id = self.get_argument("uid", None)
@@ -557,7 +565,7 @@ class BakTimeListHandle(BaseHandler):
                             args=args_value(self.request.query_arguments), page_no=page_no,
                             page_count=page_count)
             else:
-                self.write(message(False, "请求参数不对"))
+                self.render("200.html", entry=message(False,  "请求参数不对"))
 
 
 @Route("/timetable/change/time", name="change class time")
@@ -569,7 +577,7 @@ class TimetableTimeChangeHandle(BaseHandler):
     def get(self):
         checked = check_params(self.request.query_arguments, 5, ["uid", "claId", "planId", "timeId", "newTimeId"])
         if not checked:
-            self.write("Bad Request")
+            self.render("200.html", entry=message(False, "Bad Request"))
             return
         student_id = self.get_argument("uid", None)
         course_id = self.get_argument("claId", None)
@@ -584,7 +592,7 @@ class TimetableTimeChangeHandle(BaseHandler):
             if old_row and row:
                 valid = check_time(old_row.time_changed, old_row.time_status, old_row.class_date, old_row.start_time)
                 if not valid:
-                    raise tornado.web.HTTPError(403, log_message="该课程不能调了")
+                    raise tornado.web.HTTPError(500, log_message="该课程不能调了")
                 try:
                     self.auto_commit(False)
                     #进攻式SQL,如果更新成功，表明没有调过课程
@@ -611,16 +619,10 @@ class TimetableTimeChangeHandle(BaseHandler):
 
                         self.db.execute_rowcount("UPDATE timetable_bak SET flag=1 WHERE id=%s", time_id_new)
                         # TODO 记录对应关系，是否释放课程
-                        # self.db.execute_rowcount(insert_record, student_id, time_id)
-                        #flag -1表示调课的id
                         self.db.execute_rowcount(records_insert,
                                                  time_id, time_id_new, class_id, course_id, student_id, -1)
 
-                        # result = OrderedDict()
                         data = OrderedDict()
-                        # result["uid"] = student_id
-                        # result["claId"] = course_id
-                        #TODO extract a method
                         data["sourceBeiliCucId"] = time_id
                         data["sourceTeacherId"] = old_row.teacher_id
                         data["sourceCourseDate"] = str(old_row.class_date)
@@ -635,38 +637,38 @@ class TimetableTimeChangeHandle(BaseHandler):
                         data["targetEndTime"] = str(row.start_time + timedelta(minutes=row.period))
                         data["targetClassroom"] = row.class_room
                         data["targetStatus"] = TimeStatus.CHANGED
-                        # result["data"] = data
 
                         try:
                             rs_data = courses(student_id, course_id, [data])
                             if not rs_data.rlt:
-                                self.write(message(False, "Invoke interface courses field"))
+                                self.render("200.html", entry=message(False, "Invoke interface courses field"))
                                 self.rollback()
                                 logger.info("Message %s" % rs_data.data)
                                 return
                         except:
-                            logger.info(traceback)
+                            logger.info(traceback.format_exc())
                             self.rollback()
-                            self.write(message(False, "Invoke interface courses field"))
+                            self.render("200.html", entry=message(False, "调课失败"))
                             return
                         self.commit()
                         #TODO return page 2
-                        self.write(message())
+                        self.render("200.html", entry=message())
                     else:
-                        self.write(message(False, "您已调课3次, 不能调课了"))
+                        self.render("200.html", entry=message(False, "您已调课3次, 不能调课了"))
                         logger.info("Not Regular Request")
                     self.auto_commit()
                 except:
+                    self.render("200.html", entry=message(False, "调课失败"))
                     logger.info("Change time error msg{ %s }", traceback.format_exc())
                     self.rollback()
                 finally:
                     self.auto_commit()
             else:
-                self.write(message(False,  "请求错误， 没有查询到调课信息"))
                 logger.info("Not Regular Request for change class time ")
+                self.render("200.html", entry=message(False,  "请求错误， 没有查询到调课信息"))
         else:
-            self.write(message(False,  "请求参数不对"))
             logger.info("Not Regular Request for change time")
+            self.render("200.html", entry=message(False,  "请求参数不对"))
 
 
 @Route("/api/class/release", name="Release Timetable")
@@ -789,4 +791,4 @@ class APIClassRefundHandle(BaseHandler):
 #TODO 试听课程
 #TODO 查询被调课老师，class_id=-1， 放到调课列表
 
-#TODO 考勤排课
+#TODO 考勤排课, 重试机制

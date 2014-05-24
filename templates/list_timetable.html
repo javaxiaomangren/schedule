@@ -1,0 +1,113 @@
+{% extends index-base.html %}
+
+{% block bar_content %}
+ <form action="/api/class/timetable/list" method="GET" class="form-inline" id="searchForm"  role="form">
+          <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
+          <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
+          <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
+          <div class="form-group">
+            <label class="sr-only" for="teacherName">老师</label>
+            <input type="text" class="form-control " id="teacherName" name="teacherName" placeholder="Teacher Name">
+          </div>
+          <div class="form-group">
+            <select name="timeInterval" id="timeInterval" class="form-control">
+              <option value="0" selected>----全天----</option>
+              <option value="05:00-09:00" disabled>----上午----</option>
+              <option value="05:00-09:00">05:00-09:00</option>
+              <option value="09:00-12:00">09:00-12:00</option>
+              <option value="12:00-23:00" disabled>----下午----</option>
+              <option value="12:00-14:00">12:00-14:00</option>
+              <option value="14:00-18:00">14:00-18:00</option>
+              <option value="18:00-20:00">18:00-20:00</option>
+              <option value="20:00-23:00">20:00-23:00</option>
+            </select>
+          </div>
+          <div class="form-group"><button type="submit" class="btn btn-info">查询</button></div>
+        </form>
+        <script language="JavaScript" type="text/javascript">
+          value = "{{ args.get('timeInterval', '') }}"
+          options = document.getElementById("timeInterval")
+          for(var i = 0; i < options.length; i++){
+              if (options[i].value === value){
+                  options[i].selected = true
+              }
+          }
+        </script>
+{% end %}
+
+{% block content %}
+   <div class="container">
+    {% if not entries %}
+        <div style="height: 265px">
+            <center><h3>没有可选课表</h3></center>
+        </div>
+    {% else %}
+
+        <table class="table ">
+          <thead>
+            <tr>
+              <th>老师</th>
+              <th>时间</th>
+              <th>课时</th>
+              <th>日期</th>
+              <th>预约</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for entry in entries %}
+            <tr>
+              <td class="btn-group-lg">{{ entry.teacher_name }} </td>
+              <td>{{ entry.start_time[:-3] }}</td>
+              <td>{{ entry.period }}分钟</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-xs">2014年</button>
+                    {% for c in entry.classes %}
+                        <button type="button" class="btn btn-primary btn-xs">{{ c.date[5:].replace("-", ".") }}</button>
+                    {% end %}
+              </td>
+              <td>
+                 {% if args.get('change', 0) %}
+                     <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}&oldPlanId={{ args.get('oldPlanId') }}"
+                                            onclick="return window.confirm('您要转到的是:{{ entry.teacher_name }}老师的班级, {{ entry.time_desc }}, 确定要约这个时间吗？')">转班</a>
+                 {% else %}
+                      <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
+                                                                      onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a>
+                 {% end %}
+                <!--<button type="button" class="btn btn-default btn-xs active">约课</button>-->
+              </td>
+            </tr>
+            {% end %} <!-- end for loop -->
+           </tbody>
+        </table>
+
+        {% if page_count > 1%}
+             <div class="pagination mtop40">
+                {% if page_no > 1 %}
+                    <a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">prev</a>
+                {% end %}
+                 {% for p in range(1, page_count + 1) %}
+                    {% if p == page_no %}
+                        <span class="current">{{ page_no }}</span>
+                    {% else %}
+                        <a  href='javascript:;' onclick='search2({{ p }})'>{{ p }}</a>
+                    {% end %}
+                 {% end %}
+                 {% if page_no < page_count %}
+                    <a href='javascript:;' onclick='search2({{ page_no + 1 }})' class="next-page" title="下一页">next</a>
+                 {% end %}
+            </div>
+        {% end %} <!-- end if page else -->
+    {% end %} <!-- end if entries else -->
+  </div> <!--END CONTAINER-->
+{% end %} <!-- end block -->
+
+{% block extra_js %}
+<script type="text/javascript">
+    function search2(page) {
+        document.getElementById("pageNo").value = page
+        document.forms[0].submit()
+        return true
+    }
+</script>
+
+{% end %}

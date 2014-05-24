@@ -31,13 +31,13 @@ define("debug", default=True, help="Show all routed URLs", type=bool)
 class Application(tornado.web.Application):
     def __init__(self, mysql_database=None):
         settings = dict(
-            site_title=u"约课系统中间接口管理",
+            site_title=u"环迅教育－约课系统",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"GradeEntry": GradeEntry},
             # xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-            login_url="/auth/login",
+            login_url="/login",
             debug=options.debug,
         )
         handles = Route.get_routes()  # defined with route decorators
