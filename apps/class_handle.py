@@ -254,6 +254,9 @@ class TimeTableListHandle(BaseHandler):
         page_no = int(self.get_argument("pageNo", 1))
         page_size = 10
         if course_id and student_id:
+            selected = self.db.get("SELECT teacher_name, time_desc FROM timetable "
+                                   "WHERE course_id=%s and student_id=%s "
+                                   "AND class_status=1 limit 1", course_id, student_id)
             where = get_query_where(course_id, teacher_name, time_interval)
             page_count = get_page_count(self.db, where, page_size)
             if page_no > page_count:
@@ -262,7 +265,8 @@ class TimeTableListHandle(BaseHandler):
                 page_no = 1
             timetable = query_timetables(self.db, course_id, where, page_no, page_size)
             self.render("list_timetable.html", entries=timetable.values(),
-                        args=args_value(args), page_count=page_count, page_no=page_no)
+                        args=args_value(args), page_count=page_count,
+                        page_no=page_no, selected=selected)
         else:
             self.write(message(False, "请求参数不对"))
             logger.info(message(False, "请求参数不对"))
@@ -384,12 +388,6 @@ class TimetableSelectHandle(BaseHandler):
                         self.rollback()
                         self.render("200.html", entry=message(False, "Invoke interface reg_plan_status field"))
                         return
-                    # data = {"rlt": True,
-                    #         "msg": "success",
-                    #         "data": {"claId": course_id,
-                    #                  "uid": student_id
-                    #         }
-                    # }
                     self.commit()
                     self.render("200.html", entry=message())
                     return

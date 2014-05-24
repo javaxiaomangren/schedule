@@ -91,7 +91,8 @@ def post2(data):
 
 _plat = "php"
 _sys = "testing"
-url_prefix = "http://phpapi.cakephp.com"
+url_prefix = "http://ft.speiyou.com"
+# ft.speiyou.com  59.151.117.147
 
 
 def mk_md5(summary, plat=_plat, sys=_sys, key="com.xes.employee"):

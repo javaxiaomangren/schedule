@@ -70,8 +70,13 @@
                      <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}&oldPlanId={{ args.get('oldPlanId') }}"
                                             onclick="return window.confirm('您要转到的是:{{ entry.teacher_name }}老师的班级, {{ entry.time_desc }}, 确定要约这个时间吗？')">转班</a>
                  {% else %}
+                    {% if not selected %}
                       <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
-                                                                      onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a>
+                           onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a>
+                    {% else %}
+                         <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
+                           onclick="return window.confirm('您已经选择了{{ selected.teacher_name }}的{{ selected.time_desc }}的课程，确实要转到{{ entry.teacher_name }}老师, {{ entry.time_desc }},的这个班级吗？')">重选</a>
+                    {% end %} <!--end if selected-->
                  {% end %}
                 <!--<button type="button" class="btn btn-default btn-xs active">约课</button>-->
               </td>
