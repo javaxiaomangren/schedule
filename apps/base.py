@@ -22,6 +22,7 @@ class TimeStatus(object):
     REFUND = 5
     CHANGED = 6
     TRAIL = 7
+    TURNED = 8
     NAME = {
         0: "可预约",
         1: "预约,待支付",
@@ -30,7 +31,8 @@ class TimeStatus(object):
         4: "请假",
         5: "退课",
         6: "已调课",
-        7: "试听课程"
+        7: "试听课程",
+        8: "被转班"
     }
 
 
@@ -168,7 +170,7 @@ def aggregate_by_grade(rows, set_method):
 
 ####### db query
 def get_by_id(db=None, course_id=0, student_id=0, class_id=0):
-    sql = "SELECT * FROM timetable WHERE course_id='%s' " % course_id
+    sql = "SELECT * FROM timetable WHERE class_id > 0 and class_status != 8 and  course_id='%s' " % course_id
     if student_id:
         sql += " AND student_id=%s" % student_id
     elif class_id:

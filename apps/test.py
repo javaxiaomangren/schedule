@@ -191,6 +191,7 @@ class AdminClassHandle(BaseHandler):
         timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
 
         self.db.executemany(timetable_bak, timetable_baks)
+        self.db.execute("insert into timetable2 select * from timetable")
         data = cla_build_status("8a8185ce4613b5b6014613cb4fcc0017")
         print data.data
         self.redirect("/test")
@@ -233,13 +234,14 @@ class AdminClassHandle(BaseHandler):
 
             class_id += 1
         self.db.executemany_rowcount(timetable, params)
+        self.db.execute("insert into timetable2 select * from timetable")
         self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
-        data = cla_build_status(course_id)
-        msg = Row({"msg": "success"})
-        if not data.rlt:
-            msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
-            print(msg.data)
-        self.render("200.html", entry=msg)
+        # data = cla_build_status(course_id)
+        # msg = Row({"msg": "success"})
+        # if not data.rlt:
+        #     msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
+        #     print(msg.data)
+        self.render("200.html", entry=message())
 
 
 @Route("/test/course/del", name="init course")

@@ -77,6 +77,37 @@ def check_class(value):
     return value.get("class_changed", 0) < 3
 
 
+def check_on_class(class_date, start_time):
+    """判断是否即将上课"""
+    times = str(start_time).split(":")
+    now = datetime.now()
+    old = datetime(class_date.year, class_date.month, class_date.day, int(times[0]), int(times[1]))
+    s = old - now
+    return s.days > 1 or (s.days == 1 and s.seconds > 60)
+
+
+def check_has_coming_class(row):
+    for r in row:
+        if r.time_status == TimeStatus.PAYED and not check_on_class(r.class_date, r.start_time):
+            return True
+
+
+def release_changed(db, course_id, class_id):
+    maxid = db.get("select max(class_id) as max from timetable").max
+    sql = "INSERT INTO timetable(course_id,course_name,class_id,class_room," \
+          "teacher_id,teacher_name,student_id,start_time,period,class_date," \
+          "class_status,time_status,time_desc,check_roll,time_changed,class_changed)" \
+          " SELECT course_id,course_name,%s,class_room," \
+          "teacher_id,teacher_name,student_id,start_time,period,class_date," \
+          "class_status,time_status,time_desc,check_roll,time_changed,class_changed " \
+          "from timetable2 where course_id=%s and class_id=%s"
+    rs = db.execute_rowcount(sql, maxid + 2, course_id, class_id)
+    if rs:
+        rs = db.execute_rowcount("update timetable2 set class_id=%s "
+                                 "where course_id=%s and class_id=%s", maxid + 2, course_id, class_id)
+    return rs
+
+
 def set_response(dc, value):
     """
        设置聚合的课程返回信息给 speiyou.com
@@ -174,6 +205,13 @@ def aggregate_by_date(rows):
     return dic
 
 
+def get_last_change(db, course, student):
+    return db.get("select cla_id from records WHERE "
+                  "course_id=%s AND uid=%s and flag=-2"
+                  " order by create_date desc  limit 1 ",
+                  course, student)
+
+
 def get_changes(old, new):
     """
         转班
@@ -263,7 +301,7 @@ class TimeTableListHandle(BaseHandler):
         teacher_name = self.get_argument("teacherName", None)
         time_interval = self.get_argument("timeInterval", None)
         page_no = int(self.get_argument("pageNo", 1))
-        page_size = 12
+        page_size = 15
         if course_id and student_id:
             selected = self.db.get("SELECT teacher_name, time_desc FROM timetable "
                                    "WHERE course_id=%s and student_id=%s "
@@ -344,18 +382,17 @@ class TimetableSelectHandle(BaseHandler):
                                 try:
                                     rs_data = reg_plan_status(student_id, course_id)
                                     if not rs_data.rlt:
+                                        self.rollback()
                                         self.render("200.html", entry=message(False,
                                                                               "Invoke interface reg_plan_status field"))
                                         logger.info("message %s " % rs_data.data)
                                         return
                                 except:
                                     logger.info(traceback)
+                                    self.rollback()
                                     self.render("200.html",
                                                 entry=message(False, "Invoke interface reg_plan_status field"))
                                     return
-                                data = {"rlt": True, "msg": "success",
-                                        "data": {"claId": course_id, "uid": student_id, "planId": class_id}
-                                }
                                 self.commit()
                                 self.render("200.html", entry=message())
                                 return
@@ -365,7 +402,7 @@ class TimetableSelectHandle(BaseHandler):
                                 return
                         else:
                             self.render("200.html", entry=message(False, "%s Can not select class again" % student_id))
-                        self.auto_commit()
+                            self.auto_commit()
                     except:
                         self.rollback()
                         logger.info(message(False, traceback.format_exc()))
@@ -373,19 +410,24 @@ class TimetableSelectHandle(BaseHandler):
                         return
                     finally:
                         self.auto_commit()
-
+                else:
+                    self.render("200.html", entry=message(False, "您已经有课程了，请到课程管理界面查看"))
+                    logger.info("Select After payed" % class_id)
+                    return
             else:
                 try:
                     self.auto_commit(False)
                     rs = select_class(self.db, course_id, class_id, student_id,
                                       TimeStatus.APPOINTED, TimeStatus.NORMAL)
                     if not rs:
+                        self.rollback()
                         self.render("200.html", entry=message(False, "%s 课程不存在，或者已被选了" % class_id))
                         logger.info("%s Class Not found, or selected" % class_id)
                         return
                     try:
                         rs_data = reg_plan_status(student_id, course_id)
                         if not rs_data.rlt:
+                            self.rollback()
                             self.render("200.html", entry=message(False, "Invoke interface reg_plan_status field"))
                             logger.info("Message %s" % rs_data.data)
                             return
@@ -400,6 +442,7 @@ class TimetableSelectHandle(BaseHandler):
 
                 except:
                     logger.info("%s Class Not Found " % class_id)
+                    self.rollback()
                     self.render("200.html", entry=message(False,  "%s Class Not exist or is in used" % class_id))
                     return
                 finally:
@@ -427,7 +470,7 @@ class ClassChangeQueryHandle(BaseHandler):
         teacher_name = self.get_argument("teacherName", None)
         time_interval = self.get_argument("timeInterval", None)
         page_no = int(self.get_argument("pageNo", 1))
-        page_size = 10
+        page_size = 15
         if course_id and student_id:
             time_desc = self.db.query("SELECT time_desc FROM timetable "
                                       "WHERE course_id=%s AND student_id=%s limit 1", course_id, student_id)
@@ -466,8 +509,15 @@ class ClassChangeQueryHandle(BaseHandler):
         student_id = self.get_argument("uid")
         try:
             old_class = get_by_id(self.db, course_id=course_id, student_id=student_id)
+            #愿课程释放条件，该学生已经没有原课老师的任何没上课程（有24小时即将开始的课程），该课程24小时后应该释放
+            has_class = check_has_coming_class(old_class)
+            turn_class = get_last_change(self.db, course_id, student_id)
+            # if has_class:
+            #     logger.info("not regular request from change class")
+            #     self.render("200.html", entry=message(False,  "24小时内有课，不能转班，请上完课后再转班"))
+            #     return
             new_class = get_by_id(db=self.db, course_id=course_id, class_id=new_class_id)
-            if old_class and new_class_id:
+            if old_class and new_class:
                 ids, datas = get_changes(old_class, new_class)
                 if ids and datas:
                     self.auto_commit(False)
@@ -479,28 +529,46 @@ class ClassChangeQueryHandle(BaseHandler):
                     class_changed = old_class[0].class_changed
                     time_changed = old_class[0].time_changed
                     old_class_id = old_class[0].class_id
-
                     for oid, nid in ids:
-                        params.append((None, -2, 0, 0, 0, 0, course_id, oid))
+                        params.append((None, -1, TimeStatus.TURNED, TimeStatus.TURNED, 0, 0, course_id, oid))
                         params.append((student_id, old_class_id, TimeStatus.PAYED,
-                                       TimeStatus.PAYED, class_changed + 1, time_changed, course_id, nid))
+                                       TimeStatus.PAYED, class_changed, time_changed, course_id, nid))
                         #src_id, tar_id, cla_id, course_id, uid, flag
                         records_params.append((oid, nid, new_class_id, course_id, student_id, -2))
-                    ched = self.db.execute_rowcount("UPDATE timetable set class_status = %s "
-                                                    "WHERE course_id=%s AND class_id=%s",
-                                                    TimeStatus.CHANGED, course_id, new_class_id)
+                    # ched = self.db.execute_rowcount("UPDATE timetable set class_status = %s "
+                    #                                 "WHERE course_id=%s AND class_id=%s",
+                    #                                 TimeStatus.CHANGED, course_id, new_class_id)
                     updates = self.db.executemany_rowcount("UPDATE timetable set student_id=%s, class_id=%s,"
-                                                           "class_status=%s, time_status=%s, class_changed=%s,"
+                                                           " class_status=%s, time_status=%s, class_changed=%s,"
                                                            " time_changed=%s WHERE course_id=%s AND time_id=%s", params)
+                    #disapear old class
+                    dis = self.db.execute_rowcount("update timetable set class_status=%s, student_id=NULL, class_id=-1 "
+                                                   "where course_id=%s and class_id=%s ",
+                                                   TimeStatus.TURNED, course_id, new_class_id)
                     ch = self.db.execute_rowcount("UPDATE timetable set class_changed = class_changed + 1 "
                                                   "WHERE course_id=%s AND student_id=%s", course_id, student_id)
-                    if ched and updates and ch:
+                    if updates and dis and ch:
                         self.db.executemany_rowcount(records_insert, records_params)
+                        if has_class:
+                            #todo release after class
+                            pass
+                        else:
+                            #release now
+                            if turn_class:
+                                rs = release_changed(self.db, course_id, turn_class.cla_id)
+                            else:
+                                rs = release_changed(self.db, course_id, old_class_id)
+                            if not rs:
+                                logger.info("release old class failed course[%s]class[%s]", course_id, old_class_id)
+                                self.rollback()
+                                self.render("200.html", entry=message(False,  "转班级失败"))
+                                return
 
                         try:
                             rs_data = courses(student_id, course_id, datas)
                             if not rs_data.rlt:
                                 logger.info("Invoke interface courses field")
+                                self.rollback()
                                 self.render("200.html", entry=message(False,  "Invoke interface courses field"))
                                 return
                         except:
@@ -561,7 +629,7 @@ class BakTimeListHandle(BaseHandler):
                     t1, t2 = time_interval.split('-')
                     where += " AND start_time BETWEEN '%s' AND '%s' " % (t1, t2)
                 total_count = self.db.get("SELECT COUNT(*) as total FROM timetable_bak %s " % where).total
-                page_size = 10
+                page_size = 15
                 page_count = (total_count + page_size - 1)/page_size
                 if page_no > page_count:
                     page_no = page_count
@@ -596,36 +664,50 @@ class TimetableTimeChangeHandle(BaseHandler):
             if old_row and row:
                 valid = check_time(old_row.time_changed, old_row.time_status, old_row.class_date, old_row.start_time)
                 if not valid:
-                    raise tornado.web.HTTPError(500, log_message="该课程不能调了")
+                    logger.info("student: %s, time_id: %s, course_id: %s planId: %s, Can not chage time again",
+                                student_id, time_id, course_id, class_id)
+                    self.render("200.html", entry=message(False, "不能调课了"))
+                    return
                 try:
                     self.auto_commit(False)
                     #进攻式SQL,如果更新成功，表明没有调过课程
-                    rs = self.db.execute_rowcount("UPDATE timetable SET class_id=-1, class_status=0, time_status=0,"
-                                                  " student_id=NULL, time_changed=0, class_changed=0"
-                                                  " WHERE time_id=%s AND class_id=%s AND student_id=%s "
-                                                  " AND time_changed < %s", time_id, class_id, student_id, 3)
+                    # －1表示该课程被调了，但是不能放到补课列表
+                    sql1 = """ REPLACE INTO timetable_bak
+                                     SELECT time_id, teacher_id, teacher_name,
+                                            class_room, class_date, start_time, period, -1
+                                     FROM timetable
+                                     WHERE time_id=%s AND class_id=%s AND student_id=%s AND time_changed < %s
+                            """
+                    #插入到备选调课表
+                    rs0 = self.db.execute_rowcount(sql1, time_id, class_id, student_id, 1)
+                    if not rs0:
+                        logger.info("student: %s, time_id: %s, course_id: %s planId: %s, query nothing",
+                                    student_id, time_id, course_id, class_id)
+                        self.render("200.html", entry=message(False, "非法操作"))
+                        self.rollback()
+                        return
+                    #删除原来的记录
+                    rs1 = self.db.execute_rowcount("DELETE FROM timetable"
+                                                   " WHERE time_id=%s AND class_id=%s AND student_id=%s "
+                                                   " AND time_changed < %s", time_id, class_id, student_id, 1)
+                    #插入新记录
+                    last_time_id = \
+                        self.db.execute_lastrowid("INSERT INTO timetable (course_id, course_name, class_id,"
+                                                  "class_room, teacher_id, teacher_name, student_id, start_time,"
+                                                  "period, class_date, class_status, time_status, time_desc, "
+                                                  "check_roll, time_changed, class_changed) VALUES"
+                                                  "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                                                  course_id, old_row.course_name, class_id, row.class_room,
+                                                  row.teacher_id, row.teacher_name, student_id, row.start_time,
+                                                  row.period, row.class_date, old_row.class_status,
+                                                  TimeStatus.CHANGED, old_row.time_desc, old_row.check_roll,
+                                                  old_row.time_changed, old_row.class_changed)
                     #记录调课次数
-                    rs1 = self.db.execute_rowcount("UPDATE timetable SET time_changed=time_changed + 1 "
+                    rs2 = self.db.execute_rowcount("UPDATE timetable SET time_changed=time_changed + 1 "
                                                    "WHERE student_id=%s AND course_id=%s", student_id, course_id)
-                    if rs and rs1:
-                        #TODO 是否可以把这个放到 timetable表
-                        last_time_id = \
-                            self.db.execute_lastrowid("INSERT INTO timetable (course_id, course_name, class_id,"
-                                                      "class_room, teacher_id, teacher_name, student_id, start_time,"
-                                                      "period, class_date, class_status, time_status, time_desc, "
-                                                      "check_roll, time_changed, class_changed) VALUES"
-                                                      "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                                                      course_id, old_row.course_name, class_id, row.class_room,
-                                                      row.teacher_id, row.teacher_name, student_id, row.start_time,
-                                                      row.period, row.class_date, old_row.class_status,
-                                                      TimeStatus.CHANGED, old_row.time_desc, old_row.check_roll,
-                                                      old_row.time_changed + 1, old_row.class_changed)
-
-                        self.db.execute_rowcount("UPDATE timetable_bak SET flag=1 WHERE id=%s", time_id_new)
-                        # TODO 记录对应关系，是否释放课程
-                        self.db.execute_rowcount(records_insert,
-                                                 time_id, time_id_new, class_id, course_id, student_id, -1)
-
+                    rs3 = self.db.execute_rowcount("UPDATE timetable_bak SET flag=1 WHERE id=%s", time_id_new)
+                    rs4 = self.db.execute_rowcount(records_insert, time_id, time_id_new, class_id, course_id, student_id, -1)
+                    if rs0 and rs1 and rs2 and rs3 and rs4 and last_time_id:
                         data = OrderedDict()
                         data["sourceBeiliCucId"] = time_id
                         data["sourceTeacherId"] = old_row.teacher_id
@@ -655,11 +737,17 @@ class TimetableTimeChangeHandle(BaseHandler):
                             self.render("200.html", entry=message(False, "调课失败"))
                             return
                         self.commit()
-                        #TODO return page 2
+                        logger.info("Success:uid[%s]cla[%s]plan[%s]timeId[%s]newTime[%s],insert to bak[%s], delete[%s],"
+                                    "insert last id[%s], update time_changed[%s],"
+                                    " update bak flag[%s], records[%s]", student_id, course_id, class_id,
+                                    time_id, time_id_new, rs0, rs1, last_time_id, rs2, rs3, rs4)
                         self.render("200.html", entry=message())
                     else:
-                        self.render("200.html", entry=message(False, "您已调课3次, 不能调课了"))
-                        logger.info("Not Regular Request")
+                        self.render("200.html", entry=message(False, "调课失败"))
+                        logger.info("Failed update Data:uid[%s]cla[%s]plan[%s],insert to bak[%s], delete[%s], "
+                                    "insert last id[%s], update time_changed[%s],"
+                                    " update bak flag[%s], records[%s]", student_id, course_id, class_id,
+                                    rs0, rs1, last_time_id, rs2, rs3, rs4)
                     self.auto_commit()
                 except:
                     self.render("200.html", entry=message(False, "调课失败"))
@@ -763,21 +851,40 @@ class APIClassRefundHandle(BaseHandler):
                 self.write(message(False, "authorization failed"))
                 return
             where = " WHERE course_id=%s AND student_id=%s "
-            rs1 = self.db.execute_rowcount("UPDATE timetable SET class_status=%s, time_status=%s "
-                                           "WHERE course_id=%s AND student_id=%s "
-                                           "AND class_status=%s", TimeStatus.REFUND, TimeStatus.REFUND,
-                                           course_id, student_id, TimeStatus.PAYED)
-            rs2 = self.db.execute_rowcount(insert_record_all % where, course_id, student_id)
-            rs3 = self.db.execute_rowcount("UPDATE timetable SET class_status=0, time_status=0, "
-                                           "student_id=null, class_changed=0, time_changed=0, check_roll=0"
-                                           " WHERE course_id=%s AND student_id=%s "
-                                           , course_id, student_id)
+            #1.释放调课
+            #2.释放转班
+            #3.更新现有课程
+            try:
+                self.auto_commit(False)
+                turn_id = self.db.get("select tar_id from records "
+                                      " where course_id=%s and uid=%s and flag=-1 ", course_id, student_id)
+                if turn_id:
+                    self.db.execute_rowcount("UPDATE timetable_bak set flag=0 where id=%s", turn_id.tar_id)
+                turn_class = get_last_change(self.db, course_id, student_id)
+                if turn_class:
+                    release_changed(self.db, course_id, turn_class.cla_id)
+                else:
+                    cla = self.db.get("select class_id from timetable " + where + " limit 1", course_id, student_id)
+                    if cla:
+                        release_changed(self.db, course_id, cla.class_id)
 
-            if rs1 and rs2 and rs3:
-                self.write(message())
-            else:
-                self.write(message(False, "更新失败"))
-
+                rs2 = self.db.execute_rowcount(insert_record_all % where, course_id, student_id)
+                rs1 = self.db.execute_rowcount("DELETE FROM timetable "
+                                               "WHERE course_id=%s AND student_id=%s ", course_id, student_id)
+                self.db.execute_rowcount("update records set uid=concat(uid, '_refund') "
+                                         "where course_id=%s and uid=%s", course_id, student_id)
+                if rs1 and rs2:
+                    self.commit()
+                    self.write(message())
+                else:
+                    self.rollback()
+                    self.write(message(False, "更新失败"))
+            except:
+                self.rollback()
+                logger.info(traceback.format_exc())
+                self.write(message(False, "更新失败, 服务器端异常"))
+            finally:
+                self.auto_commit()
         else:
             self.write(message(False, "请求参数不对"))
 
@@ -796,3 +903,5 @@ class APIClassRefundHandle(BaseHandler):
 #TODO 查询被调课老师，class_id=-1， 放到调课列表
 
 #TODO 考勤排课, 重试机制
+
+#TODO 上课前5分钟能进入教室，bbb button

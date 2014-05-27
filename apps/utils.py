@@ -146,7 +146,7 @@ def attendances(uid, cla_id, cuc_id, status):
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cuc_id, cla_id, status))
     return Row(ujson.loads(x))
 
-
+# attendances('171119', "ff808081462d555601463cf212fb00e7")
 def sms(uid, content):
     """
     短信接口：

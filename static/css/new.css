@@ -11,12 +11,12 @@
 	  margin-left:20px;
       margin-top:30px;
 }
-	  
+
 .logo span{
 	  float:left;
 }
 
-	  
+
 .logo_font{
 	 margin-left:20px;
      font-family:"微软雅黑","宋体","tahoma","arial";
@@ -26,24 +26,24 @@
 	 text-shadow:0px 1px 1px #3f80aa;
 	 float:right;
 }
-   
+
 .bar{
 	 height:45px;
 	 background:#4d7ec1;
 }
-	
+
 .bar_content{
 	 height:45px;
      background:#dbe5f3;
 }
-	
+
 .footer{
 	 height:100px;
      border-top:10px solid #4d7ec1;
 	 background:#56a8dc;
 	 color:#FFFFFF;
 	 text-align:center;
-	 
+
 }
 
 .footer p{
@@ -51,9 +51,9 @@
      font-size:12px;
 	 padding-top:20px;
 }
-	
+
 #content{
-	 min-height:660px;
+	 min-height:760px;
 }
 
 .table th, .table td {
@@ -88,7 +88,12 @@
 
 
 
-	
-	
+#myModal{
+	margin-left:250px;
+	margin-top:250px;
+}
+
+
+
 
 
