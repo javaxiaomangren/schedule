@@ -137,14 +137,15 @@ timetable = """
 
 timetable_bak = """
         INSERT INTO schedule.timetable_bak
-        (teacher_id,
+        (id,
+        teacher_id,
         teacher_name,
         class_room,
         class_date,
         start_time,
         period,
         flag)
-        VALUES(%s,%s,%s,%s,%s,%s,%s)
+        VALUES(%s, %s,%s,%s,%s,%s,%s,%s)
 """
 
 teacher = """
@@ -161,9 +162,11 @@ teacher = """
 @Route("/test/init", name="init data")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
-        # self.db.execute("truncate table course")
+        self.db.execute("truncate table course")
         self.db.execute("truncate table teacher")
         self.db.execute("truncate table timetable")
+        self.db.execute("truncate table timetable2")
+        self.db.execute("truncate table timetable_record")
         self.db.execute("truncate table timetable_bak")
         self.db.execute("truncate table records")
 
@@ -171,29 +174,11 @@ class AdminClassHandle(BaseHandler):
         #            for course_id in range(1, 10)]
         # self.db.executemany(course, courses)
 
-        teachers = [(tid, 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(1, 101)]
+        teachers = [(200000 + tid, 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(1, 101)]
         self.db.executemany(teacher, teachers)
 
-        timetables = []
-        for th in teachers:
-            for t in ['2014-05-20','2014-05-21','2014-05-22','2014-05-23','2014-05-24','2014-05-25','2014-05-26','2014-05-27','2014-05-28','2014-05-29','2014-05-30','2014-05-31','2014-06-01','2014-06-02','2014-06-03','2014-06-04','2014-06-05','2014-06-06']:
-                pass
-                timetables.append(
-                    ("8a8185ce4613b5b6014613cb4fcc0017", "在线外教寒假班",
-                    th[0], "MN000" + str(th[0]),
-                    th[0], th[1],
-                    "09:00:00", 30, t ,0, 0,
-                    "2014-05-20,2014-06-06 "
-                    ))
-
-        self.db.executemany(timetable, timetables)
-
-        timetable_baks = [(th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
-
+        timetable_baks = [(1000000 + th1[0], th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
         self.db.executemany(timetable_bak, timetable_baks)
-        self.db.execute("insert into timetable2 select * from timetable")
-        data = cla_build_status("8a8185ce4613b5b6014613cb4fcc0017")
-        print data.data
         self.redirect("/test")
 
 
