@@ -1,163 +1,66 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset=utf-8 />
-<title>学而思培优-选课</title>
-<link rel="stylesheet" href="{{ static_url('css/base.css') }}"/>
-<link href="{{ static_url('css/sk-main.css') }}" rel="stylesheet"/>
+{% extends index-base.html %}
 
-<!--<link href="css/guide.css" rel="stylesheet"/>-->
-<!--<link rel="stylesheet" type="text/css" href="css/thickbox.css"/>-->
-<!--<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>-->
-<!--<script type="text/javascript" src="js/xes.core.js"></script>-->
-<!--<script type="text/javascript" src="js/common.js"></script>-->
-
-
-<!--[if IE]>
-<script type="text/javascript" src="js/html5.js"></script>
-<![endif]-->
-<!--[if IE 6]> 
-<script type="text/javascript">var _belatedPNG=[".fixpng"];</script>
-<![endif]-->
-<!--[if IE 6]>
-<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
-<script type="text/javascript">
-(function(){
-var A=(typeof _belatedPNG!="undefined")?_belatedPNG:[];
-var B=[].concat(A).join(",");
-DD_belatedPNG.fix(B);
-})();
-</script>
-<![endif]-->
-
-</head>
-
-<body >
-  <!-- sk-header begin -->
-  <header id="sk-header">
-      <div class="sk-wrapper">
-         <div class="sk-top-bar">
-         </div>
-         <div class="clear"></div>
-         <h1 class="sk-logo"><span class="fn-left"><a href="timetable_list.html"><img src="{{ static_url('images/pylogo-sk.png') }}"  width="229" height="56" alt="学而思培优-选课" title="学而思培优-选课"/></a></span><span class="fn-left sk-logo-font">选课</span></h1>
-         <div class="sk-search-bar">
-         </div>
-         <div class="clear"></div>
-      </div>
-</header>
-  <!-- sk-header end -->
-
-  <!-- sk-content end -->
-  <section class="sk-content relative">
-      <div class="bar-blue01"></div>
-      <section class="relative sk-wrapper mtop45">
-        <!-- search-bar begin -->
-        <div id="search-bar">
-          <ul class="search-bar-left">
-                  <li>
-                     <h3>我的课表</h3>
-                  </li>
-          </ul>
-          <div class="clear"></div>
+{% block content %}
+    <div class="container">
+    {% if not entries or len(entries) == 0 %}
+        <div>
+            <center><h3>没有课表</h3></center>
         </div>
-        <!-- search-bar end -->
+    {% else %}
+        {% set  entry = entries[0] %}
+        <div class="info">
+           <p>转班调课规则： 您可以转班3次; 调课，请假共1次。转班调课需提前24小时申请，你只可以修改从现在起24小时以后的课表。<br>调课后的课程不参与转班，已上过的课程不能转班。 </p>
+         {% if entry.class_status == 1 %}
+            <div class="btn btn-warning btn-group-sm btn-wz">
+             <a href="/api/class/timetable/list?claId={{ entry.course_id }}&uid={{ entry.student_id }}">重选</a>
+            </div>
+         {% elif entry.can_change %}
+            <div class="btn btn-warning btn-group-sm btn-wz">
+                <a href="/timetable/change/all/query?claId={{ entry.course_id }}&uid={{ entry.student_id }}&planId={{ entry.class_id }}">转班</a>
+            </div>
+         {% else %}
+                <div class="btn btn-warning btn-group-sm btn-wz">已转班3次</div>
+         {% end %}
 
-        <section class="sk-wrapper02">
-
-           <div class="spaceLine01">a</div>
-
-           <div class="s-box mtop20">
-              <!-- 搜课列表 begin -->
-              <section class="s-main-box">
-                 <div class="s-r-list">
-                    <div style="min-height: 300px">
-                        {% if not entries or len(entries) == 0 %}
-                            <div>
-                                <center><h3>没有课表</h3></center>
-                            </div>
-                        {% else %}
-                            {% for entry in entries %}
-                                 <div style="text-align: center"><h2>{{ "班级名字" }}</h2></div>
-                                <div>
-                                    转班调课规则：
-                                    <p>
-                                        <p>1.您可以转班3次</p>
-                                        <p>2.调课，请假共3次</p>
-                                        <p>3.转班调课需提前24小时申请，你只可以修改从现在起24小时以后的课表</p>
-                                        <p>4.调课后的课程不参与转班</p>
-                                        <p>5.已上过的课程不能转班</p>
-                                    <br/>
-                                    </p>
-                                </div>
-                                 <div>上课时间：{{ entry.time_desc }}
-                                     {% if entry.class_status == 1 %}
-                                     <a href="/api/class/timetable/list?claId={{ entry.course_id }}&uid={{ entry.student_id }}">重选</a>
-                                     {% elif entry.can_change %}
-                                     <a href="/timetable/change/all/query?claId={{ entry.course_id }}&uid={{ entry.student_id }}&planId={{ entry.class_id }}">转班</a>
-                                     {% else %}
-                                     <h2>你已经转班3次，或者没有课程可转班</h2>
-                                     {% end %}
-
-                                 </div>
-                                    <table class="table-setClass" width="100%">
-                                        <thead>
-                                        <th>老师</th>
-                                        <th>时间</th>
-                                        <th>课时</th>
-                                        <th>日期</th>
-                                        <th>进度</th>
-                                        <th>操作</th>
-                                        </thead>
-                                        {% for cc in entry.classes %}
-                                        <tr>
-                                            <td>{{ cc.teacher_name }}</td>
-                                            <td>{{ cc.time }}</td>
-                                            <td>{{ cc.period }}</td>
-                                            <td>{{ cc.date }}</td>
-                                            <td>
-                                                  {% if entry.class_status == 1%}
-                                                    {{ TimeStatus.NAME.get(1) }}
-                                                  {% else %}
-                                                    {{ TimeStatus.NAME.get(cc.time_status) }}
-                                                  {% end %}
-                                            </td>
-                                            <td>
-                                                {% if cc.can_time_change %}
-                                                <a target="_blank"
-                                                   href="/timetable/change/time/list?planId={{ entry.class_id }}&uid={{ entry.student_id }}&claId={{ entry.course_id }}&timeId={{ cc.time_id }}">调课</a>
-                                                {% end %}
-                                            </td>
-                                            {% end %}
-                                        </tr>
-                                    </table>
-
-                           {% end %}
+        </div><!--end info-->
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>老师</th>
+              <th>时间</th>
+              <th>课时</th>
+              <th>日期</th>
+              <th>进度</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+             {% for cc in entry.classes %}
+                <tr>
+                    <td>{{ cc.teacher_name }}</td>
+                    <td>{{ cc.time }}</td>
+                    <td>{{ cc.period }}</td>
+                    <td>{{ cc.date }}</td>
+                    <td>
+                          {% if entry.class_status == 1%}
+                            {{ TimeStatus.NAME.get(1) }}
+                          {% else %}
+                            {{ TimeStatus.NAME.get(cc.time_status) }}
+                          {% end %}
+                    </td>
+                    <td>
+                        {% if cc.can_time_change %}
+                        <a target="_blank"
+                           href="/timetable/change/time/list?planId={{ entry.class_id }}&uid={{ entry.student_id }}&claId={{ entry.course_id }}&timeId={{ cc.time_id }}">
+                            <button type="button" class="btn btn-success btn-xs">调课</button>
+                           </a>
                         {% end %}
 
-                    </div>
-
-                 </div>
-
-
-              </section>
-              <!-- 查询结果 end -->
-
-              <div class="clear"></div>
-           </div>
-        </section>
-
-        
-      </section>
-</section>
-  
-  <!-- sk-footer begin -->
-  <footer id="sk-footer">
-     <p>咨询电话：010-82618899 62164116  京ICP备09032638号-4</p>
-     <p>Copyright @ 2004 – 2014 Xueersi.All Rights Reserved.学而思教育 版权所有</p>
-  </footer>
-  <!-- sk-footer end -->
-
-
-  </div>
-</body>
-</html>
+                    </td>
+                </tr>
+             {% end %}
+          </tbody>
+        </table>
+    {% end %} <!-- end if have entries-->
+  </div> <!--end container-->
+{% end %} <!--end block content-->

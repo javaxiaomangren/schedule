@@ -1,5 +1,4 @@
 {% extends index-base.html %}
-
 {% block bar_content %}
  <form action="/api/class/timetable/list" method="GET" class="form-inline" id="searchForm"  role="form">
           <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
@@ -38,12 +37,12 @@
 {% block content %}
    <div class="container">
     {% if not entries %}
-        <div style="height: 265px">
+        <div style="min-height: 500px">
             <center><h3>没有可选课表</h3></center>
         </div>
     {% else %}
 
-        <table class="table ">
+        <table class="table">
           <thead>
             <tr>
               <th>老师</th>
@@ -60,54 +59,96 @@
               <td>{{ entry.start_time[:-3] }}</td>
               <td>{{ entry.period }}分钟</td>
                 <td>
-                    <button type="button" class="btn btn-warning btn-xs">2014年</button>
+
+                    <button type="button" id="idBtn" class="btn btn-warning btn-xs">2014年</button>
                     {% for c in entry.classes %}
                         <button type="button" class="btn btn-primary btn-xs">{{ c.date[5:].replace("-", ".") }}</button>
                     {% end %}
               </td>
               <td>
-                 {% if args.get('change', 0) %}
-                     <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}&oldPlanId={{ args.get('oldPlanId') }}"
-                                            onclick="return window.confirm('您要转到的是:{{ entry.teacher_name }}老师的班级, {{ entry.time_desc }}, 确定要约这个时间吗？')">转班</a>
-                 {% else %}
                     {% if not selected %}
-                      <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
-                           onclick="return window.confirm('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？')">约课</a>
+                        <button class="btn btn-default btn-xs active"
+                                onclick="show_model('您约的是:<br />&nbsp;&nbsp;&nbsp;&nbsp;{{ entry.teacher_name }}老师, {{ entry.time_desc }},<br/>确定要约这个时间吗？',
+                                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.class_id }}')">约课</button>
                     {% else %}
-                         <a href="/timetable/select?uid={{ args.get('uid') }}&claId={{ args.get('claId') }}&planId={{entry.class_id }}"
-                           onclick="return window.confirm('您已经选择了{{ selected.teacher_name }}的{{ selected.time_desc }}的课程，确实要转到{{ entry.teacher_name }}老师, {{ entry.time_desc }},的这个班级吗？')">重选</a>
+                        <button class="btn btn-default btn-xs active"
+                                onclick="show_model('您已经选择了{{ selected.teacher_name }}的{{ selected.time_desc }}的课程，确实要转到{{ entry.teacher_name }}老师, {{ entry.time_desc }},的这个班级吗？',
+                                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.class_id }}')">重选</button>
                     {% end %} <!--end if selected-->
-                 {% end %}
                 <!--<button type="button" class="btn btn-default btn-xs active">约课</button>-->
               </td>
             </tr>
             {% end %} <!-- end for loop -->
            </tbody>
         </table>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">提示：</h4>
+              </div>
+              <div id="message" class="modal-body">
+                ...........
+              </div>
+              <form hidden="true" action="/timetable/select" id="selectForm" method="POST">
+                  <input type="hidden" id="s_uid" name="uid" value=""/>
+                  <input type="hidden" id="s_claId" name="claId" value=""/>
+                  <input type="hidden" id="s_planId" name="planId" value=""/>
+              </form>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="submitBtn" class="btn btn-primary" onclick="submit()">确认</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
+
+        <!--    page    -->
+       <div class="pagination-fy container">
         {% if page_count > 1%}
-             <div class="pagination mtop40">
+             <ul class="pager">
                 {% if page_no > 1 %}
-                    <a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">prev</a>
+                    <li><a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">上一页</a></li>
                 {% end %}
-                 {% for p in range(1, page_count + 1) %}
-                    {% if p == page_no %}
-                        <span class="current">{{ page_no }}</span>
-                    {% else %}
-                        <a  href='javascript:;' onclick='search2({{ p }})'>{{ p }}</a>
-                    {% end %}
-                 {% end %}
+                     {% for p in range(1, page_count + 1) %}
+                        {% if p == page_no %}
+                            <li class="disabled"><a href="#">{{ page_no }} <span class="sr-only">(current)</span></a></li>
+                        {% else %}
+                            <li><a  href='javascript:;' onclick='search2({{ p }})'>{{ p }}</a></li>
+                        {% end %}
+                     {% end %}
                  {% if page_no < page_count %}
-                    <a href='javascript:;' onclick='search2({{ page_no + 1 }})' class="next-page" title="下一页">next</a>
+                    <li><a href='javascript:;' onclick='search2({{ page_no + 1 }})' class="next-page" title="下一页">下一页</a></li>
                  {% end %}
-            </div>
+            </ul>
         {% end %} <!-- end if page else -->
+       </div> <!-- end page div -->
     {% end %} <!-- end if entries else -->
   </div> <!--END CONTAINER-->
 {% end %} <!-- end block -->
 
+
 {% block extra_js %}
 <script type="text/javascript">
+//    $('#myModal').on('hidden.bs.modal', function (e) {
+//      alert("hidden")
+//    })
+    function show_model(msg, uid, claId, planId) {
+        document.getElementById("s_uid").value= uid
+        document.getElementById("s_claId").value= claId
+        document.getElementById("s_planId").value= planId
+        document.getElementById("message").innerHTML ="<h4>" + msg + "</h4>"
+
+        $('#myModal').modal({
+            keyboard:false
+        })
+    }
+    function submit() {
+        document.forms[1].submit()
+    }
+
     function search2(page) {
         document.getElementById("pageNo").value = page
         document.forms[0].submit()

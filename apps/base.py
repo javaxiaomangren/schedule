@@ -178,7 +178,7 @@ def get_by_id(db=None, course_id=0, student_id=0, class_id=0):
 
 
 def get_query_where(course_id, teacher_name, time_interval, **kwargs):
-    where = "WHERE class_status=0 AND course_id='%s' AND time_status <> %s " \
+    where = "WHERE class_id > 0 AND class_status=0 AND course_id='%s' AND time_status <> %s " \
             % (course_id, TimeStatus.TRAIL)
     if teacher_name:
         where += " AND teacher_name='%s' " % teacher_name.rstrip()

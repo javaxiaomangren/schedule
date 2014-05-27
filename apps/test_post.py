@@ -13,8 +13,8 @@ def post(url, data, headers):
     return response.read()
 
 url_prefix = "http://localhost:8081"
-uid = "10000"
-claId = "8a8185ce45fea8070145feb4f1850006"
+uid = "40000"
+claId = "8a8185ce45fe9e230145fe9f9acc0001"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
 sys = "testing"

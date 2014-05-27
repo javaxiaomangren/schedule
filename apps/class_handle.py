@@ -48,15 +48,16 @@ def check_params(args, lens, keys):
 def check_time(time_changed, time_status, class_date, start_time, for_change=None):
     """
     是否可以调课
-    1. 调课3次后不能再调节
+    1. 调课1次后不能再调节
     2.等待上课的才可以调
     3.提前24小时调课
     """
-    b1 = time_changed < 3
     # 转班只能转没有调过的
     if for_change:
+        b1 = time_changed < 3
         b2 = time_status == TimeStatus.PAYED
     else:
+        b1 = time_changed < 1
         b2 = time_status == TimeStatus.PAYED or time_status == TimeStatus.CHANGED
     now = datetime.now()
     times = str(start_time).split(":")
@@ -99,7 +100,17 @@ def set_response(dc, value):
         result = OrderedDict()
         result["claId"] = value.course_id
         result["uid"] = value.student_id
-        result["classes"] = [classes]
+
+        trial = OrderedDict()
+        trial["timeId"] = value.time_id * 1024
+        trial["teacherId"] = value.teacher_id
+        trial["classDate"] = str(value.class_date)
+        trial["startTime"] = str(value.start_time)
+        trial["endTime"] = str(value.start_time + timedelta(minutes=value.period))
+        trial["classroom"] = value.class_room
+        trial["status"] = 7
+
+        result["classes"] = [trial, classes]
         dc[value.class_id] = result
 
 
@@ -252,7 +263,7 @@ class TimeTableListHandle(BaseHandler):
         teacher_name = self.get_argument("teacherName", None)
         time_interval = self.get_argument("timeInterval", None)
         page_no = int(self.get_argument("pageNo", 1))
-        page_size = 10
+        page_size = 12
         if course_id and student_id:
             selected = self.db.get("SELECT teacher_name, time_desc FROM timetable "
                                    "WHERE course_id=%s and student_id=%s "
@@ -310,12 +321,7 @@ class TimetableSelectHandle(BaseHandler):
     /timetable/select?uid=&claId=&planId=&oldPlanId=
     如果oldPlanId 不为空表示转班
     """
-    def get(self):
-        checked = check_params(self.request.query_arguments, 4, ["uid", "claId", "planId"])
-        if not checked:
-            self.write(message(False, "Bad Request"))
-            logger.info(message(False, "请求参数不对"))
-            return
+    def post(self):
         student_id = self.get_argument("uid", None)
         course_id = self.get_argument("claId", None)
         class_id = self.get_argument("planId", None)
@@ -347,9 +353,9 @@ class TimetableSelectHandle(BaseHandler):
                                     self.render("200.html",
                                                 entry=message(False, "Invoke interface reg_plan_status field"))
                                     return
-                                # data = {"rlt": True, "msg": "success",
-                                #         "data": {"claId": course_id, "uid": student_id, "planId": class_id}
-                                # }
+                                data = {"rlt": True, "msg": "success",
+                                        "data": {"claId": course_id, "uid": student_id, "planId": class_id}
+                                }
                                 self.commit()
                                 self.render("200.html", entry=message())
                                 return
@@ -453,11 +459,11 @@ class ClassChangeQueryHandle(BaseHandler):
     转班
 
     """
-    def get(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
          #TODO post ask
-        course_id = self.get_argument("c", None)
-        new_class_id = self.get_argument("np", None)
-        student_id = self.get_argument("u")
+        course_id = self.get_argument("claId", None)
+        new_class_id = self.get_argument("newPlan", None)
+        student_id = self.get_argument("uid")
         try:
             old_class = get_by_id(self.db, course_id=course_id, student_id=student_id)
             new_class = get_by_id(db=self.db, course_id=course_id, class_id=new_class_id)
@@ -494,25 +500,29 @@ class ClassChangeQueryHandle(BaseHandler):
                         try:
                             rs_data = courses(student_id, course_id, datas)
                             if not rs_data.rlt:
+                                logger.info("Invoke interface courses field")
                                 self.render("200.html", entry=message(False,  "Invoke interface courses field"))
                                 return
                         except:
+                            logger.info("Invoke interface courses field")
                             logger.info(traceback)
                             self.rollback()
                             self.render("200.html", entry=message(False,  "Invoke interface courses field"))
                             return
+
                         self.commit()
                         self.render("200.html", entry=message())
 
                     else:
                         self.rollback()
+                        logger.info("No data will be update when payed ")
                         raise tornado.web.HTTPError(404, log_message="No data will be update")
                 else:
                     self.render("200.html", entry=message(False,  "不可以再转班了"))
         except:
             logger.info(traceback.format_exc())
             self.rollback()
-            raise tornado.web.HTTPError(500, log_message="专版失败")
+            raise tornado.web.HTTPError(500, log_message="转班失败")
         finally:
             self.auto_commit()
 
@@ -572,11 +582,7 @@ class TimetableTimeChangeHandle(BaseHandler):
     调课,1.更新要调的课，插入新的课，记录操作
     /timetable/change/time?planId=&uid=&claId=&timeId&newTimeId
     """
-    def get(self):
-        checked = check_params(self.request.query_arguments, 5, ["uid", "claId", "planId", "timeId", "newTimeId"])
-        if not checked:
-            self.render("200.html", entry=message(False, "Bad Request"))
-            return
+    def post(self):
         student_id = self.get_argument("uid", None)
         course_id = self.get_argument("claId", None)
         class_id = self.get_argument("planId", None)

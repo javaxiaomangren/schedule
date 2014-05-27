@@ -1,53 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset=utf-8 />
-<title>学而思培优-选课</title>
+{% extends index-base.html %}
+{% block content %}
+        <div style="min-height: 450px; text-align: center;">
+            <h1>{{ entry.msg }}</h1>
 
-<link rel="stylesheet" href="{{ static_url('css/base.css') }}"/>
-<link href="{{ static_url('css/sk-main.css') }}" rel="stylesheet"/>
+            <h2 id="number"></h2>秒后自动关闭
+            <script>
+                var i = 3
+                window.setInterval(timeit, 1000)
+                var browserName=navigator.appName
+                if (browserName=="Netscape")
+                {
+                    function closeme()
+                        {
+                        window.open('','_self','');
+                        window.close();
+                        }
+                    }
+                else
+                {
+                    if (browserName=="Microsoft Internet Explorer")
+                    {
+                        function closynoshowsme()
+                        {
+                            window.opener = "whocares";
+                            window.close();
+                        }
+                    }
+                }
+                function timeit() {
+                    document.getElementById("number").innerHTML = i
+                    i --
+                }
+
+                window.setTimeout(closeme, 4000)
+
+            </script>
+        </div>
+{% end %}
+{% block extra_js %}
 
 
-<!--[if IE]>
-<script type="text/javascript" src="js/html5.js"></script>
-<![endif]-->
-<!--[if IE 6]> 
-<script type="text/javascript">var _belatedPNG=[".fixpng"];</script>
-<![endif]-->
-<!--[if IE 6]>
-<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
-<script type="text/javascript">
-(function(){
-var A=(typeof _belatedPNG!="undefined")?_belatedPNG:[];
-var B=[].concat(A).join(",");
-DD_belatedPNG.fix(B);
-})();
-</script>
-<![endif]-->
-
-</head>
-
-<body >
-  <!-- sk-header begin -->
-  <header id="sk-header">
-      <div class="sk-wrapper">
-         <div class="sk-top-bar">
-         </div>
-         <div class="clear"></div>
-         <h1 class="sk-logo"><span class="fn-left"><a href="timetable_list.html"><img src="{{ static_url('images/pylogo-sk.png') }}" width="229" height="56" alt="学而思培优-选课" title="学而思培优-选课"/></a></span><span class="fn-left sk-logo-font">选课</span></h1>
-         <div class="sk-search-bar">
-         </div>
-         <div class="clear"></div>
-      </div>
-</header>
-  <!-- sk-header end -->
-
-  <!-- sk-content end -->
-  <section class="sk-content relative">
-      <div class="bar-blue01"></div>
-      <section class="relative sk-wrapper mtop45">
-        <!-- search-bar begin -->
-        <div id="search-bar"></div>
-        <h1>{{ entry.msg }}</h1>
-</body>
-</html>
+{% end %}
