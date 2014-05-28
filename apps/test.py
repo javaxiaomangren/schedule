@@ -221,11 +221,11 @@ class AdminClassHandle(BaseHandler):
         self.db.executemany_rowcount(timetable, params)
         self.db.execute("insert into timetable2 select * from timetable")
         self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
-        # data = cla_build_status(course_id)
-        # msg = Row({"msg": "success"})
-        # if not data.rlt:
-        #     msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
-        #     print(msg.data)
+        data = cla_build_status(course_id)
+        msg = Row({"msg": "success"})
+        if not data.rlt:
+            msg = Row({"msg": "success, but failed invoke interface of cla_build_status"})
+            print(msg.data)
         self.render("200.html", entry=message())
 
 
@@ -236,6 +236,7 @@ class CourseDelHandle(BaseHandler):
         if not course_id:
             return self.write("need a course Id ")
         self.db.execute("DELETE FROM timetable WHERE course_id = %s ", course_id)
+        self.db.execute("DELETE FROM timetable2 WHERE course_id = %s ", course_id)
         self.db.execute("UPDATE course SET finished=0 WHERE claId=%s", course_id)
 
         self.render("200.html", entry=Row({"msg": "success"}))
