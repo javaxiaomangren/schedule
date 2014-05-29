@@ -50,8 +50,7 @@
                     </td>
                     <td>
                         {% if cc.can_time_change %}
-                        <a target="_blank"
-                           href="/timetable/change/time/list?planId={{ entry.class_id }}&uid={{ entry.student_id }}&claId={{ entry.course_id }}&timeId={{ cc.time_id }}">
+                        <a href="/timetable/change/time/list?planId={{ entry.class_id }}&uid={{ entry.student_id }}&claId={{ entry.course_id }}&timeId={{ cc.time_id }}">
                             <button type="button" class="btn btn-success btn-xs">调课</button>
                            </a>
                         {% end %}

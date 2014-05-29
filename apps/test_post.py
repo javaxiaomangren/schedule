@@ -65,5 +65,5 @@ def test_refund():
     test_api(base_data, "/api/class/refund", header)
 
 # test_select()
-test_payed()
-test_refund()
+# test_payed()
+# test_refund()
