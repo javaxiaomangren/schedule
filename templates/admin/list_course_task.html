@@ -29,7 +29,11 @@
     </thead>
        {% for entry in entries %}
            <tr>
-               <td>{{ entry.claId }}</td>
+               <td>
+                   <a target="_blank" href="/api/class/timetable/list?claId={{ entry.claId }}&uid=000">
+                       {{ entry.claId }}
+                   </a>
+               </td>
                <td>{{ entry.class_count }}</td>
                <td>{{ entry.every_hours }}</td>
                <td>{{ entry.start_date }}</td>
