@@ -159,29 +159,6 @@ teacher = """
 """
 
 
-@Route("/test/init", name="init data")
-class AdminClassHandle(BaseHandler):
-    def get(self, *args, **kwargs):
-        self.db.execute("truncate table course")
-        self.db.execute("truncate table teacher")
-        self.db.execute("truncate table timetable")
-        self.db.execute("truncate table timetable2")
-        self.db.execute("truncate table timetable_record")
-        self.db.execute("truncate table timetable_bak")
-        self.db.execute("truncate table records")
-
-        # courses = [(course_id, 10, 30, '2014-07-01', '2014-07-20', 2, '2014', course_id, 20 + course_id, 0)
-        #            for course_id in range(1, 10)]
-        # self.db.executemany(course, courses)
-
-        teachers = [(200000 + tid, 'Windy-' + str(tid), 'Yang', 'Good Teacher', 'xxx.img') for tid in range(1, 101)]
-        self.db.executemany(teacher, teachers)
-
-        timetable_baks = [(1000000 + th1[0], th1[0], th1[1], "MN001" + str(th1[0]), "2014-08-20", "10:00", 30, 0) for th1 in teachers]
-        self.db.executemany(timetable_bak, timetable_baks)
-        self.redirect("/test")
-
-
 @Route("/test/course", name="init course")
 class AdminClassHandle(BaseHandler):
     def get(self, *args, **kwargs):
@@ -200,7 +177,10 @@ class AdminClassHandle(BaseHandler):
         freq = row.frequency
         counts = (end - start).days
         params = []
-        class_id = max_class and max_class + 1 or 1
+        class_id = 1
+        if max_class:
+            class_id = max_class + 1
+
         for tid in range(10000, 10000 + persons * 2):
             class_room = "ClassRoom" + str(class_id)
             for c in range(0, counts + 1, freq):
