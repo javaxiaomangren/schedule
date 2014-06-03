@@ -86,8 +86,11 @@ def check_on_class(class_date, start_time):
     return s.days > 1 or (s.days == 1 and s.seconds > 60)
 
 
-def check_has_coming_class(row):
+def check_has_coming_class(db, row):
     for r in row:
+        temp = db.query("select * from temp where cla_id=%s, and uid=%s", r.course_id, r.class_id)
+        if temp:
+            return True
         if r.time_status == TimeStatus.PAYED and not check_on_class(r.class_date, r.start_time):
             return True
 
@@ -508,10 +511,7 @@ class ClassChangeQueryHandle(BaseHandler):
         try:
             old_class = get_by_id(self.db, course_id=course_id, student_id=student_id)
             #愿课程释放条件，该学生已经没有原课老师的任何没上课程（有24小时即将开始的课程），该课程24小时后应该释放
-            has_class = check_has_coming_class(old_class)
-            temp = self.db.query("select * from temp where cla_id=%s, and uid=%s", old_class.course_id, old_class.class_id)
-            if temp:
-                has_class = True
+            has_class = check_has_coming_class(self.db, old_class)
             turn_class = get_last_change(self.db, course_id, student_id)
             # if has_class:
             #     logger.info("not regular request from change class")
