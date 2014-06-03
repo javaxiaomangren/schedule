@@ -88,7 +88,7 @@ def check_on_class(class_date, start_time):
 
 def check_has_coming_class(db, row):
     for r in row:
-        temp = db.query("select * from temp where cla_id=%s, and uid=%s", r.course_id, r.class_id)
+        temp = db.query("select * from temp where cla_id=%s and uid=%s", r.course_id, r.student_id)
         if temp:
             return True
         if r.time_status == TimeStatus.PAYED and not check_on_class(r.class_date, r.start_time):
