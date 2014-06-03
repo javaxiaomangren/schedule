@@ -200,7 +200,7 @@ class AdminClassHandle(BaseHandler):
         freq = row.frequency
         counts = (end - start).days
         params = []
-        class_id = max_class and max_class or 1
+        class_id = max_class and max_class + 1 or 1
         for tid in range(10000, 10000 + persons * 2):
             class_room = "ClassRoom" + str(class_id)
             for c in range(0, counts + 1, freq):
@@ -219,7 +219,7 @@ class AdminClassHandle(BaseHandler):
 
             class_id += 1
         self.db.executemany_rowcount(timetable, params)
-        self.db.execute("insert into timetable2 select * from timetable")
+        self.db.execute("insert into timetable2 select * from timetable where course_id=%s", course_id)
         self.db.execute("UPDATE course SET finished=1 WHERE claId=%s", course_id)
         data = cla_build_status(course_id)
         msg = Row({"msg": "success"})
