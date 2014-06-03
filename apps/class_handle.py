@@ -447,8 +447,6 @@ class TimetableSelectHandle(BaseHandler):
                     return
                 finally:
                     self.auto_commit()
-
-
         else:
             logger.info("请求参数不对 student_id=%s, class_id=%s" % student_id, class_id)
             self.render("200.html", entry=message(False,  "请求参数不对"))
@@ -555,7 +553,7 @@ class ClassChangeQueryHandle(BaseHandler):
                         else:
                             #release now
                             if turn_class:
-                                rs = release_changed(self.db, course_id, turn_class.cla_id)
+                                rs = release_changed(self.db, course_id, turn_class.class_id)
                             else:
                                 rs = release_changed(self.db, course_id, old_class_id)
                             if not rs:
