@@ -1,38 +1,5 @@
 {% extends index-base.html %}
-{% block bar_content %}
- <form action="{{ args.get('url')}}" method="GET" class="form-inline" id="searchForm"  role="form">
-          <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
-          <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
-          <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
-          <div class="form-group">
-            <label class="sr-only" for="teacherName">老师</label>
-            <input type="text" class="form-control " id="teacherName" name="teacherName" placeholder="Teacher Name">
-          </div>
-          <div class="form-group">
-            <select name="timeInterval" id="timeInterval" class="form-control">
-              <option value="0" selected>----全天----</option>
-              <option value="05:00-09:00" disabled>----上午----</option>
-              <option value="05:00-09:00">05:00-09:00</option>
-              <option value="09:00-12:00">09:00-12:00</option>
-              <option value="12:00-23:00" disabled>----下午----</option>
-              <option value="12:00-14:00">12:00-14:00</option>
-              <option value="14:00-18:00">14:00-18:00</option>
-              <option value="18:00-20:00">18:00-20:00</option>
-              <option value="20:00-23:00">20:00-23:00</option>
-            </select>
-          </div>
-          <div class="form-group"><button type="submit" class="btn btn-info">查询</button></div>
-        </form>
-        <script language="JavaScript" type="text/javascript">
-          value = "{{ args.get('timeInterval', '') }}"
-          options = document.getElementById("timeInterval")
-          for(var i = 0; i < options.length; i++){
-              if (options[i].value === value){
-                  options[i].selected = true
-              }
-          }
-        </script>
-{% end %}
+<!--content bar-->
 
 {% block content %}
    <div class="content" style="min-height: 500px">
@@ -42,33 +9,25 @@
         </div>
     {% else %}
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>老师</th>
-              <th>时间</th>
-              <th>课时</th>
-              <th>日期</th>
-              <th>预约</th>
-            </tr>
-          </thead>
+  <table class="table table-bordered table-striped" style="width:96%; margin-left:2%; margin-top:10px;">
+      <thead>
+        <tr style="height:70px; background-color:#333;">
+          <th><span class="glyphicon glyphicon-user" style="margin-right:5px;"></span>老师<br>Teacher</th>
+          <th><span class="glyphicon glyphicon-time" style="margin-right:5px;"></span>时间<br>Time</th>
+          <th><span class="glyphicon glyphicon-sound-5-1" style="margin-right:5px;"></span>日期<br>Date</th>
+          <th><span class="glyphicon glyphicon-hand-up" style="margin-right:5px;"></span>操作<br>Operation</th>
+        </tr>
+      </thead>
           <tbody>
           {% for entry in entries %}
             <tr>
-              <td class="btn-group-lg">{{ entry.teacher_name }} </td>
-              <td>{{ entry.start_time[:-3] }}</td>
-              <td>{{ entry.period }}分钟</td>
-                <td>
-
-                    <button type="button" id="idBtn" class="btn btn-warning btn-xs">2014年</button>
-                    {% for c in entry.classes %}
-                        <button type="button" class="btn btn-primary btn-xs">{{ c.date[5:].replace("-", ".") }}</button>
-                    {% end %}
-              </td>
+              <td class="btn-group-lg">{{ entry.shortname }} </td>
+              <td>{{ str(entry.start_time)[:-3] }}</td>
+              <td>{{ entry.description }}</td>
               <td>
                 <button class="btn btn-default btn-xs active"
-                        onclick="show_model('确实要转到{{ entry.teacher_name }}老师, {{ entry.time_desc }},的这个班级吗？',
-                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.class_id }}')">转班</button>
+                        onclick="show_model('确实要转到{{ entry.shortname }}老师, {{ entry.description }},的这个班级吗？',
+                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.time_id }}')">调课</button>
               </td>
             </tr>
             {% end %} <!-- end for loop -->
@@ -79,7 +38,8 @@
       <form hidden="true" action="/timetable/change" id="selectForm" method="POST">
               <input type="hidden" id="s_uid" name="uid" value=""/>
               <input type="hidden" id="s_claId" name="claId" value=""/>
-              <input type="hidden" id="s_planId" name="newPlan" value=""/>
+              <input type="hidden" id="s_planId" name="newTimeId" value=""/>
+              <input type="hidden" id="s_oldPlan" name="oldTimeId}" value="{{oldTimeId}}"/>
       </form>
 
     </div>

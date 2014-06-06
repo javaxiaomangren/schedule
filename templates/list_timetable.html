@@ -1,27 +1,28 @@
 {% extends index-base.html %}
 {% block bar_content %}
- <form action="/api/class/timetable/list" method="GET" class="form-inline" id="searchForm"  role="form">
+  <form action="/api/class/timetable/list" method="GET" class="form-inline" id="searchForm"  role="form">
           <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
           <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
           <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
-          <div class="form-group">
+          <input type="hidden" id="action" name="action" value="{{ action }}"/>
+          <div class="form-group" style="margin-top:8px; margin-left:10px; ">
             <label class="sr-only" for="teacherName">老师</label>
-            <input type="text" class="form-control " id="teacherName" name="teacherName" placeholder="Teacher Name">
+            <input type="text" class="form-control  input-sm " id="teacherName" name="teacherName" placeholder="Teacher Name">
           </div>
-          <div class="form-group">
-            <select name="timeInterval" id="timeInterval" class="form-control">
-              <option value="0" selected>----全天----</option>
-              <option value="05:00-09:00" disabled>----上午----</option>
-              <option value="05:00-09:00">05:00-09:00</option>
-              <option value="09:00-12:00">09:00-12:00</option>
-              <option value="12:00-23:00" disabled>----下午----</option>
-              <option value="12:00-14:00">12:00-14:00</option>
-              <option value="14:00-18:00">14:00-18:00</option>
-              <option value="18:00-20:00">18:00-20:00</option>
-              <option value="20:00-23:00">20:00-23:00</option>
-            </select>
+          <div class="form-group"  style="margin-top:8px;margin-left:5px;">
+            <select name="timeInterval" id="timeInterval" class="form-control input-sm">
+            <option value="0" selected>----全天----</option>
+            <option value="05:00-09:00" disabled>----上午----</option>
+            <option value="05:00-09:00">05:00-09:00</option>
+            <option value="09:00-12:00">09:00-12:00</option>
+            <option value="12:00-23:00" disabled>----下午----</option>
+            <option value="12:00-14:00">12:00-14:00</option>
+            <option value="14:00-18:00">14:00-18:00</option>
+            <option value="18:00-20:00">18:00-20:00</option>
+            <option value="20:00-23:00">20:00-23:00</option>
+           </select>
           </div>
-          <div class="form-group"><button type="submit" class="btn btn-info">查询</button></div>
+          <div class="form-group" style="margin-top:8px;margin-left:5px;"><button type="submit" class="btn btn-info btn-xs">查询</button></div>
         </form>
         <script language="JavaScript" type="text/javascript">
           value = "{{ args.get('timeInterval', '') }}"
@@ -36,64 +37,81 @@
 
 {% block content %}
    <div class="container">
+    {% if selected %}
+        <div style="text-align: center;font-size: 15px; margin-top: 5px; margin-bottom: 5px">
+            您已经选了：{{ selected.shortname + "  " + selected.fullname }}老师 {{ selected.description }}
+        </div>
+    {% end %}
     {% if not entries %}
         <div style="min-height: 500px">
             <center><h3>没有可选课表</h3></center>
         </div>
     {% else %}
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>老师</th>
-              <th>时间</th>
-              <th>课时</th>
-              <th>日期</th>
-              <th>预约</th>
-            </tr>
-          </thead>
+      <table class="table table-bordered table-striped" style="width:96%; margin-left:2%; margin-top:10px;">
+      <thead>
+        <tr style="height:70px; background-color:#333;">
+          <th><span class="glyphicon glyphicon-user" style="margin-right:5px;"></span>老师<br>Teacher</th>
+          <th><span class="glyphicon glyphicon-time" style="margin-right:5px;"></span>时间<br>Time</th>
+          <th><span class="glyphicon glyphicon-sound-5-1" style="margin-right:5px;"></span>日期<br>Date</th>
+          <th><span class="glyphicon glyphicon-hand-up" style="margin-right:5px;"></span>操作<br>Operation</th>
+        </tr>
+      </thead>
           <tbody>
+          {% set has_teacher = ["c101", "c301", "m201", "m202", "m203", "m204", "m205", "m206", "m210", "Josemaria"] %}
           {% for entry in entries %}
             <tr>
-              <td class="btn-group-lg">{{ entry.teacher_name }} </td>
-              <td>{{ entry.start_time[:-3] }}</td>
-              <td>{{ entry.period }}分钟</td>
+              <td class="btn-group-lg">
+                  {% if entry.teacher in has_teacher %}
+                        <a target="_blank" href="/teacher?tid={{entry.teacher }}">{{ entry.shortname }}</a>
+                  {% else %}
+                  {{ entry.shortname }}
+                  {% end %}
+              </td>
+              <td>{{ str(entry.start_time)[:-3] }}</td>
                 <td>
-
-                    <button type="button" id="idBtn" class="btn btn-warning btn-xs">2014年</button>
-                    {% for c in entry.classes %}
-                        <button type="button" class="btn btn-primary btn-xs">{{ c.date[5:].replace("-", ".") }}</button>
-                    {% end %}
+                    {{ entry.description }}
+                    <!--<button type="button" id="idBtn" class="btn btn-warning btn-xs">2014年</button>-->
+                    <!--{% for c in entry.id_dates %}-->
+                        <!--<button type="button" class="btn btn-primary btn-xs">{{ c[1][5:].replace("-", ".") }}</button>-->
+                    <!--{% end %}-->
               </td>
               <td>
-                    {% if not selected %}
-                        <button class="btn btn-default btn-xs active"
-                                onclick="show_model('您约的是:{{ entry.teacher_name }}老师, {{ entry.time_desc }},确定要约这个时间吗？',
-                                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.class_id }}')">约课</button>
-                    {% else %}
-                        <button class="btn btn-default btn-xs active"
-                                onclick="show_model('    您已经选择了{{ selected.teacher_name }}的{{ selected.time_desc }}的课程，确实要转到{{ entry.teacher_name }}老师, {{ entry.time_desc }},的这个班级吗？',
-                                 '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.class_id }}')">重选</button>
-                    {% end %} <!--end if selected-->
-                <!--<button type="button" class="btn btn-default btn-xs active">约课</button>-->
+                {% if action == '2' %}
+                     <button class="btn btn-default btn-xs active"
+                        onclick="show_model2('您约的是:{{ entry.shortname }} {{ entry.fullname }} 老师, {{ entry.description }},确定要约这个时间吗？',
+                        '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.workroom }}')">
+                            转班
+                    </button>
+                  {% else %}
+                <button class="btn btn-default btn-xs active"
+                    onclick="show_model('您约的是:{{ entry.shortname }} {{ entry.fullname }} 老师, {{ entry.description }},确定要约这个时间吗？',
+                    '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.workroom }}')">
+                        {% if not selected %}
+                                约课
+                        {% else %}
+                                重选
+                        {% end %}
+                </button>
+                {% end %}
               </td>
             </tr>
             {% end %} <!-- end for loop -->
            </tbody>
         </table>
         {% include model.html %}
-        <form hidden="true" action="/timetable/select" id="selectForm" method="POST">
+          <form hidden="true" action="/timetable/select" id="selectForm" method="POST">
               <input type="hidden" id="s_uid" name="uid" value=""/>
               <input type="hidden" id="s_claId" name="claId" value=""/>
-              <input type="hidden" id="s_planId" name="planId" value=""/>
+              <input type="hidden" id="s_planId" name="workroom" value=""/>
           </form>
     {% end %} <!-- end if entries else -->
        </div>
    </div> <!--END CONTAINER-->
-     {% include pager.html %}
 {% end %} <!-- end block -->
 <!--    page    -->
-
+{% block pager %}
+    {% include pager.html %}
+{%end %}
 
 {% block extra_js %}
 <script type="text/javascript">
@@ -105,7 +123,16 @@
         document.getElementById("s_claId").value= claId
         document.getElementById("s_planId").value= planId
         document.getElementById("message").innerHTML ="<p class='text-left' style='font-size:14px; color:#333;'>" + msg + "</p>"
-
+        $('#myModal').modal({
+            keyboard:false
+        })
+    }
+   function show_model2(msg, uid, claId, planId) {
+        document.getElementById("s_uid").value= uid
+        document.getElementById("s_claId").value= claId
+        document.getElementById("s_planId").value= planId
+        document.getElementById("message").innerHTML ="<p class='text-left' style='font-size:14px; color:#333;'>" + msg + "</p>"
+        document.forms[1].action = "/timetable/change"
         $('#myModal').modal({
             keyboard:false
         })

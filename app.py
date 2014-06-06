@@ -8,16 +8,16 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-import apps.class_handle
+import apps.view_handle
 import apps.admin_handles
-import apps.test
 from tornado.options import define, options
 from apps.entry import GradeEntry
 
 from apps.utils import Route
+from apps.db_model import set_model
 
 
-define("port", default=8081, help="run on the given port", type=int)
+define("port", default=8088, help="run on the given port", type=int)
 define("mysql_host", default="127.0.0.1:3306", help="schedule database host")
 define("mysql_database", default="schedule", help="schedule database name")
 define("mysql_user", default="root", help="schedule database user")
@@ -31,7 +31,7 @@ define("debug", default=True, help="Show all routed URLs", type=bool)
 class Application(tornado.web.Application):
     def __init__(self, mysql_database=None):
         settings = dict(
-            site_title=u"环迅教育－约课系统",
+            site_title=u"环讯教育－约课系统",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"GradeEntry": GradeEntry},
@@ -48,6 +48,7 @@ class Application(tornado.web.Application):
             user=options.mysql_user, password=options.mysql_password)
         # self.solr_path = options.solr_path
         self.static_path = settings["static_path"]
+        self.db_model = set_model(self.db)
 
 #initialize handles
 # __import__('apps', globals(), locals(), ["admin_handles" "class_handle", "test", "entry"], -1)
@@ -71,6 +72,6 @@ def main():
     except KeyboardInterrupt:
         pass
 
-
+#TODO 自动考勤
 if __name__ == "__main__":
     main()

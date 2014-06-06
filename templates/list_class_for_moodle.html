@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课表</title>
+<link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ static_url('css/new.css') }}" rel="stylesheet">
+
+</head>
+<body>
+
+<div id="content" style="margin: 0, auto" >
+    <table class="table table-bordered table-striped" style="width:500px;">
+      <thead>
+        <tr style="background-color:#333;">
+            <th><span class="glyphicon glyphicon-sound-5-1" style="margin-right:5px;"></span>日期</th>
+            <th><span class="glyphicon glyphicon-time" style="margin-right:5px;"></span>时间</th>
+          <th><span class="glyphicon glyphicon-refresh" style="margin-right:5px;"></span>进度</th>
+        </tr>
+      </thead>
+      <tbody style="color:#666;">
+         {% for entry in entries %}
+           <tr>
+               <td>{{ entry.class_date }}</td>
+               <td>{{ entry.start_time }}</td>
+               <td>{{ CheckRoll.NAME.get(entry.check_roll) }}</td>
+           </tr>
+        {% end %}
+
+      </tbody>
+    </table>
+</div><!--end content-->
+</body>
+</html>

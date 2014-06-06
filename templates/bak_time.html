@@ -1,40 +1,4 @@
 {% extends index-base.html %}
-{% block bar_content %}
- <form action="/timetable/change/time/list" method="GET" class="form-inline" id="searchForm"  role="form">
-          <input type="hidden" id="claId" name="claId" value="{{ args.get('claId') }}"/>
-          <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
-          <input type="hidden" id="planId" name="planId" value="{{ args.get('planId') }}"/>
-          <input type="hidden" id="timeId" name="timeId" value="{{ args.get('timeId', '') }}"/>
-          <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
-          <div class="form-group">
-            <label class="sr-only" for="teacherName">老师</label>
-            <input type="text" class="form-control " id="teacherName" name="teacherName" placeholder="Teacher Name">
-          </div>
-          <div class="form-group">
-            <select name="timeInterval" id="timeInterval" class="form-control">
-              <option value="0" selected>----全天----</option>
-              <option value="05:00-09:00" disabled>----上午----</option>
-              <option value="05:00-09:00">05:00-09:00</option>
-              <option value="09:00-12:00">09:00-12:00</option>
-              <option value="12:00-23:00" disabled>----下午----</option>
-              <option value="12:00-14:00">12:00-14:00</option>
-              <option value="14:00-18:00">14:00-18:00</option>
-              <option value="18:00-20:00">18:00-20:00</option>
-              <option value="20:00-23:00">20:00-23:00</option>
-            </select>
-          </div>
-          <div class="form-group"><button type="submit" class="btn btn-info">查询</button></div>
-        </form>
-        <script language="JavaScript" type="text/javascript">
-          value = "{{ args.get('timeInterval', '') }}"
-          options = document.getElementById("timeInterval")
-          for(var i = 0; i < options.length; i++){
-              if (options[i].value === value){
-                  options[i].selected = true
-              }
-          }
-        </script>
-{% end %}
 
 {% block content %}
    <div class="container">
@@ -44,68 +8,53 @@
         </div>
     {% else %}
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>老师</th>
-              <th>时间</th>
-              <th>课时</th>
-              <th>日期</th>
-              <th>调课</th>
-            </tr>
-          </thead>
+       <table class="table table-bordered table-striped" style="width:96%; margin-left:2%; margin-top:10px;">
+      <thead>
+        <tr style="height:70px; background-color:#333;">
+          <th><span class="glyphicon glyphicon-user" style="margin-right:5px;"></span>老师<br>Teacher</th>
+          <th><span class="glyphicon glyphicon-time" style="margin-right:5px;"></span>时间<br>Time</th>
+          <th><span class="glyphicon glyphicon-sound-5-1" style="margin-right:5px;"></span>日期<br>Date</th>
+          <th><span class="glyphicon glyphicon-hand-up" style="margin-right:5px;"></span>操作<br>Operation</th>
+        </tr>
+      </thead>
           <tbody>
           {% for entry in entries %}
             <tr>
-                <td>{{ entry.teacher_name }} </td>
-                <td>{{ entry.start_time }} </td>
-                <td>{{ entry.period }} </td>
-                <td>{{ entry.class_date }} </td>
-                <td>
-                    <button class="btn btn-success btn-xs active"
-                            onclick="show_model('确实要将:{{ old_entry.teacher_name }}老师，{{ old_entry.class_date }} {{old_entry.start_time}} 的课程, 调至 {{ entry.teacher_name}} 老师 {{ entry.class_date }} {{ entry.start_time }} 吗？您只能调课一次！！！',
-                     '{{old_entry.class_id }}', '{{ old_entry.student_id }}', '{{ old_entry.course_id }}',
-                     '{{ old_entry.time_id }}','{{entry.id }}')">选择</button></td>
+              <td class="btn-group-lg">{{ entry.shortname }} </td>
+              <td>{{ str(entry.start_time)[:-3] }}</td>
+              <td>{{ entry.description }}</td>
+              <td>
+                <button class="btn btn-default btn-xs active"
+                        onclick="show_model('确实要转到{{ entry.shortname }}老师, {{ entry.description }},的这个班级吗？',
+                 '{{ args.get('uid') }}', '{{ args.get('claId') }}','{{ args.get('oldTimeId') }}', '{{entry.time_id }}')">调课</button>
+              </td>
             </tr>
-           {% end %} <!-- end for loop -->
+            {% end %} <!-- end for loop -->
            </tbody>
         </table>
         {% include model.html %}
          <form hidden="true" action="/timetable/change/time" id="selectForm" method="POST">
-          <input type="hidden" id="s_planId" name="planId" value=""/>
           <input type="hidden" id="s_uid" name="uid" value=""/>
           <input type="hidden" id="s_claId" name="claId" value=""/>
-          <input type="hidden" id="s_timeId" name="timeId" value=""/>
+          <input type="hidden" id="s_oldTimeId" name="oldTimeId" value=""/>
           <input type="hidden" id="s_newTimeId" name="newTimeId" value=""/>
+
         </form>
 
     </div>
-    {% end %} <!-- end if entries else -->
-  </div> <!--END CONTAINER-->
-{% include pager.html %}
-{% end %} <!-- end block -->
-<div class="pagination-fy container">
-    <ul class="pager">
-     <li><a href="#">上一页</a></li>
-     <li><a href="#">1</a></li>
-     <li><a href="#">2</a></li>
-     <li><a href="#">3</a></li>
-     <li><a href="#">4</a></li>
-     <li><a href="#">5</a></li>
-     <li><a href="#">下一页</a></li>
-   </ul>
-</div>
+{% end %} <!-- end if entries else -->
+{% end %}
+
 
 {% block extra_js %}
 <script type="text/javascript">
 //    $('#myModal').on('hidden.bs.modal', function (e) {
 //      alert("hidden")
 //    })
-    function show_model(msg, planId, uid, claId, timeId, newTimeId) {
-        document.getElementById("s_planId").value= planId
+    function show_model(msg, uid, claId, oldTimeId, newTimeId) {
         document.getElementById("s_uid").value= uid
         document.getElementById("s_claId").value= claId
-        document.getElementById("s_timeId").value= timeId
+        document.getElementById("s_oldTimeId").value= oldTimeId
         document.getElementById("s_newTimeId").value= newTimeId
         document.getElementById("message").innerHTML ="<p class='text-left' style='font-size:14px; color:#333;'>" + msg + "</p>"
 
@@ -114,7 +63,7 @@
         })
     }
     function submit() {
-        document.forms[1].submit()
+        document.forms[0].submit()
     }
 
     function search2(page) {

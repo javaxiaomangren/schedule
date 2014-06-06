@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4>课表</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <!--<colgroup>-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-9">-->
+    <!--</colgroup>-->
+    <tbody>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Student_Id</th>
+        <th>老师</th>
+        <th>WorkRoom</th>
+        <th>日期</th>
+        <th>时间</th>
+        <th>类型</th>
+        <th>考勤</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+       {% for entry in entries %}
+           <tr>
+               <td>{{ entry.time_id }}</td>
+               <td>{{ entry.uid }}</td>
+               <td>{{ entry.shortname }}</td>
+               <td>{{ entry.workroom }}</td>
+               <td>{{ entry.class_date }}</td>
+               <td>{{ entry.start_time }}</td>
+               {% if entry.class_type == 7 %}
+                    <td>试听课</td>
+               {% else %}
+                    <td>正常课程</td>
+               {% end %}
+               <td>{{ CheckRoll.NAME.get(entry.check_roll) }}</td>
+               <td>
+                   <a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.ABSENT}}">缺课</a>
+                    <a target="_blank"  href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LATE}}">迟到</a>
+                    <a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.FINISHED}}">完成</a>
+                    <a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LOCKED}}">预约考勤</a>
+                    <a target="_blank"  href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.NORMAL}}">正常</a>
+               </td>
+           </tr>
+        {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}

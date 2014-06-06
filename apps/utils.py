@@ -1,17 +1,16 @@
 #coding:UTF-8
-from collections import OrderedDict
-from tornado.web import gen_log as logger
-
 __author__ = 'windy'
-#!/usr/bin/env python
-import tornado.web
 import urllib
 import urllib2
-from urllib2 import Request, urlopen
 import httplib
 import ujson
-import hashlib
+import traceback
+import smtplib
+import torndb
+import tornado.web
 from torndb import Row
+from tornado.web import gen_log
+from urllib2 import Request, urlopen
 
 
 class Route(object):
@@ -75,11 +74,6 @@ def post(url, data):
     return response.read()
 
 
-def get_with_header(headers, url):
-    req = Request(url, headers=headers)
-    return urlopen(req).read()
-
-
 def post2(data):
     conn = httplib.HTTPConnection('10.19.1.130', 10087)
     headers = {'Content-type': 'text/plain;charset=GBK'}
@@ -89,100 +83,72 @@ def post2(data):
     resp_data = response.read().decode('GBK').encode('UTF-8')
     return Row(ujson.loads(resp_data))
 
-_plat = "php"
-_sys = "testing"
-url_prefix = "http://ft.speiyou.com"
-# ft.speiyou.com  59.151.117.147
+
+def get_mysql():
+    return torndb.Connection(
+        host="localhost", database="schedule",
+        user="root", password="")
 
 
-def mk_md5(summary, plat=_plat, sys=_sys, key="com.xes.employee"):
-    s = summary + plat + sys + key
-    #TODO md5 cache
-    return hashlib.md5(s.encode("UTF-8")).hexdigest()
+def notify_me(func):
+    """send a email where exceptions occur"""
+
+    def wrapped(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except:
+            _sendmail("message==>%s\n\n\nHost Info:%s " % (traceback.format_exc(), "save deep and rti"),
+                      'Exception When Run Function %s' % func.func_name)
+
+    return wrapped
 
 
-def cla_build_status(cla_id):
+def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
+    """send a email with msg and subject
+    :param msg:
+    :param subject:
     """
-    http://phpapi.cakephp.com/huanxun/v1/cla_build_status.json
-    修改班级构建状态
-    """
-    #TODO 开班后调用
-    url = url_prefix + "/huanxun/v1/cla_build_status.json?claId=%s"
-    summary = cla_id
-    md5 = mk_md5(summary)
-    logger.info("Invoke %s ", url)
-    x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % cla_id)
-    return Row(ujson.loads(x))
+    try:
+        frm_user = 'ixdba_tuan800@163.com'
+        frm_passwd = 'tgxstbbA201'
+
+        # smtpserver = smtplib.SMTP("smtp.gmail.com",587)
+        smtpserver = smtplib.SMTP("smtp.163.com", 25)
+
+        smtpserver.ehlo()
+        smtpserver.starttls()
+        smtpserver.ehlo()
+        smtpserver.login(frm_user, frm_passwd)
+        header = 'To:%s\nFrom:%s\nSubject:%s\n' % (to, frm_user, subject)
+        message = header + '\n %s\n\n' % msg.encode("utf-8")
+        smtpserver.sendmail(frm_user, to, message)
+        smtpserver.close()
+    except:
+        gen_log.info(traceback.format_exc())
 
 
-def reg_plan_status(uid, cla_id):
-    """
-    更新报课的排课状态接口：
-        http://phpapi.cakephp.com/huanxun/v1/reg_plan_status.json
-    """
-    summary = uid + cla_id
-    md5 = mk_md5(summary)
-    url = url_prefix + "/huanxun/v1/reg_plan_status.json?uid=%s&claId=%s"
-    logger.info("Invoke %s ", url)
-
-    x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cla_id))
-    return Row(ujson.loads(x))
+def sendmail(msg='', subject=''):
+    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
+    for m in mails:
+        _sendmail(msg=msg, subject=subject, to=m)
 
 
-def attendances(uid, cla_id, cuc_id, status):
-    """
-    # 修改考勤状态接口：
-    uid:
-    cuc_id:课时Id
-    status:考勤状态
-    # http://phpapi.cakephp.com/huanxun/v1/attendances.json
-    """
-    # status = '0'
-    # cuc_id = "16"
-    summary = uid + cuc_id + status
-    md5 = mk_md5(summary)
-    url = url_prefix + "/huanxun/v1/attendances.json?uid=%s&cucId=%s&claId=%s&Status=%s"
-    logger.info("Invoke %s ", url)
-    x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cuc_id, cla_id, status))
-    return Row(ujson.loads(x))
-
-#0未考勤，1完成， 2预考勤
-# print attendances('172001', "ff808081462d55560146415cc0770165", '499', '0').data
-# print attendances('172001', "ff808081462d55560146415cc0770165", '500', '2').data
+class CheckRoll(object):
+    NORMAL = 0
+    FINISHED = 1
+    LOCKED = 2
+    ABSENT = 3
+    LATE = 4
+    CHANGE = 6
+    TRAIL = 7
+    NAME = {
+        0: "等待上课",
+        1: "完成",
+        2: "预考勤",
+        3: "缺席",
+        4: "迟到",
+        6: "已调课",
+        7: "试听课程",
+    }
 
 
-def sms(uid, content):
-    """
-    短信接口：
-
-    """
-    md5 = mk_md5(uid)
-    url = url_prefix + "/huanxun/v1/sms.json?uid=%s&content=%s"
-    logger.info("Invoke %s ", url)
-    x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, urllib.quote(content)))
-    return Row(ujson.loads(x))
-
-
-def courses(uid, cla_id, datas):
-    """
-    修改课程信息接口：
-        http://phpapi.cakephp.com/huanxun/v1/courses.json
-    datas: [dict, dict] 原课程和目标课程的对应关系
-    """
-
-    result = dict()
-    result["uid"] = uid
-    result["claId"] = cla_id
-    data_str = ujson.dumps(datas)
-    result["datas"] = data_str
-    url = url_prefix + "/huanxun/v1/courses.json"
-
-    summary = uid + cla_id
-    md5 = mk_md5(summary)
-    logger.info("Invoke %s ", url)
-    x = post_u8(url, result, {"sys": _sys, "plat": _plat, "md5": md5})
-    return Row(ujson.loads(x))
-
-    # test03()
-    # test04()
-    # test05()

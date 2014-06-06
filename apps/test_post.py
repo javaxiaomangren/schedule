@@ -1,7 +1,7 @@
 __author__ = 'windy'
 import urllib2
 import ujson
-from utils import mk_md5
+from http_msg import mk_md5
 
 
 def post(url, data, headers):
@@ -12,9 +12,9 @@ def post(url, data, headers):
     response = opener.open(req, data)
     return response.read()
 
-url_prefix = "http://localhost:8081"
-uid = "80000000"
-claId = "8a8185ce4613b5b6014613cb4fcc0017"
+url_prefix = "http://localhost:8088"
+uid = "1234999"
+claId = "ff80808146463d430146476fad76003d"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
 sys = "testing"
@@ -53,6 +53,7 @@ def test_select():
 def test_release():
     header["md5"] = mk_md5(uid+claId, plat, sys)
     test_api(base_data, "/api/class/release", header)
+# test_release()
 
 
 def test_payed():
@@ -65,5 +66,5 @@ def test_refund():
     test_api(base_data, "/api/class/refund", header)
 
 # test_select()
-# test_payed()
+test_payed()
 # test_refund()

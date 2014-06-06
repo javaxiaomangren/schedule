@@ -50,3 +50,10 @@
     email 存在，并且有token登陆，不存在创建用户，登陆
 
     域名验证：可配置
+
+dependence:
+tornado
+torndb
+ujson
+python-mysqldb
+

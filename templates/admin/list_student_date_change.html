@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block location_title %}
+<h4>调课信息</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <!--<colgroup>-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-9">-->
+    <!--</colgroup>-->
+    <tbody>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>学生ID</th>
+      <th>原教室</th>
+      <th>目标教室</th>
+      <th>原时间</th>
+      <th>目标时间</th>
+      <th>操作</th>
+      <th>操作时间</th>
+      <th>处理情况</th>
+    </tr>
+    </thead>
+       {% for entry in entries %}
+           <tr>
+               <td>{{ entry.id }}</td>
+               <td>{{ entry.uid }}</td>
+               <td>{{ entry.src_workroom }}</td>
+               <td>{{ entry.target_workroom }}</td>
+               <td>{{ entry.src_date }}</td>
+               <td>{{ entry.target_date }}</td>
+               <td>{{ entry.get('operate_by', 'student') }}</td>
+               <td>{{ entry.lastupdate }}</td>
+               <td>{{ entry.handle }}</td>
+           </tr>
+        {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}

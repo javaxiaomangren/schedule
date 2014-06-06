@@ -4,6 +4,18 @@
 {% end %}
 {% block main %}
 <div id="Main">
+    <form action="">
+        学生id<input type="text"/>
+        学生名字<input type="text"/>
+        操作时间<input type="text"/>
+        <select name="" id="">
+            <option value="">预选</option>
+            <option value="">支付</option>
+            <option value="">转班</option>
+        </select>
+        <button type="submit">查询</button>
+    </form>
+    <hr />
   <table class="table table-hover">
     <!--<colgroup>-->
       <!--<col class="col-xs-1">-->
@@ -14,30 +26,42 @@
     <tbody>
     <thead>
     <tr>
-      <th>班级Id</th>
-      <th>拍课ID</th>
-      <th>学生Id</th>
-      <th>老师id</th>
-      <th>老师名称</th>
+      <th>学生ID</th>
+      <th>学生姓名</th>
+      <th>老师</th>
+      <th>班级</th>
+      <th>WorkRoom</th>
+      <th>VirtualStu</th>
       <th>上课时间</th>
-      <th>课程状态</th>
-      <th>调课记录</th>
-      <th>转班记录</th>
-      <th>操作</th>
+      <th>课表</th>
+      <th>转班</th>
+      <th>调课</th>
+      <th>操作时间</th>
+      <th>处理</th>
     </tr>
     </thead>
        {% for entry in entries %}
            <tr>
-               <td>{{ entry.course_id }}</td>
-               <td>{{ entry.class_id }}</td>
-               <td>{{ entry.student_id }}</td>
-               <td>{{ entry.teacher_id }}</td>
-               <td>{{ entry.teacher_name }}</td>
-               <td>{{ entry.time_desc }}</td>
-               <td>{{ TimeStatus.NAME[entry.class_status] }}</td>
-               <td>{{ entry.time_changed }}</td>
-               <td>{{ entry.class_changed }}</td>
-               <td>&nbsp;</td>
+               <td><a target="_blank" href="/api/class/manage?uid={{ entry.uid }}&claId={{entry.cla_id }}">{{ entry.uid}}</a></td>
+               <td>{{ entry.uname}}</td>
+               <td>{{ entry.shortname }}</td>
+               <td><a href="javascript:void(0)" title="{{ entry.class_name }}">{{ entry.class_name[0:6] }}</a></td>
+               <td>{{ entry.workroom }}</td>
+               <td>{{ entry.virtual_student }}</td>
+               <td><a href="javascript:void(0)" title="{{ entry.description}}">{{ entry.description[0:6] }}</a></td>
+               {% if entry.deal == 'selected' %}
+                    <td>待支付</td>
+               {% else %}
+                    <td><a href="/admin/query/student/classtable?uid={{entry.uid}}&cla_id={{entry.cla_id}}">课表</a></td>
+               {% end %}
+               <td><a href="/admin/student/change/class?select_id={{entry.id}}">转班记录</a></td>
+               <td><a href="/admin/student/change/date?select_id={{entry.id}}">调课</a></td>
+               <td>{{ entry.lastupdate }}</td>
+               {%if entry.handle == 'Y'%}
+                    <td>Y</td>
+               {%else%}
+                <td><a href="" title="标记为已经处理">{{ entry.handle }}</a></td>
+               {%end%}
            </tr>
         {% end %}
     </tbody>

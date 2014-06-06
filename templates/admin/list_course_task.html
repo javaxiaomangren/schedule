@@ -14,7 +14,7 @@
     <tbody>
     <thead>
     <tr>
-      <th>班级Id</th>
+      <th>班级</th>
       <th>总课次</th>
       <th>课时</th>
       <th>开课时间</th>
@@ -30,8 +30,9 @@
        {% for entry in entries %}
            <tr>
                <td>
-                   <a target="_blank" href="/api/class/timetable/list?claId={{ entry.claId }}&uid=000">
-                       {{ entry.claId }}
+                   <a target="_blank" title="{{ entry.class_name }}"
+                      href="/api/class/timetable/list?claId={{ entry.claId }}&uid=1234">
+                       {{ entry.class_name[0:10] + '......' }}
                    </a>
                </td>
                <td>{{ entry.class_count }}</td>
@@ -45,9 +46,9 @@
                <td>{{ entry.create_date }}</td>
                <td>
                    {% if entry.finished %}
-                   <a href="/test/course/del?claId={{ entry.claId }}" class="link">撤销</a>
+                   <p>已经开班</p>
                    {% else %}
-                   <a class="link" href="/test/course?claId={{ entry.claId }}">开班</a>
+                   <a class="link" href="/course/added?claId={{ entry.claId }}">开班</a>
                    {% end %}
                </td>
            </tr>
