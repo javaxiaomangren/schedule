@@ -243,7 +243,7 @@ class BakTimeListHandle(BaseHandler):
         cla_id = self.get_argument("claId", None)
         #TODO page
         datas = self.db.query("SELECT ws.*, t.shortname "
-                              "FROM schedule.mid_workroom_single ws "
+                              "FROM mid_workroom_single ws "
                               "join mid_teacher t on t.id=ws.teacher "
                               "where status='normal' and  ws.cla_id=%s", cla_id)
         self.render("bak_time.html", entries=datas,
