@@ -31,7 +31,7 @@ define("debug", default=True, help="Show all routed URLs", type=bool)
 class Application(tornado.web.Application):
     def __init__(self, mysql_database=None):
         settings = dict(
-            site_title=u"环讯教育－约课系统",
+            site_title=u"培优网－约课系统",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"GradeEntry": GradeEntry},
