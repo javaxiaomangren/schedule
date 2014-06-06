@@ -351,7 +351,7 @@ class APIClassPayedHandle(BaseHandler):
                 self.auto_commit(False)
                 flag = self.db_model.pay(cla_id=cla_id, uid=uid, uname=stu_name)
                 if flag.get("rlt"):
-                    single_login(uid, stu_name)
+                    # single_login(uid, stu_name)
                     self.commit()
                 else:
                     self.rollback()
