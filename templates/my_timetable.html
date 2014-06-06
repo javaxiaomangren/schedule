@@ -48,7 +48,7 @@
                     <td>25分钟</td>
                {% end %}
                <td>{{ CheckRoll.NAME.get(entry.check_roll) }}</td>
-               {% if not date_change %}
+               {% if not date_change and entry.check_roll == CheckRoll.NORMAL %}
                <td>
                    <a href="/timetable/change/time/list?uid={{entry.uid}}&claId={{entry.cla_id}}&oldTimeId={{entry.time_id}}">调课</a>
                </td>
