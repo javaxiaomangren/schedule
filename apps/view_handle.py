@@ -207,16 +207,18 @@ class ClassChangeQueryHandle(BaseHandler):
         target_workroom = self.get_argument("workroom", None)
         uid = self.get_argument("uid", None)
         try:
+            self.auto_commit(False)
             rs = self.db_model.change_class(cla_id=cla_id, uid=uid, target_wr=target_workroom)
             if rs.rlt:
                 h_s = courses(uid, cla_id, rs.msg)
                 if h_s.rlt:
+                    self.commit()
                     email = ""
                     for l in rs.msg:
-                            email += "src workroom: {0:s}, src date:{1:s}--> " \
-                                     "target workroom {0:s}, target date {1:s}\n\n" \
-                                .format(l.get("sourceClassroom"), l.get("sourceCourseDate"),
-                                        l.get("targetClassroom"), l.get("targetCourseDate"))
+                        email += "src workroom: {0:s}, src date:{1:s}--> " \
+                                 "target workroom {0:s}, target date {1:s}\n\n" \
+                            .format(l.get("sourceClassroom"), l.get("sourceCourseDate"),
+                                    l.get("targetClassroom"), l.get("targetCourseDate"))
                     sendmail(msg=email, subject="%sStudent Changed WorkRoom" % datetime.now())
                     self.render("200.html", entry=msg())
                 else:
