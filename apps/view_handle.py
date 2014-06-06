@@ -221,7 +221,7 @@ class ClassChangeQueryHandle(BaseHandler):
                     self.render("200.html", entry=msg())
                 else:
                     self.rollback()
-                    self.render("200.html", msg(False, "Failed to invoke interface"))
+                    self.render("200.html", entry=msg(False, "Failed to invoke interface"))
             else:
                 self.render("200.html", entry=rs)
         except:
