@@ -14,9 +14,12 @@ _plat = "php"
 _sys = "testing"
 url_prefix = "http://ft.speiyou.com"
 # ft.speiyou.com  59.151.117.147
+debug = "debug"
 
 
 def get_with_header(headers, url):
+    if debug == "debug":
+        return ujson.dumps({"rlt": True, "msg": "True", "data": "Skip invoke "})
     req = Request(url, headers=headers)
     return urlopen(req).read()
 
@@ -120,6 +123,8 @@ def courses(uid, cla_id, datas):
     summary = uid + cla_id
     md5 = mk_md5(summary)
     logger.info("Invoke %s ", url)
+    if debug == "debug":
+        return Row({"rlt": True, "data": "Skip invoke "})
     x = post_u8(url, result, {"sys": _sys, "plat": _plat, "md5": md5})
     return log_it(x)
 

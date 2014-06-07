@@ -9,7 +9,7 @@
     {% else %}
       <div class="info">
        <p style="font-size: 14px">转班调课规则：
-           <b>1.</b>您可以转班3次; 调课，请假共1次。
+           <b>1.</b>您可以转班3次; 调课1次。
            <b>2.</b>转班调课需提前12小时申请，你只可以修改从现在起12小时以后的课表。
            <br><b>3.</b>调课后的课程不参与转班，有预考勤不能转班。
        </p>
@@ -52,8 +52,6 @@
                <td>
                    <a href="/timetable/change/time/list?uid={{entry.uid}}&claId={{entry.cla_id}}&oldTimeId={{entry.time_id}}">调课</a>
                </td>
-               {% else %}
-                <td>&nbsp;</td>
                {% end %}
            </tr>
         {% end %}

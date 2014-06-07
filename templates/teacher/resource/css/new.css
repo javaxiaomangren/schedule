@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 body{ 
     background:#f7f6f5;
@@ -211,6 +211,36 @@ body{
     color:#999;
     text-decoration: underline;
 }
+
+.timetable {
+            float: left;
+            background-color: #71bd57;
+            width: 110px;
+            height: 100px;
+            border-radius: 3px;
+            padding-top: 10px;
+            margin-top: 10px;
+            margin-left: 10px;
+            padding-left: 10px;
+            color: white;
+        }
+
+        .first {
+            margin-top: 3px;
+            margin-left: 5px;
+        }
+
+        .second {
+            margin-top: 10px;
+            margin-left: 16px;
+        }
+
+        .third {
+            font-weight: bold;
+            margin-top: 8px;
+            margin-left: 31px;
+        }
+	
 
 	
 

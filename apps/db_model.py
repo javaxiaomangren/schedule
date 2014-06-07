@@ -99,7 +99,6 @@ class BaseDBModel(object):
     def update(self, table, keys=list(), values=list(), where='', param=list()):
         if keys:
             sets = ",".join(map(lambda k: k + "=%s", keys))
-            print "update %s set %s %s" % (table, sets, where)
             return self.db.execute_rowcount("update %s set %s %s" % (table, sets, where), *tuple(values + param))
         return -1
 
@@ -157,7 +156,8 @@ class BaseDBModel(object):
 
         for r in src:
             right_time = BaseDBModel.check_time(r.class_date, r.start_time)
-            if r.class_type == CheckRoll.TRAIL or r.check_roll == CheckRoll.NORMAL:
+            # if r.class_type == CheckRoll.TRAIL or r.check_roll == CheckRoll.NORMAL:
+            if r.check_roll == CheckRoll.NORMAL:
                 if right_time:
                     dlt.append(r.time_id)
                     after = by_date.get(str(r.class_date))
@@ -589,6 +589,13 @@ class LogicModel(BaseDBModel):
             gen_log.info("uid=[%s], Can not change class Again.", uid)
             return msg(False, "Can not change class Again.")
 
+    def get_changed_history(self, uid='', cla_id='', deal="changed"):
+        sql = "select scc.*, ss.uid, ss.cla_id, ss.uname from mid_student_class_changed scc " \
+              "join  mid_student_selected ss on scc.select_id=ss.id" \
+              " where ss.uid=%s and  ss.cla_id=%s and ss.deal=%s"
+
+        return self.db.query(sql, uid, cla_id, deal)
+
 
 class MidCourse(BaseDBModel):
     TABLE = tb("course")
@@ -805,7 +812,7 @@ class MidStudentSelected(BaseDBModel):
     def del_by_id(self, select_id):
         return self.db.execute_rowcount("delete from mid_student_selected where id=%s", select_id)
 
-    def list_selected(self, p_no=0, size=p_size, **kwargs):
+    def list_selected(self, p_no=0, size=p_size, deal="payed"):
         """分页查询"""
         # if kwargs:
         #     where, param = self.get_and_where((" limit "), **kwargs)
@@ -818,7 +825,7 @@ class MidStudentSelected(BaseDBModel):
 
         # counts = self.db.get(sql % "count(*) as count")
         #TODO, 完善分页，条件等查询
-        return self.db.query(sql)
+        return self.db.query(sql + " where ss.deal='selected' or ss.deal=%s", deal)
 
 
 class MidStudentClasses(BaseDBModel):

@@ -128,27 +128,28 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 
 def sendmail(msg='', subject=''):
-    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
-    for m in mails:
-        _sendmail(msg=msg, subject=subject, to=m)
+    # mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
+    # for m in mails:
+    #     _sendmail(msg=msg, subject=subject, to=m)
+    _sendmail(msg=msg, subject=subject)
 
 
 class CheckRoll(object):
     NORMAL = 0
     FINISHED = 1
     LOCKED = 2
-    ABSENT = 3
-    LATE = 4
+    LATE = 3
+    ABSENT = 4
     CHANGE = 6
-    TRAIL = 7
     NAME = {
         0: "等待上课",
         1: "完成",
         2: "预考勤",
-        3: "缺席",
-        4: "迟到",
+        3: "迟到",
+        4: "缺席",
         6: "已调课",
         7: "试听课程",
     }
+    TRAIL = 7
 
 

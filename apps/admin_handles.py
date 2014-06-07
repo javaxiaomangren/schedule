@@ -90,5 +90,12 @@ class StudentClassChangedHandle(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         select_id = self.get_argument("select_id", 0)
-        date_change = self.db_model.models.mscc.get_by_select_id(select_id=select_id)
-        self.render("admin/list_student_class_change.html", entries=date_change)
+        uid = self.get_argument("uid", None)
+        cla_id = self.get_argument("cla_id", None)
+        deal = self.get_argument("deal", "changed")
+        if select_id:
+            date_change = self.db_model.models.mscc.get_by_select_id(select_id=select_id)
+            self.render("admin/list_student_class_change.html", entries=date_change)
+        else:
+            date_change = self.db_model.get_changed_history(uid=uid, cla_id=cla_id, deal=deal)
+            self.render("admin/list_student_class_change.html", entries=date_change)

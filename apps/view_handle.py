@@ -157,7 +157,8 @@ class TimeTableForMoodel(BaseHandler):
         if uid and cla_id:
             class_table = self.db_model.models.msc.full_query(uid=uid, cla_id=cla_id)
             self.render("list_class_for_moodle.html", entries=class_table)
-
+        else:
+            self.write("NO Class INfo ")
 
 @Route("/timetable/select", name="select class Timetable")
 class TimetableSelectHandle(BaseHandler):
@@ -220,6 +221,7 @@ class ClassChangeQueryHandle(BaseHandler):
                             .format(l.get("sourceClassroom"), l.get("sourceCourseDate"),
                                     l.get("targetClassroom"), l.get("targetCourseDate"))
                     sendmail(msg=email, subject="%sStudent Changed WorkRoom" % datetime.now())
+                    print msg()
                     self.render("200.html", entry=msg())
                 else:
                     self.rollback()
@@ -283,7 +285,6 @@ class TimetableTimeChangeHandle(BaseHandler):
                                                src_time_id=old_time_id,
                                                target_time_id=new_time_id)
                 if rs.rlt:
-                    # TODO remember to remove comment
                     http_rsl = courses(uid, cla_id, rs.msg)
                     if http_rsl.rlt:
                         self.commit()
@@ -408,6 +409,7 @@ class NotifyHandle(BaseHandler):
             uid = self.get_argument("uid")
             time_id = self.get_argument("time_id")
             check_roll = self.get_argument("check_roll")
+            self.auto_commit(False)
             rs = self.db_model.models.msc.update_check_roll(uid=uid, cla_id=cla_id, time_id=time_id, check_roll=check_roll)
             if rs:
                 mg = attendances(uid, cla_id, time_id, check_roll)
@@ -432,3 +434,4 @@ class NotifyHandle(BaseHandler):
 # #TODO xheader=true
 # #TODO 跨站伪造请求的防范
 # #TODO 404，500
+# TODO 记录被调课老师

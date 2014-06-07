@@ -54,7 +54,7 @@
                {% else %}
                     <td><a href="/admin/query/student/classtable?uid={{entry.uid}}&cla_id={{entry.cla_id}}">课表</a></td>
                {% end %}
-               <td><a href="/admin/student/change/class?select_id={{entry.id}}">转班记录</a></td>
+               <td><a href="/admin/student/change/class?uid={{entry.uid}}&cla_id={{entry.cla_id}}">转班记录</a></td>
                <td><a href="/admin/student/change/date?select_id={{entry.id}}">调课</a></td>
                <td>{{ entry.lastupdate }}</td>
                {%if entry.handle == 'Y'%}

@@ -1,4 +1,5 @@
 __author__ = 'windy'
+#coding:utf8
 import urllib2
 import ujson
 from http_msg import mk_md5
@@ -13,7 +14,7 @@ def post(url, data, headers):
     return response.read()
 
 url_prefix = "http://localhost:8088"
-uid = "1234999"
+uid = u"test11"
 claId = "ff80808146463d430146476fad76003d"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
