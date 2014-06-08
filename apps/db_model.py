@@ -363,7 +363,7 @@ class LogicModel(BaseDBModel):
                     sso = single_login(uid, uname)
                     email = "Student From LJL id=%s, name=%s\n" \
                             "Payed for:%s \n" \
-                            "Class Table Link: http://test01.121learn.com/timetable/list/moodle?uid=%s&cla_id=%s\n" \
+                            "Class Table Link: http://test01.121learn.com/timetable/list/moodle?uid=%s&claId=%s\n" \
                             "SSO URL: %s" \
                             % (uid, uname, rows[0].workroom, uid, cla_id, sso)
                     sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
