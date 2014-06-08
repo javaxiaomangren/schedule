@@ -2,6 +2,7 @@ __author__ = 'windy'
 #coding: utf-8
 from base import *
 from http_msg import cla_build_status
+from test_db_model import auto_insert_date
 
 
 #===============================后台管理=====================
@@ -35,12 +36,16 @@ class IndexHandler(BaseHandler):
     def get(self):
         cla_id = self.get_argument("claId")
         if cla_id:
-            rs = cla_build_status(cla_id)
+            rs = auto_insert_date(cla_id=cla_id)
             if rs.rlt:
-                self.db.execute_rowcount("update mid_course set finished=1 where claId=%s", cla_id)
-
-        self.redirect("/admin/course/tasks")
-
+                rs = cla_build_status(cla_id)
+                if rs.rlt:
+                    self.db.execute_rowcount("update mid_course set finished=1 where claId=%s", cla_id)
+                    self.redirect("/admin/course/tasks")
+                else:
+                    self.render("200.html", entry=msg(False, "接口调用失败"))
+            else:
+                self.render("200.html", entry=rs)
 
 @Route("/admin/workroom", name="workroom")
 class WorkRoomHandle(BaseHandler):

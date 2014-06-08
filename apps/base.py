@@ -35,7 +35,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_template_namespace(self):
         ns = super(BaseHandler, self).get_template_namespace()
         ns.update({
-            'CheckRoll': CheckRoll
+            'CheckRoll': CheckRoll,
+            "get_pages": list_page
         })
 
         return ns

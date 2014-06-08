@@ -128,10 +128,9 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 
 def sendmail(msg='', subject=''):
-    # mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
-    # for m in mails:
-    #     _sendmail(msg=msg, subject=subject, to=m)
-    _sendmail(msg=msg, subject=subject)
+    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
+    for m in mails:
+        _sendmail(msg=msg, subject=subject, to=m)
 
 
 class CheckRoll(object):
@@ -152,4 +151,27 @@ class CheckRoll(object):
     }
     TRAIL = 7
 
+
+def list_page(display, p_count, p_no):
+    x, y = 1, p_count
+    rount = p_count - display + 1
+    if rount > 0:
+        if rount > display:
+            if display <= p_no <= rount:
+                x = p_no
+                y = display + p_no - 1
+            elif rount < p_no <= p_count:
+                x = rount
+                y = p_count
+            else:
+                x = 1
+                y = display
+        else:
+            if p_no >= display:
+                x = rount
+                y = p_count
+            else:
+                x = 1
+                y = display
+    return range(x, y + 1)
 

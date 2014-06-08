@@ -8,6 +8,7 @@ from utils import CheckRoll
 from utils import sendmail
 from datetime import datetime
 from datetime import timedelta
+from http_msg import single_login
 
 tb_prefix = "mid_"
 tb = lambda x: tb_prefix + x
@@ -359,10 +360,12 @@ class LogicModel(BaseDBModel):
                 rs1 = self.models.mss.update_by(_id=selected.id, uid=uid, cla_id=cla_id,
                                                 fields=["uname", "deal"], values=[uname, "payed"])
                 if rs and rs1:
+                    sso = single_login(uid, uname)
                     email = "Student From LJL id=%s, name=%s\n" \
                             "Payed for:%s \n" \
-                            "Class Table Link: http://test01.121learn.com/timetable/list/moodle?uid=%s&cla_id=%s" \
-                            % (uid, uname, rows[0].workroom,uid, cla_id)
+                            "Class Table Link: http://test01.121learn.com/timetable/list/moodle?uid=%s&cla_id=%s\n" \
+                            "SSO URL: %s" \
+                            % (uid, uname, rows[0].workroom, uid, cla_id, sso)
                     sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
                     return {"rlt": True, "msg": "Success", "data": self.set_response(rows, cla_id, uid)}
                 else:
@@ -624,6 +627,9 @@ class MidCourseWorkRoom(BaseDBModel):
 
     def get_course_wr(self):
         pass
+
+    def add_by(self, params):
+        return self.insert(self.TABLE, self.fields, params)
 
     def add(self, cla_id, term):
         workrooms = MidWorkRoom(self.db).get_id_by_term(term)

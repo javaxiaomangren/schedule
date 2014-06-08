@@ -4,14 +4,8 @@
         {% if page_no > 1 %}
             <li><a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">上一页</a></li>
         {% end %}
-              {% if page_count - page_no > 10 %}
-                {% set x = 10 %}
-                {% set y = 1 %}
-              {% else %}
-                {% set x = page_count %}
-                {% set y = page_count - 10 %}
-              {% end %}
-            {% for p in range(y, x + 1) %}
+
+            {% for p in get_pages(10, page_count, page_no) %}
                 {% if p == page_no %}
                     <li class="disabled"><a href="#">{{ page_no }} <span class="sr-only">(current)</span></a></li>
                 {% else %}

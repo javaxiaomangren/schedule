@@ -28,6 +28,7 @@ logic_model.initial(mwr=workroom_model, mcwr=course_wr_model,
 uid = "1211222"
 cla_id = "ff80808146463d430146476fad76003d"
 
+
 def auto_commit(flag=True):
     db._db.autocommit(flag)
 
@@ -38,6 +39,7 @@ def commit():
 
 def rollback():
     db._db.rollback()
+
 
 def transaction(func):
     try:
@@ -103,7 +105,6 @@ def test_load_from_text():
         desc = u'2014年7月23 到 8月4号, 周一至周六, %s 上课'
         wd_datas = []
         teacher = {}
-        class_type = 2
         for l in src:
             term, time, t_id, tname, grade = l[:-1].split("\t")
             if len(time) == 4:
@@ -126,8 +127,98 @@ def test_load_from_text():
         print workroom_dates_model.add(wd_datas)
         print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)), teacher))
-
 # test_load_from_text()
+
+
+def auto_insert_date(cla_id='1211212'):
+    try:
+        workroom = []
+        workroom_s = []
+        wd_datas = []
+        wr_course = []
+        t_count = 1
+        desc = u'%s年%s月%s 到 %s月%s号, 周一至周六, %s 上课'
+        times = ["09:00", "09:30", "10:00", "11:00", "12:30", "13:00", "13:30", "14:00",
+                 "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:30", "19:30",
+                 "20:00", "20:30"]
+        c = db.get("select count(*) as counts from mid_teacher")
+        t_time_id = db.get("select max(time_id) as time_id from mid_workroom_single")
+        if c:
+            t_count = c.counts + 1
+            t_time_id = t_time_id.time_id
+        course = db.query("select * from mid_course where finished=0 and claId=%s", cla_id)
+        if course:
+            check = db.query("select * from mid_course_workroom where cla_id=%s limit 1", cla_id)
+            if check:
+                return msg(False, "已经开过班了")
+            if len(course) > 1:
+                return msg(False, "有重复的班级ID")
+            else:
+                course = course[0]
+            start = datetime(*map(lambda _x: int(_x), course.start_date.split("-")))
+            end = datetime(*map(lambda _x: int(_x), course.end_date.split("-")))
+            max_person = course.max_person
+            dates = [(start + timedelta(days=d)) for d in range(0, (end - start).days + 1)]
+            teachers = [("test" + str(c), "test" + str(c), "test" + str(c) + "full name")
+                        for c in range(t_count + 1, t_count + max_person + 1)]
+            teachers_1 = [("TKtest" + str(c), "TKtest" + str(c), "TKtest" + str(c) + "full name")
+                          for c in range(t_count + 1, t_count + max_person + 1)]
+            for ttm in times:
+                for t1 in teachers_1:
+                    wr_id_s = "T-" + string.replace(ttm, ":", '') + "-K1-" + t1[0]
+                    wr_course.append((cla_id, wr_id_s))
+                    stu_id_s = "t-" + string.replace(ttm, ":", '') + "-k1-" + t1[0]
+                    t_time_id += 1
+                    workroom_s.append((wr_id_s, cla_id, t_time_id, "A", t1[0],
+                                       "2014-08-25", ttm, 2, stu_id_s,
+                                       "normal", "2014年8月25日 %s 上课" % ttm))
+            for i in workroom_s:
+                print i
+            for tm in times:
+                for tc in teachers:
+                    wr_id = "A-" + string.replace(tm, ":", '') + "-K1-" + tc[0]
+                    wr_course.append((cla_id, wr_id))
+                    stu_id = "a-" + string.replace(tm, ":", '') + "-k1-" + tc[0]
+                    workroom.append((wr_id, "A", tc[0], tm, stu_id, "normal",
+                                     desc % (dates[0].year, dates[0].month, dates[0].day,
+                                             dates[-1:][0].month, dates[-1:][0].day, tm)))
+                    class_type = 1
+                    for dt in dates:
+                        if class_type == 1:
+                            class_type = 7
+                        elif class_type == 7:
+                            class_type = 2
+                        wd_datas.append((wr_id, dt, class_type))
+            auto_commit(False)
+            for te in teachers + teachers_1:
+                print te
+            for wr in workroom:
+                print wr
+            for wrs in workroom_s:
+                print wrs
+            r_t = db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)",
+                                          teachers + teachers_1)
+            if r_t:
+                r_t1 = workroom_model.add(workroom)
+                if r_t1:
+                    r_t2 = workroom_dates_model.add(wd_datas)
+                    if r_t2:
+                        r_t3 = course_wr_model.add_by(wr_course)
+                        if r_t3:
+                            r_t4 = workroom_single.add(workroom_s)
+                            if r_t4:
+                                commit()
+                                auto_commit()
+                                return msg()
+            rollback()
+            return msg(False, "数据插入失败")
+    except:
+        print traceback.format_exc()
+        rollback()
+    finally:
+        auto_commit()
+
+
 def test_relation_class():
     db.execute("insert into mid_course_workroom (cla_id, workroom) "
                "select %s, id from mid_workroom where term=%s", "ff80808146463d430146476fad76003d", "A")

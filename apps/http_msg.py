@@ -7,12 +7,12 @@ from urllib2 import Request, urlopen
 from torndb import Row
 from tornado.web import gen_log as logger
 from utils import post_u8
-import calendar
-from datetime import datetime
+import traceback
 
 _plat = "php"
 _sys = "testing"
 url_prefix = "http://ft.speiyou.com"
+url_sso = "http://ljl.121learn.cn/auth/token/auto_login.php"
 # ft.speiyou.com  59.151.117.147
 debug = "debug"
 
@@ -80,20 +80,6 @@ def attendances(uid, cla_id, cuc_id, status):
     x = get_with_header({"sys": _sys, "plat": _plat, "md5": md5}, url % (uid, cuc_id, cla_id, status))
     return log_it(x)
 
-#0未考勤，1完成， 2预考勤
-# print attendances('234878', "ff80808146463d4301466b45a38b0208", '4168', '1').data
-# print attendances('234878', "ff80808146463d4301466b45a38b0208", '4169', '2').data
-# print attendances('191655', "ff80808146463d4301465fb3307000a1", '141', '3').data
-# print attendances('191655', "ff80808146463d4301465fb3307000a1", '142', '2').data
-# print attendances('191655', "ff80808146463d4301465fb3307000a1", '143', '1').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '80', '1').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '81', '1').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '82', '1').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '83', '3').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '84', '1').data
-# print attendances('172479', "ff80808146463d430146476fad76003d", '85', '0').data
-# print attendances('172001', "ff808081462d55560146415cc0770165", '500', '0').data
-
 
 def sms(uid, content):
     """
@@ -130,34 +116,11 @@ def courses(uid, cla_id, datas):
 
 
 def single_login(uid, uname):
-    #TODO single login
-    secret_salt = '123456'
-    timestamp = calendar.timegm(datetime.now().utctimetuple())
-    user = str(uid)
-    newuser = '1'
-    fn = ''
-    ln = uname
-    cohortname = ''
-    email = uid+"@101tal.com"
-    city = 'Beijing'
-    country = 'CN'
-    token = hashlib.md5(str(timestamp) + user + email + secret_salt).hexdigest()
-    url = "http://localhost:8080/moodle22/auth/token/index.php"
-    sso_url = url + '?user=%s&token=%s&timestamp=%s' \
-                    '&email=%s&newuser=%s&cohortname=%s' \
-                    '&fn=%s&ln=%s&city=%s&country=%s' % \
-              (user, token, timestamp, email, newuser, cohortname, fn, ln, city, country)
-    print sso_url
-    return urlopen(sso_url)
-
-# print single_login('121212', "XiaoMIng")
-
-
-#
-# $token = crypt($timestamp.$user.$email,$secret_salt);
-#
-# $url = 'http://lms.astm.org/auth/token/index.php';
-#
-# $sso_url = $url.'?user='.$user.'&token='.$token.'&timestamp='.$timestamp.'&email='.$email.'&newuser='.$newuser.'&cohortname='.$cohortname.'&fn='.$fn.'&ln='.$ln.'&city='.$city.'&country='.$country;
-#
-# header("Location: ".$sso_url);
+    try:
+        sso_url = url_sso + '?user=%s&uname=%s' % (uid, uname)
+        urlopen(sso_url)
+        return sso_url
+    except:
+        logger.info("Single Login Failed, %s", traceback.format_exc())
+    finally:
+        return sso_url

@@ -14,7 +14,7 @@ def post(url, data, headers):
     return response.read()
 
 url_prefix = "http://localhost:8088"
-uid = u"test11"
+uid = u"12344321"
 claId = "ff80808146463d430146476fad76003d"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
@@ -59,6 +59,8 @@ def test_release():
 
 def test_payed():
     header["md5"] = mk_md5(uid+claId, plat, sys)
+    # base_data["stuName"] = u'李小龙'
+    base_data["stuName"] = u'测试用户2014'
     test_api(base_data, "/api/class/payed", header)
 
 
@@ -67,5 +69,5 @@ def test_refund():
     test_api(base_data, "/api/class/refund", header)
 
 # test_select()
-test_payed()
+# test_payed()
 # test_refund()

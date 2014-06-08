@@ -14,6 +14,7 @@ def get_param(request):
     student_id = data.get("uid", None)
     return course_id, student_id
 
+
 format_date = lambda x, y: "%s %s" % (x, y)
 
 
@@ -40,13 +41,14 @@ class APIAddClassHandle(BaseHandler):
         开课请求接口
         调用方式：post 参数，json格式
     """
+
     def post(self, *args, **kwargs):
         data = self.request.body
         try:
             data = json.loads(data)
             p = Row(data)
             try:
-                summary = p.claId+p.classCount+p.everyHours+p.startDate+p.endDate+p.frequency+p.year+p.termName+p.maxPersons
+                summary = p.claId + p.classCount + p.everyHours + p.startDate + p.endDate + p.frequency + p.year + p.termName + p.maxPersons
                 if not authorization(summary, self.request.headers):
                     return self.write(msg(False, "authorization error"))
             except AttributeError:
@@ -83,6 +85,7 @@ class TimeTableListHandle(BaseHandler):
      请求课表页面
     /api/class/timetable/list?claId=&uid=
     """
+
     def get(self):
 
         args = self.request.query_arguments
@@ -126,6 +129,7 @@ class MyClassHandler(BaseHandler):
     学生课程管理页面
     /api/class/manage?uid=&claId=
     """
+
     def get(self):
         uid = self.get_argument("uid", None)
         cla_id = self.get_argument("claId", None)
@@ -160,6 +164,7 @@ class TimeTableForMoodel(BaseHandler):
         else:
             self.write("NO Class INfo ")
 
+
 @Route("/timetable/select", name="select class Timetable")
 class TimetableSelectHandle(BaseHandler):
     """
@@ -167,6 +172,7 @@ class TimetableSelectHandle(BaseHandler):
     /timetable/select?uid=&claId=&workroom
     如果oldPlanId 不为空表示转班
     """
+
     def post(self):
         uid = self.get_argument("uid", None)
         cla_id = self.get_argument("claId", None)
@@ -193,7 +199,7 @@ class TimetableSelectHandle(BaseHandler):
 
         else:
             logger.info("请求参数不对 uid=%s, cla_id=%s, workroom=%s" % uid, cla_id)
-            self.render("200.html", entry=msg(False,  "请求参数不对"))
+            self.render("200.html", entry=msg(False, "请求参数不对"))
 
 
 @Route("/timetable/change", name="")
@@ -202,8 +208,9 @@ class ClassChangeQueryHandle(BaseHandler):
     转班
 
     """
+
     def post(self, *args, **kwargs):
-         #TODO post ask
+        #TODO post ask
         cla_id = self.get_argument("claId", None)
         target_workroom = self.get_argument("workroom", None)
         uid = self.get_argument("uid", None)
@@ -215,12 +222,14 @@ class ClassChangeQueryHandle(BaseHandler):
                 if h_s.rlt:
                     self.commit()
                     email = ""
+                    x = 1
                     for l in rs.msg:
-                        email += "src workroom: {0:s}, src date:{1:s}--> " \
-                                 "target workroom {0:s}, target date {1:s}\n\n" \
-                            .format(l.get("sourceClassroom"), l.get("sourceCourseDate"),
+                        email += str(x) + ". src workroom: %s, src date: %s--> " \
+                                          "target workroom %s, target date %s\n\n" \
+                                 % (l.get("sourceClassroom"), l.get("sourceCourseDate"),
                                     l.get("targetClassroom"), l.get("targetCourseDate"))
-                    sendmail(msg=email, subject="%sStudent Changed WorkRoom" % datetime.now())
+                        x += 1
+                    sendmail(msg=email, subject="%sStudent=%s Changed WorkRoom" % (str(datetime.now()), uid))
                     print msg()
                     self.render("200.html", entry=msg())
                 else:
@@ -236,13 +245,13 @@ class ClassChangeQueryHandle(BaseHandler):
             self.auto_commit()
 
 
-
 @Route("/timetable/change/time/list", name="class time list")
 class BakTimeListHandle(BaseHandler):
     """
     查询可调课列表
     /timetable/change/time/list?planId=&uid=&claId=
     """
+
     def get(self):
         cla_id = self.get_argument("claId", None)
         #TODO page
@@ -260,6 +269,7 @@ class BakTimeListHandle(BaseHandler):
     查询可调课列表
     /timetable/change/time/list?planId=&uid=&claId=
     """
+
     def get(self):
         tid = self.get_argument("tid")
         if not tid:
@@ -273,6 +283,7 @@ class TimetableTimeChangeHandle(BaseHandler):
     """
     /timetable/change/time?planId=&uid=&claId=&timeId&newTimeId
     """
+
     def post(self):
         uid = self.get_argument("uid", None)
         cla_id = self.get_argument("claId", None)
@@ -297,14 +308,14 @@ class TimetableTimeChangeHandle(BaseHandler):
                     self.rollback()
                     self.render("200.html", entry=rs)
             except:
-                    self.render("200.html", entry=msg(False, "调课失败"))
-                    logger.info("Change time error msg{ %s }", traceback.format_exc())
-                    self.rollback()
+                self.render("200.html", entry=msg(False, "调课失败"))
+                logger.info("Change time error msg{ %s }", traceback.format_exc())
+                self.rollback()
             finally:
                 self.auto_commit()
         else:
             logger.info("Not Regular Request for change time")
-            self.render("200.html", entry=msg(False,  "请求参数不对"))
+            self.render("200.html", entry=msg(False, "请求参数不对"))
 
 
 @Route("/api/class/release", name="Release Timetable")
@@ -313,6 +324,7 @@ class APIClassReleaseHandle(BaseHandler):
     撤销课表锁定-消息互通接口
     /api/class/release?claId=&uid
     """
+
     def post(self):
         cla_id, uid = get_param(self.request)
         if cla_id and uid:
@@ -339,11 +351,12 @@ class APIClassPayedHandle(BaseHandler):
     学生支付课程-消息互通接口
     /api/class/payed?claId=&uid=
     """
+
     def post(self):
         data = ujson.loads(self.request.body)
         cla_id = data.get("claId", None)
         uid = data.get("uid", None)
-        stu_name = data.get("stuName", u"杨华")
+        stu_name = data.get("stuName", u"陈中华")
         #TODO build username
         if cla_id and uid:
             summary = uid + cla_id
@@ -354,7 +367,6 @@ class APIClassPayedHandle(BaseHandler):
                 self.auto_commit(False)
                 flag = self.db_model.pay(cla_id=cla_id, uid=uid, uname=stu_name)
                 if flag.get("rlt"):
-                    # single_login(uid, stu_name)
                     self.commit()
                 else:
                     self.rollback()
@@ -374,6 +386,7 @@ class APIClassRefundHandle(BaseHandler):
      学生退费-消息互通接口
     /api/class/refund?claId=&uid=
     """
+
     def post(self):
         cla_id, uid = get_param(self.request)
         if cla_id and uid:
@@ -410,7 +423,8 @@ class NotifyHandle(BaseHandler):
             time_id = self.get_argument("time_id")
             check_roll = self.get_argument("check_roll")
             self.auto_commit(False)
-            rs = self.db_model.models.msc.update_check_roll(uid=uid, cla_id=cla_id, time_id=time_id, check_roll=check_roll)
+            rs = self.db_model.models.msc.update_check_roll(uid=uid, cla_id=cla_id, time_id=time_id,
+                                                            check_roll=check_roll)
             if rs:
                 mg = attendances(uid, cla_id, time_id, check_roll)
                 if mg.rlt:
@@ -429,9 +443,9 @@ class NotifyHandle(BaseHandler):
             self.auto_commit()
 
 
-# #TODO 登录，单点登录
-# #TODO 两个表的Timeiid 要唯一
-# #TODO xheader=true
-# #TODO 跨站伪造请求的防范
-# #TODO 404，500
-# TODO 记录被调课老师
+            # #TODO 登录，单点登录
+            # #TODO 两个表的Timeiid 要唯一
+            # #TODO xheader=true
+            # #TODO 跨站伪造请求的防范
+            # #TODO 404，500
+            # TODO 记录被调课老师

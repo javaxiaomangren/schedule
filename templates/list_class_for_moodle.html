@@ -10,127 +10,133 @@
 </head>
 <body>
     <ul style="width: 800px; list-style-type: none">
-        <li class="timetable" style="background-color: darkgray">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                试听课
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-        <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
+        {% for entry in entries %}
+            {% if entry.check_roll > 0 %}
+            <li class="timetable" style="background-color: darkgray">
+            {% else %}
             <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-            <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
-            <li class="timetable">
-            <div class="first">
-                13:00-13:30
-            </div>
-            <div class="second">
-                02月16日
-            </div>
-            <div class="third">
-                缺勤
-            </div>
-        </li>
+            {% end %}
+                <div class="first">
+                   {{ entry.start_time }}
+                </div>
+                <div class="second">
+                    {{ entry.class_date }}
+                </div>
+                <div class="third">
+                   {{ CheckRoll.NAME.get(entry.check_roll) }}
+                </div>
+            </li>
+        {% end %}
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+        <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+            <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+            <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
+            <!--<li class="timetable">-->
+            <!--<div class="first">-->
+                <!--13:00-13:30-->
+            <!--</div>-->
+            <!--<div class="second">-->
+                <!--02月16日-->
+            <!--</div>-->
+            <!--<div class="third">-->
+                <!--缺勤-->
+            <!--</div>-->
+        <!--</li>-->
     </ul>
 
 
