@@ -227,18 +227,18 @@ body{
 
         .first {
             margin-top: 3px;
-            margin-left: 5px;
+            margin-left: 10px;
         }
 
         .second {
             margin-top: 10px;
-            margin-left: 16px;
+            margin-left: 10px;
         }
 
         .third {
             font-weight: bold;
             margin-top: 8px;
-            margin-left: 31px;
+            margin-left: 10px;
         }
 	
 
