@@ -6,19 +6,20 @@ from db_model import *
 import traceback
 import string
 
-db = get_mysql()
-db_model = BaseDBModel(db)
-course_wr_model = MidCourseWorkRoom(db)
-workroom_model = MidWorkRoom(db)
-workroom_single = MidWorkRoomSingle(db)
-selected = MidStudentSelected(db)
-workroom_dates_model = MidWorkRoomDates(db)
-student_classes = MidStudentClasses(db)
-stu_date_change = MidStudentDateChanged(db)
-stu_class_changed = MidStudentClassChanged(db)
-stu_refund = MidStudentRefund(db)
+db01 = get_mysql()
 
-logic_model = LogicModel(db)
+db_model = BaseDBModel(db01)
+course_wr_model = MidCourseWorkRoom(db01)
+workroom_model = MidWorkRoom(db01)
+workroom_single = MidWorkRoomSingle(db01)
+selected = MidStudentSelected(db01)
+workroom_dates_model = MidWorkRoomDates(db01)
+student_classes = MidStudentClasses(db01)
+stu_date_change = MidStudentDateChanged(db01)
+stu_class_changed = MidStudentClassChanged(db01)
+stu_refund = MidStudentRefund(db01)
+
+logic_model = LogicModel(db01)
 logic_model.initial(mwr=workroom_model, mcwr=course_wr_model,
                     mss=selected, mwrd=workroom_dates_model,
                     msc=student_classes, msdc=stu_date_change,
@@ -30,15 +31,15 @@ cla_id = "ff80808146463d430146476fad76003d"
 
 
 def auto_commit(flag=True):
-    db._db.autocommit(flag)
+    db01._db.autocommit(flag)
 
 
 def commit():
-    db._db.commit()
+    db01._db.commit()
 
 
 def rollback():
-    db._db.rollback()
+    db01._db.rollback()
 
 
 def transaction(func):
@@ -125,7 +126,7 @@ def test_load_from_text():
 
         print workroom_model.add(workroom)
         print workroom_dates_model.add(wd_datas)
-        print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
+        print db01.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)), teacher))
 # test_load_from_text()
 
@@ -141,14 +142,14 @@ def auto_insert_date(cla_id='1211212'):
         times = ["09:00", "09:30", "10:00", "11:00", "12:30", "13:00", "13:30", "14:00",
                  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:30", "19:30",
                  "20:00", "20:30"]
-        c = db.get("select count(*) as counts from mid_teacher")
-        t_time_id = db.get("select max(time_id) as time_id from mid_workroom_single")
+        c = db01.get("select count(*) as counts from mid_teacher")
+        t_time_id = db01.get("select max(time_id) as time_id from mid_workroom_single")
         if c:
             t_count = c.counts + 1
             t_time_id = t_time_id.time_id
-        course = db.query("select * from mid_course where finished=0 and claId=%s", cla_id)
+        course = db01.query("select * from mid_course where finished=0 and claId=%s", cla_id)
         if course:
-            check = db.query("select * from mid_course_workroom where cla_id=%s limit 1", cla_id)
+            check = db01.query("select * from mid_course_workroom where cla_id=%s limit 1", cla_id)
             if check:
                 return msg(False, "已经开过班了")
             if len(course) > 1:
@@ -196,7 +197,7 @@ def auto_insert_date(cla_id='1211212'):
                 print wr
             for wrs in workroom_s:
                 print wrs
-            r_t = db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)",
+            r_t = db01.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)",
                                           teachers + teachers_1)
             if r_t:
                 r_t1 = workroom_model.add(workroom)
@@ -220,7 +221,7 @@ def auto_insert_date(cla_id='1211212'):
 
 
 def test_relation_class():
-    db.execute("insert into mid_course_workroom (cla_id, workroom) "
+    db01.execute("insert into mid_course_workroom (cla_id, workroom) "
                "select %s, id from mid_workroom where term=%s", "ff80808146463d430146476fad76003d", "A")
 
 # test_relation_class()

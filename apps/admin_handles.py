@@ -2,7 +2,7 @@ __author__ = 'windy'
 #coding: utf-8
 from base import *
 from http_msg import cla_build_status
-from test_db_model import auto_insert_date
+from test_db_model import *
 
 
 #===============================后台管理=====================

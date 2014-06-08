@@ -13,8 +13,8 @@ def post(url, data, headers):
     response = opener.open(req, data)
     return response.read()
 
-url_prefix = "http://localhost:8088"
-uid = u"12344321"
+url_prefix = "http://test01.121learn.com"
+uid = u"982701"
 claId = "ff80808146463d430146476fad76003d"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
