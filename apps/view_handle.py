@@ -76,7 +76,7 @@ class APIAddClassHandle(BaseHandler):
 @Route("/", name="index")
 class IndexHandler(BaseHandler):
     def get(self):
-        self.render("xes-sk2.html")
+        self.render("index-base.html")
 
 
 @Route("/api/class/timetable/list", name="List TimeTables ")
