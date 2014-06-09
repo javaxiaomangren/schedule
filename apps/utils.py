@@ -86,8 +86,8 @@ def post2(data):
 
 def get_mysql():
     return torndb.Connection(
-        host="localhost", database="test01",
-        user="root", password="123456")
+        host="localhost", database="schedule",
+        user="root", password="")
 
 
 def notify_me(func):

@@ -128,7 +128,6 @@ def test_load_from_text():
         print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)), teacher))
 
-# test_load_from_text()
 
 
 def auto_insert_date(cla_id='1211212'):

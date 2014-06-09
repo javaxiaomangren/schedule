@@ -14,7 +14,7 @@ _sys = "testing"
 url_prefix = "http://ft.speiyou.com"
 url_sso = "http://ljl.121learn.cn/auth/token/auto_login.php"
 # ft.speiyou.com  59.151.117.147
-debug = "un-debug"
+debug = "debug"
 
 
 def get_with_header(headers, url):
@@ -117,8 +117,8 @@ def courses(uid, cla_id, datas):
 
 def single_login(uid, uname):
     try:
-        sso_url = url_sso + '?user=%s&uname=%s' % (uid, uname)
-        # urlopen(sso_url)
+        sso_url = url_sso + '?user=%s&uname=%s' % (uid, urllib.quote(uname))
+        urlopen(sso_url)
         return sso_url
     except:
         logger.info("Single Login Failed, %s", traceback.format_exc())
