@@ -147,7 +147,7 @@ def auto_insert_date(cla_id='1211212'):
         if c:
             t_count = c.counts + 1
         if t_time_id and t_time_id.time_id:
-            t_time_id = t_time_id
+            t_time_id = t_time_id.time_id
         else:
             t_time_id = 1
         course = db.query("select * from mid_course where finished=0 and claId=%s", cla_id)
