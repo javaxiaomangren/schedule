@@ -86,8 +86,8 @@ def post2(data):
 
 def get_mysql():
     return torndb.Connection(
-        host="localhost", database="schedule",
-        user="root", password="")
+        host="localhost", database="test01",
+        user="root", password="123456")
 
 
 def notify_me(func):
@@ -128,7 +128,8 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 
 def sendmail(msg='', subject=''):
-    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com", "johnny.dai@huanxunedu.com"]
+    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com",
+             "johnny.dai@huanxunedu.com", "simon.sun@huanxunedu.com"]
     for m in mails:
         _sendmail(msg=msg, subject=subject, to=m)
 
@@ -147,7 +148,7 @@ class CheckRoll(object):
         3: "迟到",
         4: "缺席",
         6: "已调课",
-        7: "试听课程",
+        7: "调试课",
     }
     TRAIL = 7
 

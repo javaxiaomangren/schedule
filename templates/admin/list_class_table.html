@@ -39,6 +39,9 @@
                     <td>正常课程</td>
                {% end %}
                <td>{{ CheckRoll.NAME.get(entry.check_roll) }}</td>
+               {% if entry.class_type == 7%}
+                        <td>&nbsp;</td>
+               {% else %}
                <td>
                    <a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.ABSENT}}">缺课</a>
                     <a target="_blank"  href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LATE}}">迟到</a>
@@ -46,6 +49,7 @@
                     <a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LOCKED}}">预约考勤</a>
                     <a target="_blank"  href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.NORMAL}}">正常</a>
                </td>
+               {% end %}
            </tr>
         {% end %}
     </tbody>
