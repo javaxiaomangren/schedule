@@ -33,14 +33,11 @@ cla_id = "ff80808146463d430146476fad76003d"
 def auto_commit(flag=True):
     db01._db.autocommit(flag)
 
-
 def commit():
     db01._db.commit()
 
-
 def rollback():
     db01._db.rollback()
-
 
 def transaction(func):
     try:
@@ -183,12 +180,9 @@ def auto_insert_date(cla_id='1211212'):
                     workroom.append((wr_id, "A", tc[0], tm, stu_id, "normal",
                                      desc % (dates[0].year, dates[0].month, dates[0].day,
                                              dates[-1:][0].month, dates[-1:][0].day, tm)))
-                    class_type = 1
+                    class_type = 2
+                    wd_datas.append((wr_id, dates[0], 7))
                     for dt in dates:
-                        if class_type == 1:
-                            class_type = 7
-                        elif class_type == 7:
-                            class_type = 2
                         wd_datas.append((wr_id, dt, class_type))
             auto_commit(False)
             for te in teachers + teachers_1:
@@ -198,7 +192,7 @@ def auto_insert_date(cla_id='1211212'):
             for wrs in workroom_s:
                 print wrs
             r_t = db01.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)",
-                                          teachers + teachers_1)
+                                             teachers + teachers_1)
             if r_t:
                 r_t1 = workroom_model.add(workroom)
                 if r_t1:
