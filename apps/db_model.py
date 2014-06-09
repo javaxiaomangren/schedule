@@ -760,7 +760,7 @@ class MidWorkRoomDates(BaseDBModel):
     def get_valid_dates(self, workroom, status='', date_now=datetime.now(), time_now="00:00:00"):
         where = "where w.id=%s order by wd.class_date"
         if status:
-            where = "where w.id=%s and w.status=%s and  wd.class_date > %s and w.start_time > %s order by wd.class_date"
+            where = "where w.id=%s and w.status=%s and  wd.class_date >= %s and w.start_time > %s order by wd.class_date"
             print self.sql + where % (workroom, status, date_now, time_now)
             return self.db.query(self.sql + where, workroom, status, date_now, time_now)
         return self.db.query(self.sql + where, workroom)
