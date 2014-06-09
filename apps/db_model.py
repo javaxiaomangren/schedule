@@ -141,7 +141,7 @@ class BaseDBModel(object):
                 gen_log.info("[%s][%s] was locked", r.class_date, r.time_id)
                 return True, "[%s] will start after [%s] our" % (r.class_date, pre_check)
             #未考勤的课程是否即将开始
-            if r.check_roll == CheckRoll.NORMAL:
+            if r.check_roll == CheckRoll.NORMAL or r.check_roll == CheckRoll.TRAIL:
                 if not BaseDBModel.check_time(r.class_date, r.start_time):
                     gen_log.info("[%s] will start after [%s] our" % (r.class_date, pre_check))
                     return True, "[%s] will start after [%s] our" % (r.class_date, pre_check)
@@ -163,9 +163,9 @@ class BaseDBModel(object):
         by_date = dict([(str(t.class_date), t) for t in target])
 
         for r in src:
-            right_time = BaseDBModel.check_time(r.class_date, r.start_time)
             # if r.class_type == CheckRoll.TRAIL or r.check_roll == CheckRoll.NORMAL:
-            if r.check_roll == CheckRoll.NORMAL:
+            if r.check_roll == CheckRoll.NORMAL or r.check_roll == CheckRoll.TRAIL:
+                right_time = BaseDBModel.check_time(r.class_date, r.start_time)
                 if right_time:
                     dlt.append(r.time_id)
                     after = by_date.get(str(r.class_date))
@@ -360,17 +360,17 @@ class LogicModel(BaseDBModel):
         """
         flag, selected = self.models.mss.get_selected_for_pay(uid, cla_id)
         dt, valid_time = BaseDBModel.get_valid_date()
-        # TODO 试听课程不在时间范围内
         if flag:
             if selected:
                 rows = self.models.mwrd.get_valid_dates(selected.workroom, status="used",
-                                                        date_now=dt, time_now=valid_time)
+                                                        date_now=dt)
                 p = []
                 for r in rows:
-                    if r.class_type == CheckRoll.TRAIL:
-                        p.append((uid, cla_id, r.time_id, r.workroom, r.teacher, r.class_date, CheckRoll.TRAIL))
-                    else:
-                        p.append((uid, cla_id, r.time_id, r.workroom, r.teacher, r.class_date, CheckRoll.NORMAL))
+                    if BaseDBModel.check_time(r.class_date, r.start_time):
+                        if r.class_type == CheckRoll.TRAIL:
+                            p.append((uid, cla_id, r.time_id, r.workroom, r.teacher, r.class_date, CheckRoll.TRAIL))
+                        else:
+                            p.append((uid, cla_id, r.time_id, r.workroom, r.teacher, r.class_date, CheckRoll.NORMAL))
                 rs = self.models.msc.add(p)
                 rs1 = self.models.mss.update_by(_id=selected.id, uid=uid, cla_id=cla_id,
                                                 fields=["uname", "deal"], values=[uname, "payed"])
@@ -760,9 +760,9 @@ class MidWorkRoomDates(BaseDBModel):
     def get_valid_dates(self, workroom, status='', date_now=datetime.now(), time_now="00:00:00"):
         where = "where w.id=%s order by wd.class_date"
         if status:
-            where = "where w.id=%s and w.status=%s and  wd.class_date >= %s and w.start_time > %s order by wd.class_date"
-            print self.sql + where % (workroom, status, date_now, time_now)
-            return self.db.query(self.sql + where, workroom, status, date_now, time_now)
+            where = "where w.id=%s and w.status=%s and  wd.class_date >= %s order by wd.class_date"
+            print self.sql + where % (workroom, status, date_now)
+            return self.db.query(self.sql + where, workroom, status, date_now)
         return self.db.query(self.sql + where, workroom)
 
     def get_by_time_id(self, time_id=0):
