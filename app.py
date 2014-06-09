@@ -59,7 +59,7 @@ def main():
     if options.showurls:
         for each in Route.get_routes():
             print each._path.ljust(20), "mapping to RequestHandle-->", each.handler_class.__name__
-    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server = tornado.httpserver.HTTPServer(Application(), xheaders=True)
     print "Starting tornado server on port", options.port
     if options.prefork:
         print "\tpre-forking"
