@@ -127,6 +127,7 @@ def test_load_from_text():
         print workroom_dates_model.add(wd_datas)
         print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)), teacher))
+
 # test_load_from_text()
 
 
@@ -145,7 +146,10 @@ def auto_insert_date(cla_id='1211212'):
         t_time_id = db.get("select max(time_id) as time_id from mid_workroom_single")
         if c:
             t_count = c.counts + 1
-            t_time_id = t_time_id.time_id
+        if t_time_id and t_time_id.time_id:
+            t_time_id = t_time_id
+        else:
+            t_time_id = 1
         course = db.query("select * from mid_course where finished=0 and claId=%s", cla_id)
         if course:
             check = db.query("select * from mid_course_workroom where cla_id=%s limit 1", cla_id)
