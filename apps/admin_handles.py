@@ -36,16 +36,16 @@ class IndexHandler(BaseHandler):
     def get(self):
         cla_id = self.get_argument("claId")
         if cla_id:
-            rs = auto_insert_date(cla_id=cla_id)
+            # rs = auto_insert_date(cla_id=cla_id)
+            # if rs.rlt:
+            rs = cla_build_status(cla_id)
             if rs.rlt:
-                rs = cla_build_status(cla_id)
-                if rs.rlt:
-                    self.db.execute_rowcount("update mid_course set finished=1 where claId=%s", cla_id)
-                    self.redirect("/admin/course/tasks")
-                else:
-                    self.render("200.html", entry=msg(False, "接口调用失败"))
+                self.db.execute_rowcount("update mid_course set finished=1 where claId=%s", cla_id)
+                self.redirect("/admin/course/tasks")
             else:
-                self.render("200.html", entry=rs)
+                self.render("200.html", entry=msg(False, "接口调用失败"))
+            # else:
+            #     self.render("200.html", entry=rs)
 
 @Route("/admin/workroom", name="workroom")
 class WorkRoomHandle(BaseHandler):
