@@ -11,8 +11,9 @@ import traceback
 
 _plat = "php"
 _sys = "testing"
-url_prefix = "http://ft.speiyou.com"
-url_sso = "http://ljl.121learn.cn/auth/token/auto_login.php"
+# url_prefix = "http://ft.speiyou.com"
+url_prefix = "http://wjiao.speiyou.com"
+url_sso = "http://waijiao.speiyou.com/auth/token/auto_login.php"
 # ft.speiyou.com  59.151.117.147
 debug = "no-debug"
 
