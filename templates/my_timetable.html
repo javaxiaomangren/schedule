@@ -33,7 +33,7 @@
           <th><span class="glyphicon glyphicon-book" style="margin-right:5px;"></span>课时<br>Class</th>
           <th><span class="glyphicon glyphicon-refresh" style="margin-right:5px;"></span>进度<br>Process</th>
           {% if not date_change %}
-          <th><span class="glyphicon glyphicon-hand-up" style="margin-right:5px;"></span>操作<br>Operation</th>
+          <th><span class="glyphicon glyphicon-hand-up" style="margin-right:5px;"></span>请假<br>Operation</th>
           {% end %}
         </tr>
       </thead>
@@ -51,7 +51,7 @@
                <td>{{ CheckRoll.NAME.get(entry.check_roll) }}</td>
                {% if not date_change and entry.check_roll == CheckRoll.NORMAL and entry.class_type == 2 %}
                <td>
-                   <a href="/timetable/change/time/list?uid={{entry.uid}}&claId={{entry.cla_id}}&oldTimeId={{entry.time_id}}">调课</a>
+                   <a href="/timetable/change/time/list?uid={{entry.uid}}&claId={{entry.cla_id}}&oldTimeId={{entry.time_id}}">请假</a>
                </td>
                {% end %}
            </tr>
