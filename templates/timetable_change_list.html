@@ -3,6 +3,11 @@
 
 {% block content %}
    <div class="content" style="min-height: 500px">
+        {% if selected %}
+        <div style="text-align: center;font-size: 15px; margin-top: 5px; margin-bottom: 5px">
+            您已经选了：{{ selected.shortname + "  " + selected.fullname }}老师 {{ selected.description }}
+        </div>
+    {% end %}
     {% if not entries %}
        <div style="min-height: 450px; text-align: center;">
             <h1><h3>没有可选课表</h3></h1>

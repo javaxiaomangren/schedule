@@ -218,7 +218,7 @@ class ClassChangeQueryHandle(BaseHandler):
             self.auto_commit(False)
             rs = self.db_model.change_class(cla_id=cla_id, uid=uid, target_wr=target_workroom)
             if rs.rlt:
-                logger.info("uid:%s, claid[%s], data:[%w]", uid, cla_id, rs.msg)
+                # logger.info("uid:%s, claid[%s], data:[%s]", uid, cla_id, rs.msg)
                 h_s = courses(uid, cla_id, rs.msg)
                 if h_s.rlt:
                     self.commit()

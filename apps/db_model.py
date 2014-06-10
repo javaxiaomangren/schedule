@@ -189,6 +189,7 @@ class BaseDBModel(object):
             c = OrderedDict()
             c["timeId"] = row.time_id
             c["teacherId"] = row.teacher
+            c["teacherName"] = row.fullname
             c["classDate"] = str(row.class_date)
             c["startTime"] = str(row.start_time)
             c["endTime"] = str(row.start_time + timedelta(minutes=class_period))
@@ -204,6 +205,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = src.time_id
         data["sourceTeacherId"] = src.teacher
+        # data["sourceTeacherName"] = src.fullname
         data["sourceCourseDate"] = str(src.class_date)
         data["sourceStartTime"] = str(src.start_time)
         data["sourceEndTime"] = str(src.start_time + timedelta(minutes=class_period))
@@ -211,6 +213,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = src.class_type
         data["targetBeiliCucId"] = target.time_id
         data["targetTeacherId"] = target.teacher
+        # data["targetTeacherName"] = target.fullname
         data["targetCourseDate"] = str(target.class_date)
         data["targetStartTime"] = str(target.start_time)
         data["targetEndTime"] = str(target.start_time + timedelta(minutes=class_period))
@@ -223,6 +226,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = old.time_id
         data["sourceTeacherId"] = old.teacher
+        # data["sourceTeacherName"] = old.fullname
         data["sourceCourseDate"] = str(old.class_date)
         data["sourceStartTime"] = str(old.start_time)
         data["sourceEndTime"] = str(old.start_time + timedelta(minutes=class_period))
@@ -230,6 +234,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = old.class_type
         data["targetBeiliCucId"] = new.time_id
         data["targetTeacherId"] = new.teacher
+        # data["targetTeacherName"] = new.fullname
         data["targetCourseDate"] = str(new.class_date)
         data["targetStartTime"] = str(new.start_time)
         data["targetEndTime"] = str(new.start_time + timedelta(minutes=class_period))
@@ -378,7 +383,7 @@ class LogicModel(BaseDBModel):
                     sso = single_login(uid, uname)
                     email = "Student From LJL id=%s, name=%s\n" \
                             "Payed for:%s \n" \
-                            "Class Table Link: http://test01.121learn.com/timetable/list/moodle?uid=%s&claId=%s\n" \
+                            "Class Table Link: http://yueke.speiyou.com/timetable/list/moodle?uid=%s&claId=%s\n" \
                             "SSO URL: %s" \
                             % (uid, uname, rows[0].workroom, uid, cla_id, sso)
                     sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
@@ -737,7 +742,7 @@ class MidWorkRoomDates(BaseDBModel):
     TABLE = tb("workroom_dates")
     fields = ["workroom", "class_date", "class_type"]
     sql = "select w.virtual_student, w.start_time, w.description, " \
-          "w.teacher, t.fullname, t.shortname, wd.* from mid_workroom w " \
+          "w.teacher, t.fullname, t.shortname, t.fullname, wd.* from mid_workroom w " \
           "join mid_teacher t on t.id=w.teacher "\
           "join mid_workroom_dates wd " \
           "on w.id=wd.workroom " \
@@ -845,7 +850,7 @@ class MidStudentSelected(BaseDBModel):
         """分页查询"""
         # if kwargs:
         #     where, param = self.get_and_where((" limit "), **kwargs)
-        sql = "select ss.*, t.id as teacher, t.shortname," \
+        sql = "select ss.*, t.id as teacher, t.shortname, t.fullname," \
               " mc.class_name, wr.description, wr.virtual_student " \
               "from mid_student_selected ss " \
               "join mid_workroom wr on wr.id=ss.workroom " \
@@ -860,12 +865,12 @@ class MidStudentSelected(BaseDBModel):
 class MidStudentClasses(BaseDBModel):
     TABLE = tb("student_classes")
     fields = ["uid", "cla_id", "time_id", "workroom", "teacher", "class_date", "check_roll"]
-    sql = "select sc.*, wd.class_type, wr.start_time, wr.teacher, t.shortname from mid_student_classes sc " \
+    sql = "select sc.*, wd.class_type, wr.start_time, wr.teacher, t.shortname, t.fullname from mid_student_classes sc " \
           "join mid_workroom_dates wd on sc.time_id=wd.time_id " \
           "join mid_workroom wr on wr.id= sc.workroom " \
           "join mid_teacher t on t.id=wr.teacher "
 
-    sql2 = "select sc.*, ws.start_time, ws.class_type, ws.teacher, t.shortname " \
+    sql2 = "select sc.*, ws.start_time, ws.class_type, ws.teacher, t.shortname, t.fullname " \
            "from mid_student_classes sc " \
            "join mid_workroom_single ws on sc.time_id=ws.time_id " \
            "join mid_teacher t on t.id=ws.teacher"
