@@ -14,8 +14,8 @@ def post(url, data, headers):
     return response.read()
 
 url_prefix = "http://localhost:8088"
-uid = u"12341234"
-claId = "ff80808146463d430146476fad76003d"
+uid = u"1234555"
+claId = "112233445566"
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
 sys = "testing"
@@ -69,5 +69,5 @@ def test_refund():
     test_api(base_data, "/api/class/refund", header)
 
 # test_select()
-# test_payed()
+test_payed()
 # test_refund()
