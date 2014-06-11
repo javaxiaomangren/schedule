@@ -704,6 +704,8 @@ class MidWorkRoomSingle(BaseDBModel):
     TABLE = tb("workroom_single")
     fields = ["id", "cla_id", "time_id", "term", "teacher", "class_date", "start_time",
               "class_type", "virtual_student", "status", "description"]
+    sql = "select ws.*, t.shortname, t.fullname from mid_workroom_single ws join mid_teacher t " \
+          "on ws.teacher=t.id "
 
     @property
     def get(self):
@@ -720,10 +722,14 @@ class MidWorkRoomSingle(BaseDBModel):
         return self.update(self.TABLE, ["status"], [status], where=" where id=%s", param=[workroom])
 
     def get_by_time_id(self, time_id=0):
-        return self.get_one(self.TABLE, where=" where time_id=%s ", param=[time_id])
+        where = " where ws.time_id=%s"
+        return self.db.get(self.sql + where, time_id)
+        # return self.get_one(self.TABLE, where=" where time_id=%s ", param=[time_id])
 
     def get_by_id(self, _id):
-        return self.get_one(self.TABLE, where=" where id=%s", param=[_id])
+        where = " where ws.id=%s"
+        return self.db.get(self.sql + where, _id)
+        # return self.get_one(self.TABLE, where=" where id=%s", param=[_id])
 
     def used_exists(self, _id):
         r = self.get_by_id(_id)
