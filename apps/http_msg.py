@@ -117,22 +117,24 @@ def courses(uid, cla_id, datas):
 
 
 def single_login(uid, uname):
+    if isinstance(uname, unicode):
+        uname = uname.encode("utf-8")
     sso_url = url_sso + '?uname=%s&user=%s' % (uname, uid)
     try:
         rs = None
         try:
             rs = urlopen(sso_url)
         except:
-            logger.info("Single Login Failed, %s", traceback.format_exc())
+            logger.info("1-Single Login Failed, %s", traceback.format_exc())
         if not rs:
             try:
+                print url_sso + '?uname=%s&user=%s' % (urllib.quote(uname), uid)
                 rs = urlopen(url_sso + '?uname=%s&user=%s' % (urllib.quote(uname), uid))
                 logger.info(rs)
             except:
-                logger.info("Single Login Failed, %s", traceback.format_exc())
-        return sso_url
+                logger.info("2-Single Login Failed, %s", traceback.format_exc())
     except:
         logger.info("Single Login Failed, %s", traceback.format_exc())
     finally:
         return sso_url
-        # single_login(uid='1234567', uname='JavaVaid')
+# print single_login(uid='987654321000', uname=u'李华人')
