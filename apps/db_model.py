@@ -205,7 +205,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = src.time_id
         data["sourceTeacherId"] = src.teacher
-        # data["sourceTeacherName"] = src.fullname
+        data["sourceTeacherName"] = src.fullname
         data["sourceCourseDate"] = str(src.class_date)
         data["sourceStartTime"] = str(src.start_time)
         data["sourceEndTime"] = str(src.start_time + timedelta(minutes=class_period))
@@ -213,7 +213,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = src.class_type
         data["targetBeiliCucId"] = target.time_id
         data["targetTeacherId"] = target.teacher
-        # data["targetTeacherName"] = target.fullname
+        data["targetTeacherName"] = target.fullname
         data["targetCourseDate"] = str(target.class_date)
         data["targetStartTime"] = str(target.start_time)
         data["targetEndTime"] = str(target.start_time + timedelta(minutes=class_period))
@@ -226,7 +226,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = old.time_id
         data["sourceTeacherId"] = old.teacher
-        # data["sourceTeacherName"] = old.fullname
+        data["sourceTeacherName"] = old.fullname
         data["sourceCourseDate"] = str(old.class_date)
         data["sourceStartTime"] = str(old.start_time)
         data["sourceEndTime"] = str(old.start_time + timedelta(minutes=class_period))
@@ -234,7 +234,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = old.class_type
         data["targetBeiliCucId"] = new.time_id
         data["targetTeacherId"] = new.teacher
-        # data["targetTeacherName"] = new.fullname
+        data["targetTeacherName"] = new.fullname
         data["targetCourseDate"] = str(new.class_date)
         data["targetStartTime"] = str(new.start_time)
         data["targetEndTime"] = str(new.start_time + timedelta(minutes=class_period))
