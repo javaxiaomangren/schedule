@@ -111,7 +111,6 @@ def courses(uid, cla_id, datas):
     logger.info("Invoke %s ", url)
     if debug == "debug":
         return Row({"rlt": True, "data": "Skip invoke "})
-    logger.info(data_str)
     x = post_u8(url, result, {"sys": _sys, "plat": _plat, "md5": md5})
     return log_it(x)
 
