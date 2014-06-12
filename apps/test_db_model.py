@@ -130,7 +130,7 @@ def test_load_from_text():
 # test_load_from_text()
 
 def test_load_from_text2():
-    with open("t_class_table.txt", 'r') as tl:
+    with open("T_class_table.txt", 'r') as tl:
         m_time = db.get("select max(time_id) as mt from mid_workroom_single")
         if m_time and m_time.mt > 0:
             m_time = m_time.mt
