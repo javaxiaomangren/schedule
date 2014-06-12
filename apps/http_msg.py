@@ -11,8 +11,8 @@ import traceback
 
 _plat = "php"
 _sys = "testing"
-url_prefix = "http://ft.speiyou.com"
-# url_prefix = "http://wjiao.speiyou.cn"
+# url_prefix = "http://ft.speiyou.com"
+url_prefix = "http://wjiao.speiyou.cn"
 url_sso = "http://waijiao.speiyou.com/auth/token/auto_login.php"
 # ft.speiyou.com  59.151.117.147
 debug = "no-debug"
@@ -118,6 +118,7 @@ def courses(uid, cla_id, datas):
 
 
 def single_login(uid, uname):
+    logger.info(type(uname))
     if isinstance(uname, unicode):
         uname = uname.encode("utf-8")
     sso_url = url_sso + '?uname=%s&user=%s' % (uname, uid)
