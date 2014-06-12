@@ -327,8 +327,8 @@ class APIClassReleaseHandle(BaseHandler):
     """
 
     def post(self):
-        cla_id, uid = get_param(self.request)
         logger.info(self.request)
+        cla_id, uid = get_param(self.request)
         if cla_id and uid:
             summary = uid + cla_id
             if not authorization(summary, self.request.headers):
