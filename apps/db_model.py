@@ -18,7 +18,7 @@ class_period = 25
 pre_check = 12
 a_dates = ["2014-07-23", "2014-07-24", "2014-07-25", "2014-07-26",
            "2014-07-28", "2014-07-29", "2014-07-30", "2014-07-31",
-           "2014-08-01", "2014-08-02", "2014-08-04"]
+           "2014-08-01", "2014-08-02"]
 
 b_dates = ["2014-08-05", "2014-08-06", "2014-08-07", "2014-08-08",
            "2014-08-09", "2014-08-11", "2014-08-12", "2014-08-13",
@@ -186,16 +186,18 @@ class BaseDBModel(object):
         result["uid"] = uid
 
         for row in rows:
-            c = OrderedDict()
-            c["timeId"] = row.time_id
-            c["teacherId"] = row.teacher
-            c["teacherName"] = row.fullname
-            c["classDate"] = str(row.class_date)
-            c["startTime"] = str(row.start_time)
-            c["endTime"] = str(row.start_time + timedelta(minutes=class_period))
-            c["classroom"] = row.workroom
-            c["status"] = row.class_type
-            classes.append(c)
+            #TODO 预考勤
+            if BaseDBModel.check_time(row.class_date, row.start_time):
+                c = OrderedDict()
+                c["timeId"] = row.time_id
+                c["teacherId"] = row.teacher
+                c["teacherName"] = row.shortname
+                c["classDate"] = str(row.class_date)
+                c["startTime"] = str(row.start_time)
+                c["endTime"] = str(row.start_time + timedelta(minutes=class_period))
+                c["classroom"] = row.workroom
+                c["status"] = row.class_type
+                classes.append(c)
 
         result["classes"] = classes
         return result
@@ -205,7 +207,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = src.time_id
         data["sourceTeacherId"] = src.teacher
-        data["sourceTeacherName"] = src.fullname
+        data["sourceTeacherName"] = src.shortname
         data["sourceCourseDate"] = str(src.class_date)
         data["sourceStartTime"] = str(src.start_time)
         data["sourceEndTime"] = str(src.start_time + timedelta(minutes=class_period))
@@ -213,7 +215,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = src.class_type
         data["targetBeiliCucId"] = target.time_id
         data["targetTeacherId"] = target.teacher
-        data["targetTeacherName"] = target.fullname
+        data["targetTeacherName"] = target.shortname
         data["targetCourseDate"] = str(target.class_date)
         data["targetStartTime"] = str(target.start_time)
         data["targetEndTime"] = str(target.start_time + timedelta(minutes=class_period))
@@ -226,7 +228,7 @@ class BaseDBModel(object):
         data = OrderedDict()
         data["sourceBeiliCucId"] = old.time_id
         data["sourceTeacherId"] = old.teacher
-        data["sourceTeacherName"] = old.fullname
+        data["sourceTeacherName"] = old.shortname
         data["sourceCourseDate"] = str(old.class_date)
         data["sourceStartTime"] = str(old.start_time)
         data["sourceEndTime"] = str(old.start_time + timedelta(minutes=class_period))
@@ -234,7 +236,7 @@ class BaseDBModel(object):
         data["sourceStatus"] = old.class_type
         data["targetBeiliCucId"] = new.time_id
         data["targetTeacherId"] = new.teacher
-        data["targetTeacherName"] = new.fullname
+        data["targetTeacherName"] = new.shortname
         data["targetCourseDate"] = str(new.class_date)
         data["targetStartTime"] = str(new.start_time)
         data["targetEndTime"] = str(new.start_time + timedelta(minutes=class_period))
