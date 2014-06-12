@@ -380,13 +380,18 @@ class LogicModel(BaseDBModel):
                 rs1 = self.models.mss.update_by(_id=selected.id, uid=uid, cla_id=cla_id,
                                                 fields=["uname", "deal"], values=[uname, "payed"])
                 if rs and rs1:
-                    sso = single_login(uid, uname)
-                    email = "Student From LJL id=%s, name=%s\n" \
-                            "Payed for:%s \n" \
-                            "Class Table Link: http://yueke.speiyou.com/timetable/list/moodle?uid=%s&claId=%s\n" \
-                            "SSO URL: %s" \
-                            % (uid, uname, rows[0].workroom, uid, cla_id, sso)
-                    sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
+                    try:
+                        if isinstance(uname, unicode):
+                            uname = uname.encode("utf-8")
+                        sso = single_login(uid, uname)
+                        email = "Student From LJL id=%s, name=%s\n" \
+                                "Payed for:%s \n" \
+                                "Class Table Link: http://yueke.speiyou.com/timetable/list/moodle?uid=%s&claId=%s\n" \
+                                "SSO URL: %s" \
+                                % (uid, uname, rows[0].workroom, uid, cla_id, sso)
+                        sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
+                    except:
+                        pass
                     return {"rlt": True, "msg": "Success", "data": self.set_response(rows, cla_id, uid)}
                 else:
                     return {"rlt": False, "msg": "Failed", "data": "支付失败"}
