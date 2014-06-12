@@ -102,7 +102,7 @@ def test_add_workroom_and_dates():
 def test_load_from_text():
     with open("class_table.txt") as src:
         workroom = []
-        desc = u'2014年7月23 到 8月4号, 周一至周六, %s 上课'
+        desc = u'2014年7月23 到 8月2号, 周一至周六, %s 上课'
         wd_datas = []
         teacher = {}
         for l in src:
@@ -119,16 +119,37 @@ def test_load_from_text():
             teacher[t_id] = tname
             for dt in a_dates:
                 class_type = 2
-                if dt == "2014-07-23":
-                    class_type = 7
+                # if dt == "2014-07-23":
+                #     class_type = 7
                 wd_datas.append((room_id, dt, class_type))
 
         print workroom_model.add(workroom)
         print workroom_dates_model.add(wd_datas)
         print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
-        ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)), teacher))
+        ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)[:-2]), teacher))
+# test_load_from_text()
 
+def test_load_from_text2():
+    with open("t_class_table.txt", 'r') as tl:
+        m_time = db.get("select max(time_id) as mt from mid_workroom_single")
+        if m_time and m_time.mt > 0:
+            m_time = m_time.mt
+        else:
+            m_time = 1000000
+        param = []
+        for l in tl:
+            time, tid , tname, grade = l[:-1].split("\t")
+            if len(time) == 4:
+                time = '0' + time
+            tt = str(string.replace(time, ":", ''))
+            _id = "T" + "-0818-" + tt + "-" + tid + "-" + grade
+            v_id = "t" + "-0818-" + tt + "-" + tid + "-" + grade.lower()
+            param.append((_id, '', m_time, 'A', tid, "2014-08-18", time, 2, v_id, "normal", u'2014年8月10日 %s上课' % time))
+            m_time += 1
+        if param:
+            print workroom_single.add(param)
 
+# test_load_from_text2()
 
 def auto_insert_date(cla_id='1211212'):
     try:
