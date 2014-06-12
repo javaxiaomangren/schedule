@@ -118,11 +118,6 @@ def courses(uid, cla_id, datas):
 
 
 def single_login(uid, uname):
-    logger.info(type(uname))
-    if isinstance(uname, unicode):
-        logger.info("hekearaewr")
-        uname = uname.encode("utf-8")
-    logger.info(type(uname))
     sso_url = url_sso + '?uname=%s&user=%s' % (uname, uid)
     try:
         rs = None
