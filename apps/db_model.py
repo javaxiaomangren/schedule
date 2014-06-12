@@ -219,7 +219,7 @@ class BaseDBModel(object):
         data["targetEndTime"] = str(target.start_time + timedelta(minutes=class_period))
         data["targetClassroom"] = target.id
         data["targetStatus"] = target.class_type
-        return data
+        return [data]
 
     @staticmethod
     def set_change_class(old, new):
