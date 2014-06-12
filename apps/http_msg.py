@@ -15,7 +15,7 @@ _sys = "testing"
 url_prefix = "http://wjiao.speiyou.cn"
 url_sso = "http://waijiao.speiyou.com/auth/token/auto_login.php"
 # ft.speiyou.com  59.151.117.147
-debug = "no-debug"
+debug = "debug"
 
 
 def get_with_header(headers, url):
