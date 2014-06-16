@@ -1,13 +1,31 @@
 {% extends base-teacher.html %}
 
- {% block teacher-info %}
-                <img src="{{ static_url('imge/Ruth.jpg')}}" class="img-thumbnail" width="32%" style="margin-top: 10px; margin-left: 20px; float:left;">
+{% block teacher-info %}
+                    <!-- /end left-top -->
+                  <div class="teacher">
+                   <div class="teacher-info">
+                      <h4 style="margin-top:20px;">基本资料|Personal Information</h4>
+                      <div class="line"></div>
+                      <img src="{{static_url('imge/Ruth.jpg')}}" class="img-thumbnail" width="22%" style="margin-left:20px; float:left; margin-top:25px;">
+                      <p><strong>姓名: </strong>Ruth M. Famularcano              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>昵称：</strong>Ruth</p>
+                      <p><strong>教师证书：</strong>TESL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>教学经验：</strong>2年</p>
+                      <p><strong>擅长人群：</strong>成年和少儿、青少儿</p>
+                      <p><strong>擅长级别：</strong>入门级、基础级、中高级</p>
+                      <p><strong>兴趣爱好：</strong>看书、看电影、听有趣的故事，打篮球和羽毛球</p>
+                   </div><!-- /end teacher-info -->
+                   <h4 style="margin-top:40px;">自我介绍|Introdution</h4>
 
-                <div class="teacher-info">
-                    <h4 style="color:#09F; margin-left:20px; margin-top:20px;"><strong>Ruth</strong> | 菲律宾老师（Philippine）</h4>
-                    <p><strong>Introdution:</strong>Hello everyone! My name is Ruth. I am 30 years old. I graduated from St. Paul University. I am a mother of 2. I like reading books, watching movies and hearing funny stories. In weekends, i spend my day playing with my kids, watching cartoons and eating snacks. I also play sports like basketball and badminton.</p>
-                    <p>Again this is Teacher Ruth and I am very excited to work and play with you soon.</p>
-                    <p><strong>自我介绍：</strong>大家好！我是Ruth，30岁，毕业于菲律宾圣保罗大学。我有两个小孩。我很喜欢看书，看电影，听有趣的故事。周末，我都是和我的孩子们度过的，我们一起看动画片，一起吃零食。我也很喜欢篮球和羽毛球哦。呵呵，Ruth老师很期待能和你们一起学习哟！</p>
-                </div>
-                <p><embed src="http://player.youku.com/player.php/sid/XNzIyMTMyNTU2/v.swf" allowfullscreen="true" quality="high" width="32%" height="220" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:left; margin-left: 20px; margin-top:15px;" /></p>
+                   <div class="line"></div>
+
+                   <div class="teacher-intro" >
+
+                      <p><strong>Introdution:：</strong>Hello everyone! My name is Ruth. I am a mother of 2. I like reading books, watching movies and hearing funny stories. In weekends, i spend my day playing with my kids, watching cartoons and eating snacks. I also play sports like basketball and badminton.Again this is Teacher Ruth and I am very excited to work and play with you soon.</p>
+
+                      <p><strong>自我介绍：</strong>大家好！我是Ruth。我有两个小孩。我很喜欢看书，看电影，听有趣的故事。周末，我都是和我的孩子们度过的，我们一起看动画片，一起吃零食。我也很喜欢篮球和羽毛球哦。呵呵，Ruth老师很期待能和你们一起学习哟！</p>
+                   </div>
+                   <p><embed src="http://player.youku.com/player.php/sid/XNzIyMTMyNTU2/v.swf" allowfullscreen="true" quality="high" width="30%" height="200" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:right; margin-right: 25px; margin-top:30px;" /></p>
+
+                </div><!-- /end teacher -->
 {% end %}

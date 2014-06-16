@@ -8,17 +8,14 @@ from torndb import Row
 from tornado.web import gen_log as logger
 from utils import post_u8
 import traceback
+from config import *
 
 _plat = "php"
 _sys = "testing"
-# url_prefix = "http://ft.speiyou.com"
-url_prefix = "http://wjiao.speiyou.cn"
-url_sso = "http://waijiao.speiyou.com/auth/token/auto_login.php"
-debug = "no-debug"
 
 
 def get_with_header(headers, url):
-    if debug == "debug":
+    if debug:
         return ujson.dumps({"rlt": True, "msg": "True", "data": "Skip invoke "})
     req = Request(url, headers=headers)
     return urlopen(req).read()
@@ -116,6 +113,8 @@ def courses(uid, cla_id, datas):
 
 
 def single_login(uid, uname):
+    if debug:
+        return "skipp"
     sso_url = url_sso + '?uname=%s&user=%s' % (uname, uid)
     try:
         rs = None

@@ -362,7 +362,6 @@ class APIClassPayedHandle(BaseHandler):
         cla_id = data.get("claId", None)
         uid = data.get("uid", None)
         stu_name = data.get("stuName", u"学生")
-        #TODO build username
         if cla_id and uid:
             summary = uid + cla_id
             if not authorization(summary, self.request.headers):

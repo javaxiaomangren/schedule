@@ -6,8 +6,8 @@
           <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
           <input type="hidden" id="action" name="action" value="{{ action }}"/>
           <div class="form-group" style="margin-top:8px; margin-left:10px; ">
-            <label class="sr-only" for="teacherName">老师</label>
-            <input type="text" class="form-control  input-sm " id="teacherName" name="teacherName" placeholder="Teacher Name">
+            <label class="sr-only" for="txt_auto">老师</label>
+            <input type="text" class="form-control  input-sm " id="txt_auto" name="teacherName" placeholder="Teacher Name" autocomplete="off">
           </div>
           <div class="form-group"  style="margin-top:8px;margin-left:5px;">
             <select name="timeInterval" id="timeInterval" class="form-control input-sm">
@@ -57,15 +57,10 @@
         </tr>
       </thead>
           <tbody>
-          {% set has_teacher = ["c101", "c301", "m201", "m202", "m203", "m204", "m205", "m206", "m210", "Josemaria"] %}
           {% for entry in entries %}
             <tr>
               <td class="btn-group-lg">
-                  {% if entry.teacher in has_teacher %}
                         <a target="_blank" href="/teacher?tid={{entry.teacher }}">{{ entry.shortname }}</a>
-                  {% else %}
-                  {{ entry.shortname }}
-                  {% end %}
               </td>
               <td>{{ str(entry.start_time)[:-3] }}</td>
                 <td>
@@ -115,9 +110,6 @@
 
 {% block extra_js %}
 <script type="text/javascript">
-//    $('#myModal').on('hidden.bs.modal', function (e) {
-//      alert("hidden")
-//    })
     function show_model(msg, uid, claId, planId) {
         document.getElementById("s_uid").value= uid
         document.getElementById("s_claId").value= claId
@@ -147,5 +139,7 @@
         return true
     }
 </script>
-
+<!--<script src="{{ static_url('js/jquery.1.8.3.js') }}"></script>-->
+<script src="{{ static_url('js/typeahead.js') }}"></script>
+<!--<script src="{{static_url('js/jquery.autocomplete.min.js') }}"></script>-->
 {% end %}

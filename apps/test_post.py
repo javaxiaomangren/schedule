@@ -13,9 +13,10 @@ def post(url, data, headers):
     response = opener.open(req, data)
     return response.read()
 
-url_prefix = "http://localhost:8088"
-uid = u"1234555"
-claId = "112233445566"
+url_prefix = "http://test01.121learn.com"
+uid = u"217034"
+claId = "ff808081467e6d1401467f0dc878002e"
+# uid=217034&claId=ff808081467e6d1401467f0dc878002e
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
 sys = "testing"
@@ -68,6 +69,7 @@ def test_refund():
     header["md5"] = mk_md5(uid+claId, plat, sys)
     test_api(base_data, "/api/class/refund", header)
 
+# test_release()
 # test_select()
 # test_payed()
 # test_refund()

@@ -38,224 +38,148 @@
     <div id="content">
         <div class="container width">
                <div class="left">
-                <div class="left-top">
+                    <div class="left-top">
                     <h5>选课><strong>老师详情</strong></h5>
                 </div>
                 <!-- /end left-top -->
                 {% block teacher-info %}
-                <img src="{{ static_url('imge/Suzette-Pic.png') }}" class="img-thumbnail" width="32%" style="margin-top: 10px; margin-left: 20px; float:left;">
+                      <div class="teacher">
+                   <div class="teacher-info">
+                      <h4 style="margin-top:20px;">基本资料</h4>
+                      <div class="line"></div>
+                      <img src="{{static_url('imge/Sumi.jpg') }}" class="img-thumbnail" width="22%" style="margin-left:20px; float:left; margin-top:25px;">
+                      <p><strong>姓名: </strong>Maria Charis B. Blanco                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>昵称：</strong>Sumi</p>
+                      <p><strong>教师证书：</strong>TESL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>教学经验：</strong>7年</p>
+                      <p><strong>擅长人群：</strong>成年和少儿</p>
+                      <p><strong>擅长级别：</strong>入门级、中高级</p>
+                      <p><strong>兴趣爱好：</strong>看小说，刷微薄，上网聊天</p>
+                   </div><!-- /end teacher-info -->
+                   <h4 style="margin-top:40px;">自我介绍|Introdution</h4>
 
-                <div class="teacher-info">
-                    <h4 style="color:#09F; margin-left:20px; margin-top:20px;"><strong>Suzette</strong> | 菲律宾老师（Philippine）</h4>
-                    <p><strong>Introdution:</strong>Hello! I am teacher Suzette! I am 26 years old, and I've been teaching ESL for almost 5 years now. I am a person who loves reading-English pocketbooks to be exact. My favourite author is Agatha Christie, because of her tricky way in creating stories. I'm also into singing. I just sing whenever I feel sad because music alleviates my mood. I'm really excited to have fun with you in class! I'll be waiting...see you soon!</p>
-                    <p><strong>自我介绍：</strong>大家好！我是Suzette,今年26岁，至今从事非母语英语课程教学工作5年。我非常喜欢英语口袋书。我最喜欢的作者是阿加莎·克里斯蒂，因为她讲述故事的方式总是那么的精妙。我也很喜欢唱歌。每当心情不好的时候，我就唱歌，因为唱歌能缓解我的情绪。我非常希望在课堂上能和你玩得开心。期待和你的见面哟！</p>
-                </div>
-                <p><embed src="http://player.youku.com/player.php/sid/XNzIyMTMxMzYw/v.swf" allowfullscreen="true" quality="high" width="32%" height="220" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:left; margin-left: 20px; margin-top:15px;" /></p>
+                   <div class="line"></div>
+
+                   <div class="teacher-intro" >
+
+                      <p><strong>Introdution:：</strong>Hi! I am Teacher Sumi! I have been teaching ESL for seven years. I enjoy talking to different people and learning from them as well. When I have free time, I like reading romance novels from wattpad, visiting blogs related to fashion, chatting with friends, and watching movies and TV series. One of my dreams is to travel the world and explore different cultures... I hope to see you in class. I'm sure we'll have fun learning together!</p>
+
+                      <p><strong>自我介绍：</strong>嗨！我是Sumi，7年来我一直教授非母语英语课程。我喜欢和不同的人交流，也喜欢向他们学习。空闲时间，我喜欢从wattpad（一家手机电子书公司）上读浪漫小说，在博客上关注最新时尚，与朋友聊天,看电影和电视剧。我的梦想之一是环游世界以及探索不同的文化。期待在课堂上见到你。相信我们一定会一起快乐学习的!
+</p>
+                   </div>
+                   <p><embed src="http://player.youku.com/player.php/sid/XNzIyMTMwOTEy/v.swf" allowfullscreen="true" quality="high" width="30%" height="200" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:right; margin-right: 25px; margin-top:30px;" /></p>
+
+                </div><!-- /end teacher -->
                 {% end %}
                 <!-- /end teacher-info -->
 
-                <div class="left-top" style="float:left; margin-top:10px;">
-                    <h5 style="line-height: 20px;"><strong>老师课表</strong></h5>
-                </div>
-                <!-- /end left-top -->
-
-                <table class="table " style="width:835px; margin-left:10px;">
-                    <thead>
-                        <tr>
-                            <th style="color:#09F;">时间</th>
-                            <th style="color:#09F;">日期</th>
-                            <th style="color:#09F;">预约</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>13:00-13:30</td>
-                            <td>
-                                <button type="button" class="btn btn-warning btn-xs date form_datetime" id="datetimepicker">2014年</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-xs active" data-toggle="modal" data-target="#myModal">约课</button>
-                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h4 class="modal-title" style="color: #09F;">Modal title</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p style="font-size: 12px; color: #999;">One fine body&helli;</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary btn-xs">Save changes</button>
-                                            </div>
-                                        </div>
-                                        <!-- /.modal-content -->
-                                    </div>
-                                    <!-- /.modal-dialog -->
-                                </div>
-                                <!-- /.modal -->
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>13:00-13:30</td>
-                            <td>
-                                <button type="button" class="btn btn-warning btn-xs date form_datetime" id="datetimepicker">2014年</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-xs active">约课</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>13:00-13:30</td>
-                            <td>
-                                <button type="button" class="btn btn-warning btn-xs date form_datetime" id="datetimepicker">2014年</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                                <button type="button" class="btn btn-primary btn-xs">12/11</button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-xs active">约课</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div><!-- /end col-lg-9-->
+
+
+
              <div class="rg">
                <div class="right">
                 <div class="s-side-right">
                     <h3>名师推荐</h3>
                 </div>
                 <div class="teacher-box">
-                    <a href="/teacher?tid=m206"><img src="{{ static_url('imge/Angel.jpg') }}" class="imge"></a>
+                    <a href="/teacher?tid=m206"><img src="{{ static_url('imge/angel.gif') }}" class="imge"></a>
                     <div class="text">
                         <strong>Angel</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：3年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
                 <!-- /end teacher-box -->
                 <div class="teacher-box">
-                     <a href="/teacher?tid=m201"><img src="{{ static_url('imge/Cely.jpg')}}" class="imge"></a>
+                     <a href="teacher?tid=m201"><img src="{{ static_url('imge/cely.gif') }}" class="imge"></a>
                     <div class="text">
                         <strong>Cely</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
+                            教师证书：TESL<br>
                             任教时间：2年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
-                <!-- /end teacher-box --> 
+                <!-- /end teacher-box -->
                 <div class="teacher-box">
-                    <a href="/teacher?tid=c101"><img src="{{ static_url('imge/Sumi.jpg')}}" class="imge"></a>
+                    <a href="/teacher?tid=c101"><img src="{{ static_url('imge/Sumi.jpg') }}" class="imge"></a>
                     <div class="text">
                         <strong>Sumi</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                           教师证书：TESL<br>
+                           任教时间：7年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
                 <!-- /end teacher-box -->
                 <div class="teacher-box">
-                    <a href="/teacher?tid=c202"><img src="{{ static_url('imge/Suzette-Pic.png')}}" class="imge"></a>
+                    <a href="/teacher?tid=c102"><img src="{{ static_url('imge/Suzette.jpg') }}" class="imge"></a>
                     <div class="text">
                         <strong>Suzette</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：5年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
                 <!-- /end teacher-box -->
                 <div class="teacher-box">
-                    <a href="/teacher?tid=m210"><img src="{{ static_url('imge/Chelsea Marquez.jpg') }}" class="imge"></a>
+                    <a href="/teacher?tid=m210"><img src="{{ static_url('imge/Chelsea.gif') }}" class="imge"></a>
                     <div class="text">
                         <strong>Chelsea</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：5年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
                 <!-- /end teacher-box -->
                 <div class="teacher-box">
-                    <a href="/teacher?tid=m205"><img src="{{ static_url('imge/Claudine.jpg') }}" class="imge"></a>
+                    <a href="/teacher?tid=m205"><img src="{{ static_url('imge/Claudine.gif') }}" class="imge"></a>
                     <div class="text">
                         <strong>Claudine</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：7年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
-                <!-- /end teacher-box -->  
-                
+                <!-- /end teacher-box -->
+
                 <div class="teacher-box">
                     <a href="/teacher?tid=m204"><img src="{{ static_url('imge/Rodalyn.jpg') }}" class="imge"></a>
                     <div class="text">
                         <strong>Rodalyn</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：3年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
-                <!-- /end teacher-box --> 
-                
+                <!-- /end teacher-box -->
+
                 <div class="teacher-box">
-                    <a href="/teacher?tid=Josemaria"><img src="{{ static_url('imge/Josemaria Espinosa.jpg') }}" class="imge"></a>
+                    <a href="/teacher?tid=m208"><img  src="{{ static_url('imge/Josemaria.jpg') }}" class="imge"></a>
                     <div class="text">
                         <strong>Josemaria</strong>
                         <p>
-                            老师级别：菲律宾老师<br>
-                            任教时间：2年
+                            教师证书：TESL<br>
+                            任教时间：3年
                         </p>
                     </div>
                     <!-- /end text -->
                 </div>
-                <!-- /end teacher-box -->  
- 
-
+                <!-- /end teacher-box -->
                <div class="div_button">
                     <div class="glyphicon glyphicon-chevron-left div_left_button"></div>
                     <div class="glyphicon glyphicon-chevron-right div_right_button"></div>

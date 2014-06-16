@@ -116,7 +116,7 @@ body{
 	width:855px; 
 	background-color:#FFF; 
 	float:left; 
-	min-height:760px;
+	min-height:805px;
 }
 
 
@@ -133,12 +133,13 @@ body{
     padding-left: 20px;
 }
 
-.teacher-info {
-    width:63%;
-	background-color:#EEE;
-    min-height: 455px;
+.teacher {
+    width:97.4%;
+	border:2px #f4d4a5 solid;
+	background-color:#fffcf7;
+    min-height: 745px;
     float:right;
-    margin-right:10px;
+    margin-right:11px;
     margin-top: 10px;
 }
 
@@ -146,9 +147,32 @@ body{
     font-size: 14px;
     color: #333;
     font-family: "微软雅黑","宋体","tahoma","arial";
-    line-height:30px;
-	padding-left:10px;
-	padding-right:10px;
+	margin-top:20px;
+	margin-left:230px;
+}
+
+.teacher h4{
+	color:#09F; 
+	margin-left:25px; 
+	font-weight:bold;
+}
+
+.line{
+	border:2px #f4d4a5 solid; 
+	width:95%; 
+	margin-left:20px; 
+	margin-top:10px;
+}
+
+.teacher-intro{
+	margin-left:25px; 
+	margin-top:20px; 
+	width:500px; 
+	float:left; 
+	line-height:30px;
+	font-size: 14px;
+    color: #333;
+    font-family: "微软雅黑","宋体","tahoma","arial";
 }
 
 .imge {
@@ -215,7 +239,6 @@ body{
 .timetable {
             float: left;
             background-color: #71bd57;
-            text-align: center;
             width: 110px;
             height: 100px;
             border-radius: 3px;
@@ -228,18 +251,18 @@ body{
 
         .first {
             margin-top: 3px;
-            margin-left: 10px;
+            margin-left: 5px;
         }
 
         .second {
             margin-top: 10px;
-            margin-left: 10px;
+            margin-left: 16px;
         }
 
         .third {
             font-weight: bold;
             margin-top: 8px;
-            margin-left: 10px;
+            margin-left: 31px;
         }
 	
 

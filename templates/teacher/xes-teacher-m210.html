@@ -1,13 +1,32 @@
                    {% extends base-teacher.html %}
 
  {% block teacher-info %}
-                <img src="{{ static_url('imge/Chelsea Marquez.jpg')}} " class="img-thumbnail" width="32%" style="margin-top: 10px; margin-left: 20px; float:left;">
 
-                <div class="teacher-info">
-                    <h4 style="color:#09F; margin-left:20px; margin-top:20px;"><strong>Chelsea</strong> | 菲律宾老师（Philippine）</h4>
-                    <p><strong>Introdution:</strong>HI! I’m teacher Chelsea. I’m friendly and very jolly. I like singing and dancing. I love watching romantic and funny movies. I’m interested in meeting and teaching new people. I will make sure that you not only learn but also have fun in class with me.  </p>
-                    <p><strong>自我介绍：</strong>嗨！我是Chelsea，我很活泼友善哦。我喜欢唱歌和跳舞，喜欢看浪漫和有趣的电影。我喜欢会议以及教授新的学员。我确信在我的课堂上，你会学得开心，玩得开心哟！</p>
+                <div class="teacher">
+                   <div class="teacher-info">
+                      <h4 style="margin-top:20px;">基本资料|Personal Information</h4>
+                      <div class="line"></div>
+                      <img src="{{static_url('imge/Chelsea.gif')}}" class="img-thumbnail" width="22%" style="margin-left:20px; float:left; margin-top:25px;">
+                      <p><strong>姓名: </strong>Chelsea C. Marquez            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>昵称：</strong>Chelsea</p>
+                      <p><strong>教师证书：</strong>TESL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>教学经验：</strong>2年</p>
+                      <p><strong>擅长人群：</strong>少儿、青少儿、成人</p>
+                      <p><strong>擅长级别：</strong>入门级、基础级</p>
+                      <p><strong>兴趣爱好：</strong>唱歌、跳舞，看浪漫和有趣的电影</p>
+                   </div><!-- /end teacher-info -->
+                   <h4 style="margin-top:40px;">自我介绍|Introdution</h4>
 
-                </div>
-                <p><embed src="http://player.youku.com/player.php/sid/XNjYyOTAxMDQ4/v.swf" allowfullscreen="true" quality="high" width="32%" height="220" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:left; margin-left: 20px; margin-top:15px;" /></p>
+                   <div class="line"></div>
+
+                   <div class="teacher-intro" >
+
+                      <p><strong>Introdution:：</strong>Hi! I’m teacher Chelsea. I’m friendly and very jolly. I like singing and dancing. I love watching romantic and funny movies. I’m interested in meeting and teaching new people. I will make sure that you not only learn but also have fun in class with me.  </p>
+
+                      <p><strong>自我介绍：</strong> 嗨！我是Chelsea，我很活泼友善哦。我喜欢唱歌和跳舞，喜欢看浪漫和有趣的电影。我喜欢会议以及教授新的学员。我确信在我的课堂上，你会学得开心，玩得开心哟！</p>
+                   </div>
+                   <p><embed src="http://player.youku.com/player.php/sid/XNzI1NDI2NDM2/v.swf" allowfullscreen="true" quality="high" width="30%" height="200" align="middle" name="english" title="english" type="application/x-shockwave-flash" flashvars="winType=adshow&amp;isAutoPlay=false" style="visibility: visible; float:right; margin-right: 25px; margin-top:30px;" /></p>
+
+                </div><!-- /end teacher -->
+
 {% end %}

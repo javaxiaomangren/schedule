@@ -11,6 +11,7 @@ import tornado.web
 from torndb import Row
 from tornado.web import gen_log
 from urllib2 import Request, urlopen
+from config import *
 
 
 class Route(object):
@@ -84,10 +85,21 @@ def post2(data):
     return Row(ujson.loads(resp_data))
 
 
+# def get_mysql():
+#     return torndb.Connection(
+#         host="localhost", database="schedule",
+#         user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
+
+
 def get_mysql():
-    return torndb.Connection(
-        host="localhost", database="schedule",
-        user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
+    if debug:
+        return torndb.Connection(
+            host="localhost", database="init_test",
+            user="root", password="")
+    else:
+        return torndb.Connection(
+            host="localhost", database="schedule",
+            user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
 
 
 def notify_me(func):
@@ -128,8 +140,8 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 
 def sendmail(msg='', subject=''):
-    mails = ["windy.yang@huanxunedu.com", "cc.chen@huanxunedu.com",
-             "johnny.dai@huanxunedu.com", "simon.sun@huanxunedu.com"]
+    if debug:
+        return
     for m in mails:
         _sendmail(msg=msg, subject=subject, to=m)
 
