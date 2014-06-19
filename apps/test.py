@@ -7,7 +7,10 @@ from utils import Route
 from utils import sendmail
 from http_msg import single_login
 from datetime import datetime
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 @Route("/test/uname")
 class TestPost(BaseHandler):
