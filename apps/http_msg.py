@@ -120,6 +120,8 @@ def single_login(uid, uname):
         rs = None
         try:
             rs = urlopen(sso_url)
+            logger.info("Single Result--->")
+            logger.info(rs)
         except:
             logger.info("1-Single Login Failed, %s", traceback.format_exc())
         if not rs:
@@ -133,4 +135,4 @@ def single_login(uid, uname):
         logger.info("Single Login Failed, %s", traceback.format_exc())
     finally:
         return sso_url
-        # print single_login(uid='987654321000', uname=u'李华人')
+# single_login(uid='987654321000', uname=u'李华人')
