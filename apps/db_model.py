@@ -9,6 +9,7 @@ from utils import sendmail
 from datetime import datetime
 from datetime import timedelta
 from http_msg import single_login
+import traceback
 
 tb_prefix = "mid_"
 tb = lambda x: tb_prefix + x
@@ -393,7 +394,7 @@ class LogicModel(BaseDBModel):
                                 % (uid, uname, rows[0].workroom, uid, cla_id, sso)
                         sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
                     except:
-                        pass
+                        gen_log.info(traceback.format_exc())
                     return {"rlt": True, "msg": "Success", "data": self.set_response(rows, cla_id, uid)}
                 else:
                     return {"rlt": False, "msg": "Failed", "data": "支付失败"}
@@ -1022,4 +1023,8 @@ def set_model(db):
                   mwrs=_mwrs, mscc=_mscc,
                   msr=_msr)
     return model
+
+
+def auto_check_roll(db):
+    msc = MidStudentClasses(db)
 
