@@ -4,7 +4,7 @@ __author__ = 'windy'
 from base import *
 from db_model import BaseDBModel
 from http_msg import *
-
+from utils import _sendmail
 
 #====================== Commons Methods ==========
 def get_param(request):
@@ -64,6 +64,7 @@ class APIAddClassHandle(BaseHandler):
                                      "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 0)",
                                      p.claId, p.claName, p.classCount, p.everyHours, p.startDate, p.endDate,
                                      p.frequency, p.year, p.termName, p.maxPersons)
+            _sendmail(msg="Ask for plan classes", subject="Ask for plan class")
             self.write(msg())
         except AttributeError as ae:
             self.write(msg(False, "%s 参数没有找到" % ae))
