@@ -7,11 +7,11 @@ from utils import Route
 from utils import sendmail
 from http_msg import single_login
 from datetime import datetime
-import sys
+# import sys
 from tornado.web import gen_log
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 @Route("/test/uname")
 class TestPost(BaseHandler):
