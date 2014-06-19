@@ -131,9 +131,11 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
         smtpserver.starttls()
         smtpserver.ehlo()
         smtpserver.login(frm_user, frm_passwd)
-        header = 'To:%s\nFrom:%s\nSubject:%s\n' % (to, frm_user, subject)
-        message = header + '\n %s\n\n' % msg.encode("utf-8")
-        smtpserver.sendmail(frm_user, to, message)
+        for m in mails:
+            to = m
+            header = 'To:%s\nFrom:%s\nSubject:%s\n' % (to, frm_user, subject)
+            message = header + '\n %s\n\n' % msg.encode("utf-8")
+            smtpserver.sendmail(frm_user, to, message)
         smtpserver.close()
     except:
         gen_log.info(traceback.format_exc())
@@ -143,8 +145,7 @@ def sendmail(msg='', subject=''):
     if debug:
         gen_log.info("debug")
         return
-    for m in mails:
-        _sendmail(msg=msg, subject=subject, to=m)
+    _sendmail(msg=msg, subject=subject)
 
 
 class CheckRoll(object):
