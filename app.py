@@ -16,6 +16,10 @@ from apps.entry import GradeEntry
 
 from apps.utils import Route
 from apps.db_model import set_model
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 define("port", default=8088, help="run on the given port", type=int)
