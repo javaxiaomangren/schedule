@@ -141,6 +141,7 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 def sendmail(msg='', subject=''):
     if debug:
+        gen_log.info("debug")
         return
     for m in mails:
         _sendmail(msg=msg, subject=subject, to=m)
