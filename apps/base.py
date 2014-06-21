@@ -3,10 +3,14 @@ __author__ = 'windy'
 import traceback
 import ujson
 import json
-from collections import OrderedDict
 from datetime import datetime, timedelta
 from utils import *
 from http_msg import mk_md5
+import sys
+if sys.version_info < (2, 7):
+    from ordereddict import OrderedDict
+else:
+    from collections import OrderedDict
 
 import tornado.web
 from torndb import Row

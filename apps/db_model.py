@@ -3,13 +3,18 @@ __author__ = 'windy'
 import calendar
 from tornado.web import gen_log
 from torndb import Row
-from collections import OrderedDict
 from utils import CheckRoll
 from utils import sendmail
 from datetime import datetime
 from datetime import timedelta
 from http_msg import single_login
 import traceback
+import sys
+if sys.version_info < (2, 7):
+    from ordereddict import OrderedDict
+else:
+    from collections import OrderedDict
+
 
 tb_prefix = "mid_"
 tb = lambda x: tb_prefix + x
