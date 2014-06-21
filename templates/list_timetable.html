@@ -73,13 +73,13 @@
               <td>
                 {% if action == '2' %}
                      <button class="btn btn-default btn-xs active"
-                        onclick="show_model2('您约的是:{{ entry.shortname }} {{ entry.fullname }} 老师, {{ entry.description }},确定要约这个时间吗？',
+                        onclick="show_model2('您约的是:{{ entry.shortname }} 老师, {{ entry.description }},确定要约这个时间吗？',
                         '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.workroom }}')">
                             转班
                     </button>
                   {% else %}
                 <button class="btn btn-default btn-xs active"
-                    onclick="show_model('您约的是:{{ entry.shortname }} {{ entry.fullname }} 老师, {{ entry.description }},确定要约这个时间吗？',
+                    onclick="show_model('您约的是:{{ entry.shortname }} 老师, {{ entry.description }},确定要约这个时间吗？',
                     '{{ args.get('uid') }}', '{{ args.get('claId') }}', '{{entry.workroom }}')">
                         {% if not selected %}
                                 约课
