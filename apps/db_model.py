@@ -209,6 +209,32 @@ class BaseDBModel(object):
         return result
 
     @staticmethod
+    def set_pre_pay_data(rows=list(), cla_id='', uid=''):
+        """
+           设置聚合的课程返回信息给 speiyou.com
+           当调用支付接口时， 返回给培优网的数据
+        """
+        result = OrderedDict()
+        classes = []
+        result["claId"] = cla_id
+        result["uid"] = uid
+
+        for row in rows:
+            #TODO 预考勤
+            if BaseDBModel.check_time(row.class_date, row.start_time):
+                c = OrderedDict()
+                c["teacherName"] = row.shortname
+                c["classDate"] = str(row.class_date)
+                c["startTime"] = str(row.start_time)
+                c["endTime"] = str(row.start_time + timedelta(minutes=class_period))
+                c["status"] = row.class_type
+                classes.append(c)
+
+        result["available"] = classes
+        result["counts"] = str(len(classes))
+        return result
+
+    @staticmethod
     def set_change_date(src, target):
         data = OrderedDict()
         data["sourceBeiliCucId"] = src.time_id
@@ -409,6 +435,26 @@ class LogicModel(BaseDBModel):
             #重复调用
             rows = self.models.mwrd.get_by_workroom(selected.workroom)
             return {"rlt": False, "msg": "Fiald", "data": self.set_response(rows, cla_id, uid)}
+
+    def pre_pay(self, cla_id='', uid=''):
+        """
+            支付课程
+            1. insert into student_classes
+            2. update student_class_select deal as payed
+            3. return class data
+        """
+        flag, selected = self.models.mss.get_selected_for_pay(uid, cla_id)
+        dt, valid_time = BaseDBModel.get_valid_date()
+        if flag:
+            if selected:
+                rows = self.models.mwrd.get_valid_dates(selected.workroom, status="used",
+                                                        date_now=dt)
+                return {'rlt': True, 'msg': 'Success', 'data': self.set_pre_pay_data(rows, cla_id, uid)}
+            else:
+                return {"rlt": False, "msg": "Success", "data": "没有选课"}
+        else:
+            #已经支付了
+            return {"rlt": False, "msg": "Failed, Repeat invoke", "data": "已经支付了"}
 
     def refund(self,  cla_id='', uid=''):
         """
@@ -1011,6 +1057,33 @@ class MidStudentRefund(BaseDBModel):
         pass
 
 
+class MidTask(BaseDBModel):
+    TABLE = tb('task')
+    fields = ["uid", "cla_id", "content", "tasktype", "parant"]
+
+    @property
+    def get(self):
+        return self.TABLE
+
+    def add(self, params):
+        return self.insert(self.TABLE, self.fields, params)
+
+    def list_task(self, assign='ready', tasktype=''):
+        where, param = self.get_and_where(assign=assign, tasktype=tasktype)
+        return self.query(self.TABLE, where=where, param=param)
+
+    def update_by(self, fields=list(), values=list(), **kwargs):
+        """更新某些字段"""
+        where, params = self.get_and_where(**kwargs)
+        return self.update(self.TABLE, fields, values, where, param=params)
+
+    def finished(self, _id=''):
+        self.update_by(fields=["assign"], values=["done"], id=_id)
+
+    def failed(self, _id="", retry=1):
+        self.update_by(fields=["retry"], values=[retry], id=_id)
+
+
 def set_model(db):
     _mcwr = MidCourseWorkRoom(db)
     _mwr = MidWorkRoom(db)
@@ -1021,12 +1094,13 @@ def set_model(db):
     _msdc = MidStudentDateChanged(db)
     _mscc = MidStudentClassChanged(db)
     _msr = MidStudentRefund(db)
+    _mt = MidTask(db)
     model = LogicModel(db)
     model.initial(mwr=_mwr, mcwr=_mcwr,
                   mss=_mss, mwrd=_mwrd,
                   msc=_msc, msdc=_msdc,
                   mwrs=_mwrs, mscc=_mscc,
-                  msr=_msr)
+                  msr=_msr, mt=_mt)
     return model
 
 

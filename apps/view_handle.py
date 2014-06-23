@@ -351,6 +351,28 @@ class APIClassReleaseHandle(BaseHandler):
             self.write(msg(False, "请求参数不对"))
 
 
+@Route("/api/class/available", name="Check available classes")
+class APIClassPayedHandle(BaseHandler):
+    """
+    中途报班级问题
+    查询可选课程次数
+    """
+
+    def post(self):
+        data = ujson.loads(self.request.body)
+        cla_id = data.get("claId", None)
+        uid = data.get("uid", None)
+        if cla_id and uid:
+            summary = uid + cla_id
+            if not authorization(summary, self.request.headers):
+                self.write(msg(False, "authorization failed"))
+                return
+            result = self.db_model.pre_pay(cla_id=cla_id, uid=uid)
+            self.write(result)
+        else:
+            self.write(msg(False, "请求参数不对"))
+
+
 @Route("/api/class/payed", name="Get payed notify")
 class APIClassPayedHandle(BaseHandler):
     """
