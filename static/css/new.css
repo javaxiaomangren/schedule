@@ -245,24 +245,23 @@ body{
             padding-top: 10px;
             margin-top: 10px;
             margin-left: 10px;
-            padding-left: 10px;
             color: white;
         }
 
         .first {
             margin-top: 3px;
-            margin-left: 5px;
+            text-align:center; 
         }
 
         .second {
             margin-top: 10px;
-            margin-left: 16px;
+            text-align:center;
         }
 
         .third {
             font-weight: bold;
             margin-top: 8px;
-            margin-left: 31px;
+            text-align:center;
         }
 	
 
