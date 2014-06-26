@@ -245,25 +245,57 @@ body{
             padding-top: 10px;
             margin-top: 10px;
             margin-left: 10px;
-            padding-left: 10px;
             color: white;
         }
 
         .first {
             margin-top: 3px;
-            margin-left: 5px;
+            
+            text-align:center; 
         }
 
         .second {
             margin-top: 10px;
-            margin-left: 16px;
+            text-align:center;
         }
 
         .third {
             font-weight: bold;
             margin-top: 8px;
-            margin-left: 31px;
+            text-align:center;
         }
+.autoComplete {position:relative;}
+    
+
+.autoComplete ul {
+    z-index:12;
+    position:absolute;
+    border:1px #333 solid;
+    width:154px;
+    background:white;
+    display:none;
+    margin-top:2px;
+    text-align:center;
+}
+    
+.autoComplete li {
+    list-style:none;
+    color:#09F;
+}
+
+.autoComplete li a {
+    margin-left:-40px;
+    display:block;
+    color:#000;
+    text-decoration:none;
+    width:152px;
+}
+    
+.autoComplete li a:hover {
+    color:#000;
+    background:#ccc;
+    border:none;
+}
 	
 
 	
