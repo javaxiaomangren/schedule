@@ -58,10 +58,21 @@ var autoComplete=function(o){
             match:function(quickExpr,value,source){/* 生成提示 */
                 var li = null;
                 for(var i in source){
-                    if( value.length>0 && quickExpr.exec(source[i])!=null ){
-                        li = document.createElement('li');
-                        li.innerHTML = '<a href="javascript:;">'+source[i]+'</a>';
-                        this.popup.appendChild(li);
+                    if( value.length>0){
+                        std = source[i];
+                        flag = quickExpr.exec(std);
+                        if (flag != null){
+                            li = document.createElement('li');
+                            li.innerHTML = '<a href="javascript:;">'+source[i]+'</a>';
+                            this.popup.appendChild(li);
+                        } else {
+                            flag = quickExpr.exec(std.toLowerCase());
+                            if (flag != null){
+                                li = document.createElement('li');
+                                li.innerHTML = '<a href="javascript:;">'+source[i]+'</a>';
+                                this.popup.appendChild(li);
+                            }
+                        }
                     }
                 }
                 if(this.popup.getElementsByTagName('a').length)
@@ -94,6 +105,7 @@ var autoComplete=function(o){
                 var that=this;
                 this.input.onfocus = function(){
                     if(this.inputValue) this.value = this.inputValue;
+                    
                     var value=this.value, quickExpr=RegExp('^'+value,'i'), self=this;
                     var els = that.popup.getElementsByTagName('a');
                     if(els.length>0) that.popup.style.display = 'block';
@@ -215,4 +227,3 @@ addEvent.call(null,'load',function(){
     });
 });
 //]]>
-
