@@ -56,4 +56,5 @@ tornado
 torndb
 ujson
 python-mysqldb
+wget
 

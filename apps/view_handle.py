@@ -223,7 +223,7 @@ class ClassChangeQueryHandle(BaseHandler):
                 h_s = courses(uid, cla_id, rs.msg)
                 if h_s.rlt:
                     self.commit()
-                    email = ""
+                    email = "\n\n\n\nThis is For Schedule"
                     x = 1
                     for l in rs.msg:
                         email += str(x) + ". src workroom: %s, src date: %s--> " \
@@ -231,7 +231,7 @@ class ClassChangeQueryHandle(BaseHandler):
                                  % (l.get("sourceClassroom"), l.get("sourceCourseDate"),
                                     l.get("targetClassroom"), l.get("targetCourseDate"))
                         x += 1
-                    sendmail(msg=email, subject="%sStudent=%s Changed WorkRoom" % (str(datetime.now()), uid))
+                    sendmail(msg=rs.email + email, subject="%sStudent=%s Changed WorkRoom" % (str(datetime.now()), uid))
                     print msg()
                     self.render("200.html", entry=msg())
                 else:
@@ -470,7 +470,6 @@ class NotifyHandle(BaseHandler):
             self.auto_commit()
 
 
-            # #TODO 登录，单点登录
             # #TODO 两个表的Timeiid 要唯一
             # #TODO xheader=true
             # #TODO 跨站伪造请求的防范

@@ -14,6 +14,7 @@ from urllib2 import Request, urlopen
 from config import *
 
 
+
 class Route(object):
     """
     Example
@@ -121,8 +122,8 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
     :param subject:
     """
     try:
-        frm_user = 'ixdba_tuan800@163.com'
-        frm_passwd = 'tgxstbbA201'
+        frm_user = 'CourseHandler@163.com'
+        frm_passwd = '106yh!@#$'
 
         # smtpserver = smtplib.SMTP("smtp.gmail.com",587)
         smtpserver = smtplib.SMTP("smtp.163.com", 25)
@@ -142,9 +143,6 @@ def _sendmail(msg='', subject='', to='windy.yang@huanxunedu.com'):
 
 
 def sendmail(msg='', subject=''):
-    if debug:
-        gen_log.info("debug")
-        return
     _sendmail(msg=msg, subject=subject)
 
 
@@ -189,4 +187,10 @@ def list_page(display, p_count, p_no):
                 x = 1
                 y = display
     return range(x, y + 1)
+
+
+def write_to_file(uid, cla_id, line):
+    with open(downloads % (uid + cla_id), 'w') as f:
+        f.write(line)
+# write_to_file("1223334444", "K00001", "add, student, %s, %s" % ("1223334444", "A-1500-K1-c105"))
 

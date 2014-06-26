@@ -43,7 +43,7 @@
        {% for entry in entries %}
            <tr>
                <td><a target="_blank" href="/api/class/manage?uid={{ entry.uid }}&claId={{entry.cla_id }}">{{ entry.uid}}</a></td>
-               <td>{{ entry.uname}}</td>
+               <td><a href="http://ljl.121learn.cn/speiyou/auto_login.php?uname={{ entry.uname}}&user={{ entry.uid}}" target="_blank">{{ entry.uname}}</a></td>
                <td>{{ entry.shortname }}</td>
                <td><a href="javascript:void(0)" title="{{ entry.class_name }}">{{ entry.class_name[0:6] }}</a></td>
                <td>{{ entry.workroom }}</td>

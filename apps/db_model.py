@@ -5,9 +5,11 @@ from tornado.web import gen_log
 from torndb import Row
 from utils import CheckRoll
 from utils import sendmail
+from utils import write_to_file
 from datetime import datetime
 from datetime import timedelta
 from http_msg import single_login
+from task_handle import *
 import traceback
 import sys
 if sys.version_info < (2, 7):
@@ -115,6 +117,9 @@ class BaseDBModel(object):
 
     def delete(self, table, where, params=list()):
         return self.db.execute_rowcount("delete from %s %s" % (table, where), *params)
+
+    def get_teacher_number(self, tid):
+        return self.db.get("select idnumber from mid_idnumber where id=%s", tid).idnumber
 
     @staticmethod
     def check_time(class_date, start_time, check=pre_check):
@@ -418,14 +423,30 @@ class LogicModel(BaseDBModel):
                         if isinstance(uname, unicode):
                             uname = uname.encode("utf-8")
                         sso = single_login(uid, uname)
+                        teacher_number = self.models.mss.get_teacher_number(rows[0].teacher)
+                        #set flat enrol file
+                        line = "add, student, %s, %s\nadd, student, %s, %s\nadd, teacher, %s, %s"\
+                               % (uid, selected.workroom, uid, rows[0].teacher.upper(), teacher_number, selected.workroom)
+                        write_to_file(uid, cla_id, line)
+                        enrol_file = set_file_url(uid, cla_id)
+                        #get moodle cron exe url
+                        cron = get_cron_url()
+                        edit_url = get_edit_classtable(selected.workroom)
+                        classtable = get_classtable_url(uid=uid, cla_id=cla_id)
+                        #update class table
+                        update_class_table(classtable, selected.workroom)
+                        update_course_shortname(selected.workroom, uname)
+                        # set_when_payed(uid, cla_id, uname, selected.workroom)
                         email = "Student From LJL id=%s, name=%s\n" \
                                 "Payed for:%s \n" \
-                                "Class Table Link: http://yueke.speiyou.com/timetable/list/moodle?uid=%s&claId=%s\n" \
-                                "SSO URL: %s" \
-                                % (uid, uname, rows[0].workroom, uid, cla_id, sso)
+                                "Class Table Link:\n %s \n" \
+                                "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\n"\
+                                "Step 4(Open is different Browser):\n %s" \
+                                % (uid, uname, rows[0].workroom, classtable, enrol_file, cron, edit_url, sso)
                         sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
                     except:
                         gen_log.info(traceback.format_exc())
+
                     return {"rlt": True, "msg": "Success", "data": self.set_response(rows, cla_id, uid)}
                 else:
                     return {"rlt": False, "msg": "Failed", "data": "支付失败"}
@@ -576,7 +597,42 @@ class LogicModel(BaseDBModel):
                     gen_log.info("Change classes failed when update select records. "
                                  "select_id=[%s]", selected_row.id)
                     return msg(False, "Change Classes Failed")
-                return Row({"rlt": True, "msg": datas})
+                r6 = update_moodle_course_name(selected_row.workroom, target_wr)
+                if not r6:
+                    gen_log.info("Course Names Update Failed src[%s], target[%s]", selected_row.workroom, target_wr)
+                    return msg(False, "Change Classes Failed, Course Names Update Failed")
+                email = "Set Email Error, Concat to Windy"
+                try:
+                    src_teacher = self.models.mss.get_teacher_number(src_data[0].teacher)
+                    target_teacher = self.models.mss.get_teacher_number(target_data[0].teacher)
+                    line = "del, teacher, %s, %s\n" \
+                           "add, teacher, %s, %s\n" \
+                           "add, student, %s, %s\n" \
+                           "del, teacher, %s, %s" \
+                           % (src_teacher, target_wr,
+                              target_teacher, target_wr,
+                              uid, target_data[0].teacher.upper(),
+                              uid, src_data[0].teacher.upper())
+                    write_to_file(uid, cla_id + "_change", line)
+                    enrol_file = set_file_url(uid, cla_id + "_change")
+                    cron = get_cron_url()
+                    src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
+                    src_lab_edit = get_edit_label(src_lab.edit)
+                    target_lab_edit = get_edit_label(target_lab.edit)
+                    src_vc = src_lab.intro
+                    target_vc = target_lab.intro
+
+                    email = "Student Change Teacher From LJL id=%s\n" \
+                            "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\nVC Content:\n %s\n"\
+                            "Step 4:\n Change Teacher ID as: %s\n" \
+                            "Step 5:\n     %s\nVC Content:\n %s\n" \
+                            "Step 6:\n Change Teacher ID as: %s\n" \
+                            % (uid, enrol_file, cron, src_lab_edit, target_vc,
+                               target_data[0].teacher, target_lab_edit, src_vc, target_data[0].teacher)
+
+                except:
+                    gen_log.info("Failed set Email info")
+                return Row({"rlt": True, "msg": datas, "email": email})
 
             else:
                 gen_log.info("uid=[%s],cla_id[%s] No classes can be change.", uid, cla_id)
@@ -1106,4 +1162,5 @@ def set_model(db):
 
 def auto_check_roll(db):
     msc = MidStudentClasses(db)
+
 

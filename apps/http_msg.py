@@ -106,15 +106,13 @@ def courses(uid, cla_id, datas):
     summary = uid + cla_id
     md5 = mk_md5(summary)
     logger.info("Invoke %s ", url)
-    if debug == "debug":
+    if debug:
         return Row({"rlt": True, "data": "Skip invoke "})
     x = post_u8(url, result, {"sys": _sys, "plat": _plat, "md5": md5})
     return log_it(x)
 
 
 def single_login(uid, uname):
-    if debug:
-        return "skipp"
     sso_url = url_sso + '?uname=%s&user=%s' % (uname, uid)
     try:
         rs = None
