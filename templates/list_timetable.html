@@ -7,7 +7,8 @@
           <input type="hidden" id="action" name="action" value="{{ action }}"/>
           <div class="form-group" style="margin-top:8px; margin-left:10px; ">
             <label class="sr-only" for="txt_auto">老师</label>
-            <input type="text" class="form-control  input-sm " id="txt_auto" name="teacherName" placeholder="Teacher Name" autocomplete="off">
+            <!-- <input type="text" class="form-control  input-sm " id="txt_auto" name="teacherName" placeholder="Teacher Name" autocomplete="off"> -->
+            <div class="autoComplete"><input type="text"   class="form-control  input-sm " value="input" /><ul><li></li></ul></div>
           </div>
           <div class="form-group"  style="margin-top:8px;margin-left:5px;">
             <select name="timeInterval" id="timeInterval" class="form-control input-sm">
@@ -138,8 +139,10 @@
         document.forms[0].submit()
         return true
     }
+
 </script>
 <!--<script src="{{ static_url('js/jquery.1.8.3.js') }}"></script>-->
 <script src="{{ static_url('js/typeahead.js') }}"></script>
+<script src="{{ static_url('js/customer_auto_complete.js') }}"></script>
 <!--<script src="{{static_url('js/jquery.autocomplete.min.js') }}"></script>-->
 {% end %}
