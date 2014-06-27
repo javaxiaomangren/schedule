@@ -639,6 +639,7 @@ class LogicModel(BaseDBModel):
 
                 except:
                     gen_log.info("Failed set Email info")
+                    gen_log.info(traceback.format_exc())
                 return Row({"rlt": True, "msg": datas, "email": email})
 
             else:

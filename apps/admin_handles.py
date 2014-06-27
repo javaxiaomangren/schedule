@@ -78,7 +78,7 @@ class QueryStudentSelectedHandle(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         select_list = self.db_model.models.mss.list_selected()
-        self.render("admin/list_student_class.html", entries=select_list)
+        self.render("admin/list_student_class.html", entries=select_list, login_url=config.moodle_url)
 
 
 @Route("/admin/query/student/classtable", name="Student Class Table")
