@@ -425,8 +425,11 @@ class LogicModel(BaseDBModel):
                         sso = single_login(uid, uname)
                         teacher_number = self.models.mss.get_teacher_number(rows[0].teacher)
                         #set flat enrol file
-                        line = "add, student, %s, %s\nadd, student, %s, %s\nadd, teacher, %s, %s"\
-                               % (uid, selected.workroom, uid, rows[0].teacher.upper(), teacher_number, selected.workroom)
+                        line = "add, student, %s, %s\nadd, student, %s, %s\nadd, teacher, %s, %s\nadd, teacher, %s, %s"\
+                               % (uid, selected.workroom,
+                                  uid, rows[0].teacher.upper(),
+                                  teacher_number, selected.workroom,
+                                  teacher_number, rows[0].teacher.upper())
                         write_to_file(uid, cla_id, line)
                         enrol_file = set_file_url(uid, cla_id)
                         #get moodle cron exe url
@@ -455,7 +458,7 @@ class LogicModel(BaseDBModel):
         else:
             #重复调用
             rows = self.models.mwrd.get_by_workroom(selected.workroom)
-            return {"rlt": False, "msg": "Fiald", "data": self.set_response(rows, cla_id, uid)}
+            return {"rlt": True, "msg": "Repeat Invoke", "data": self.set_response(rows, cla_id, uid)}
 
     def pre_pay(self, cla_id='', uid=''):
         """
@@ -608,7 +611,7 @@ class LogicModel(BaseDBModel):
                     line = "del, teacher, %s, %s\n" \
                            "add, teacher, %s, %s\n" \
                            "add, student, %s, %s\n" \
-                           "del, teacher, %s, %s" \
+                           "del, student, %s, %s" \
                            % (src_teacher, target_wr,
                               target_teacher, target_wr,
                               uid, target_data[0].teacher.upper(),
@@ -623,9 +626,13 @@ class LogicModel(BaseDBModel):
                     target_vc = target_lab.intro
 
                     email = "Student Change Teacher From LJL id=%s\n" \
-                            "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\nVC Content:\n %s\n"\
+                            "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\nVC Content:\n " \
+                            "============================================================================\n" \
+                            " %s\n============================================================================\n" \
                             "Step 4:\n Change Teacher ID as: %s\n" \
-                            "Step 5:\n     %s\nVC Content:\n %s\n" \
+                            "Step 5:\n     %s\nVC Content:\n" \
+                            "============================================================================\n" \
+                            " %s\n============================================================================\n" \
                             "Step 6:\n Change Teacher ID as: %s\n" \
                             % (uid, enrol_file, cron, src_lab_edit, target_vc,
                                target_data[0].teacher, target_lab_edit, src_vc, target_data[0].teacher)
