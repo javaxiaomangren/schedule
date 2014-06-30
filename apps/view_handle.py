@@ -147,9 +147,13 @@ class MyClassHandler(BaseHandler):
                 will_start = (b, m)
 
             class_change, selected_row = self.db_model.models.mss.check_will_change(cla_id=cla_id, uid=uid)
+            change_times = 3
+            if class_change and selected_row:
+                change_times = selected_row.version - 1
             date_change = self.db_model.models.msdc.check_has_changed(cla_id=cla_id, uid=uid)
             self.render("my_timetable.html", entries=class_table, uid=uid, cla_id=cla_id,
-                        class_change=class_change, date_change=date_change, will_start=will_start)
+                        class_change=class_change, date_change=date_change, will_start=will_start,
+                        change_times=change_times)
         else:
             self.write(msg(False, "请求参数不对"))
 
