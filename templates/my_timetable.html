@@ -15,7 +15,8 @@
        </p>
        {% if class_change %}
           {% if not will_start[0] %}
-                <a href="/api/class/timetable/list?uid={{uid}}&claId={{cla_id}}&action=2" class="btn btn-success btn-group-sm btn-wz" style="font-size: 16px">转班</a>
+                <a href="/api/class/timetable/list?uid={{uid}}&claId={{cla_id}}&action=2"
+                   class="btn btn-success btn-group-sm btn-wz" style="font-size: 16px">转班(还可以转班{{3 - change_times}}次)</a>
           {% else %}
                 <div class="btn btn-danger btn-group-sm btn-wz" style="width:100px; font-size:16px ">有预考勤
                 </div>
