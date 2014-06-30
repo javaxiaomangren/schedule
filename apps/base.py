@@ -71,7 +71,7 @@ class LoginHandle(BaseHandler):
     def post(self, *args, **kwargs):
         user = self.get_argument("username")
         passwd = self.get_argument("passwd")
-        row = self.db.get("SELECT password FROM user where username=%s", user)
+        row = self.db.get("SELECT role, password FROM user where username=%s", user)
         md5 = mk_md5(passwd)
         if row and row.password == unicode(md5):
             self.set_secure_cookie("user", user)
