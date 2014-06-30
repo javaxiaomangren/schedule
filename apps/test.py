@@ -32,3 +32,8 @@ class TestPost(BaseHandler):
             self.write("world")
         else:
             self.write("Hello")
+
+@Route("/test/post")
+class TestPost(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render("test_post.html")

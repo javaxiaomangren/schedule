@@ -93,14 +93,14 @@ def post2(data):
 
 
 def get_mysql(dbname='schedule'):
-    # if debug:
-    #     return torndb.Connection(
-    #         host="localhost", database=dbname,
-    #         user="root", password="")
-    # else:
-    return torndb.Connection(
-        host="localhost", database=dbname,
-        user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
+    if debug:
+        return torndb.Connection(
+            host="localhost", database=dbname,
+            user="root", password="")
+    else:
+        return torndb.Connection(
+            host="localhost", database=dbname,
+            user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
 
 
 def notify_me(func):

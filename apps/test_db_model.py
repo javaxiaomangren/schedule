@@ -17,6 +17,7 @@ student_classes = MidStudentClasses(db)
 stu_date_change = MidStudentDateChanged(db)
 stu_class_changed = MidStudentClassChanged(db)
 stu_refund = MidStudentRefund(db)
+task = MidTask(db)
 
 logic_model = LogicModel(db)
 logic_model.initial(mwr=workroom_model, mcwr=course_wr_model,
@@ -301,3 +302,20 @@ def test_change_class():
 def test_refund():
     return logic_model.refund(cla_id=cla_id, uid=uid)
 # transaction(test_refund)
+
+
+def test_add_task():
+    params = [("222223", "aadfasdfafadsf", "httpwwwerwr<>fasfasfd''", 'test', None)]
+    # task.fields ["uid", "cla_id", "content", "tasktype"]
+    task.add(params)
+
+
+def test_update_task():
+    return task.update_by(fields=["assign", "lastupdate"], values=["done", datetime.now()], uid='22222', cla_id="aadfasdfafadsf")
+
+
+def test_get_ready_task():
+    return task.list_task()
+
+# test_add_task()
+print test_get_ready_task()
