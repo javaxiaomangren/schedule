@@ -617,7 +617,7 @@ class LogicModel(BaseDBModel):
                               uid, target_data[0].teacher.upper(),
                               uid, src_data[0].teacher.upper())
                     write_to_file(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher, line)
-                    enrol_file = set_file_url(uid, cla_id + "_change")
+                    enrol_file = set_file_url(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher)
                     cron = get_cron_url()
                     src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
                     src_lab_edit = get_edit_label(src_lab.edit)
