@@ -635,7 +635,7 @@ class LogicModel(BaseDBModel):
                             " %s\n============================================================================\n" \
                             "Step 6:\n Change Teacher ID as: %s\n" \
                             % (uid, enrol_file, cron, src_lab_edit, target_vc,
-                               target_data[0].teacher, target_lab_edit, src_vc, target_data[0].teacher)
+                               target_data[0].teacher, target_lab_edit, src_vc, src_data[0].teacher)
 
                 except:
                     gen_log.info("Failed set Email info")
