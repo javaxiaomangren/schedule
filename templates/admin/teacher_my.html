@@ -28,7 +28,7 @@
                <td>{{ entry.class_date }}</td>
                <td>{{ entry.start_time }}</td>
                <td>{{ entry.uid }}</td>
-               <td>{{ entry.uname }}</td>
+               <td><a href="http://waijiao.speiyou.com/course/view.php?id={{ entry.courseId }}">{{ entry.uname }}</a></td>
                <td>
                     <a target="_blank" onclick="return window.confirm('Did the student really not join this class ? ')" class="btn btn-danger btn-sm" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.ABSENT}}">ABSENT</a>
                     &nbsp;<a target="_blank" onclick="return window.confirm('Did the student really late for this class ? ')" class="btn btn-warning btn-sm" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LATE}}">LATE</a>
