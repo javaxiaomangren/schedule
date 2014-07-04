@@ -126,7 +126,7 @@ def test_load_from_text():
 
         print workroom_model.add(workroom)
         print workroom_dates_model.add(wd_datas)
-        print db.executemany_rowcount("insert into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
+        print db.executemany_rowcount("replace into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)[:-2]), teacher))
 # test_load_from_text()
 
