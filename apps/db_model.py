@@ -425,11 +425,12 @@ class LogicModel(BaseDBModel):
                         sso = single_login(uid, uname)
                         teacher_number = self.models.mss.get_teacher_number(rows[0].teacher)
                         #set flat enrol file
-                        line = "add, student, %s, %s\nadd, student, %s, %s\nadd, teacher, %s, %s\nadd, teacher, %s, %s"\
+                        line = "add, student, %s, %s\nadd, teacher, %s, %s"\
                                % (uid, selected.workroom,
-                                  uid, rows[0].teacher.upper(),
-                                  teacher_number, selected.workroom,
-                                  teacher_number, rows[0].teacher.upper())
+                                  # uid, rows[0].teacher.upper(),
+                                  teacher_number, selected.workroom
+                                  # teacher_number, rows[0].teacher.upper()
+                                  )
                         write_to_file(uid, cla_id, line)
                         enrol_file = set_file_url(uid, cla_id)
                         #get moodle cron exe url
