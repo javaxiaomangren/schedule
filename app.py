@@ -10,7 +10,8 @@ import tornado.options
 import tornado.web
 import apps.view_handle
 import apps.admin_handles
-import apps.test
+import apps.teacher_handle
+# import apps.test
 from tornado.options import define, options
 from apps.entry import GradeEntry
 

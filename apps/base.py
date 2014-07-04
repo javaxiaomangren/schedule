@@ -76,8 +76,9 @@ class LoginHandle(BaseHandler):
         if row and row.password == unicode(md5):
             self.set_secure_cookie("user", user)
             if row.role == "teacher":
-                self.render("admin/base_teacher.html")
-            self.render("admin/base.html")
+                self.render("admin/base_teacher.html", tid=user)
+            else:
+                self.render("admin/base.html")
         else:
             self.render("login.html", entry=Row({"msg": "Wrong login"}))
 

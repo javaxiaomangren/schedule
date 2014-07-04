@@ -7,14 +7,32 @@ from config import *
 
 
 #===============================后台管理=====================
-@Route("/user/add", name="Add User Manager")
+
+@Route("/user/add", name="Add User Add")
 class UserHandle(BaseHandler):
-    # @tornado.web.authenticated
+    @tornado.web.authenticated
     def get(self):
-        user = self.get_argument("user")
+        self.render("admin/add_user.html")
+
+
+@Route("/user/add/save", name="Add User Add")
+class UserHandle(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        user = self.get_argument("username")
         password = self.get_argument("passwd")
-        self.db.execute("INSERT INTO user (username, password) values(%s, %s)", user, mk_md5(password))
-        self.redirect("/login")
+        role = self.get_argument("role")
+        self.db.execute("INSERT INTO user (username, password, role) values(%s, %s, %s)", user, mk_md5(password), role)
+        self.redirect("/user/list")
+
+
+@Route("/user/list", name="List User")
+class UserHandle(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        entries = self.db.query("select * from user")
+        self.render("admin/list_user.html", entries=entries)
+
 
 
 @Route("/admin", name="Admin Manager")
@@ -22,6 +40,7 @@ class AdminClassHandle(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render("admin/base.html")
+
 
 @Route("/admin/course/tasks", name="class Tasks")
 class CourseTasksClassHandle(BaseHandler):
