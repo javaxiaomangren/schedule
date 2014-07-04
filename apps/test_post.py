@@ -14,8 +14,8 @@ def post(url, data, headers):
     return response.read()
 
 url_prefix = "http://yueke.speiyou.com"
-uid = u"944002"
-claId = "ff808081468666ee01468f7ee78d1142"
+uid = u"1123123123123"
+claId = "ff80808146fa1f720146fb638c3e0824"
 # uid=217034&claId=ff808081467e6d1401467f0dc878002e
 base_data = {"uid": uid, "claId": claId}
 plat = "python"
@@ -60,7 +60,7 @@ def test_release():
 
 def test_payed():
     header["md5"] = mk_md5(uid+claId, plat, sys)
-    base_data["stuName"] = '孙老师'
+    base_data["stuName"] = '刘阳亮'
     test_api(base_data, "/api/class/payed", header)
 
 
@@ -75,5 +75,5 @@ def test_refund():
 
 # test_release()
 # test_select()
-# test_payed()
-test_refund()
+test_payed()
+# test_refund()
