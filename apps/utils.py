@@ -92,9 +92,9 @@ def post2(data):
 #         user="root", password="vR9PrPEjeVhBptInCrMBFCi7fBa0I7Y4XzNhK3KwWmQ1l3gYQTEqjnLAvHFZupC")
 
 
-def get_mysql():
+def get_mysql(dbname=mysql_database):
     return torndb.Connection(
-        host=mysql_host, database=mysql_database,
+        host=mysql_host, database=dbname,
         user=mysql_user, password=mysql_password)
 
 
