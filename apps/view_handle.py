@@ -215,7 +215,6 @@ class ClassChangeQueryHandle(BaseHandler):
     """
 
     def post(self, *args, **kwargs):
-        #TODO post ask
         cla_id = self.get_argument("claId", None)
         target_workroom = self.get_argument("workroom", None)
         uid = self.get_argument("uid", None)
@@ -472,10 +471,5 @@ class NotifyHandle(BaseHandler):
             self.auto_commit()
 
 
-            # #TODO 两个表的Timeiid 要唯一
-            # #TODO xheader=true
-            # #TODO 跨站伪造请求的防范
-            # #TODO 404，500
-            # TODO 记录被调课老师
             # TODO 自动考勤
             # TODO 异步发送邮件

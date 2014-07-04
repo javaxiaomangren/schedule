@@ -37,7 +37,6 @@ def cla_build_status(cla_id):
         http://phpapi.cakephp.com/huanxun/v1/cla_build_status.json
         修改班级构建状态
     """
-    #TODO 开班后调用
     url = url_prefix + "/huanxun/v1/cla_build_status.json?claId=%s"
     summary = cla_id
     md5 = mk_md5(summary)

@@ -345,8 +345,8 @@ class LogicModel(BaseDBModel):
         results = self.db.query(q_sql + where + group + limit, *params)
         for r in results:
             r["id_dates"] = split_sort(r.id_dates)
-
-        gen_log.debug("query sql[%s], param[%s]", q_sql + where, params)
+        if config.debug:
+            gen_log.info("query sql[%s], param[%s]", q_sql + where, params)
         return results
 
     def select_class(self, uid='', cla_id='', workroom=''):
@@ -417,7 +417,8 @@ class LogicModel(BaseDBModel):
                             p.append((uid, cla_id, r.time_id, r.workroom, r.teacher, r.class_date, CheckRoll.NORMAL))
                 rs = self.models.msc.add(p)
                 rs1 = self.models.mss.update_by(_id=selected.id, uid=uid, cla_id=cla_id,
-                                                fields=["uname", "deal"], values=[uname, "payed"])
+                                                fields=["uname", "deal", "lastupdate"],
+                                                values=[uname, "payed", datetime.now()])
                 if rs and rs1:
                     try:
                         if isinstance(uname, unicode):
@@ -596,7 +597,7 @@ class LogicModel(BaseDBModel):
                 _rs5 = self.models.mss.add([(uid, selected_row.uname, cla_id, target_wr,
                                              "payed", "N", selected_row.version + 1)])
                 _rs51 = self.models.mss.update_by(_id=selected_row.id, cla_id=cla_id, uid=uid,
-                                                  fields=["deal"], values=["changed"])
+                                                  fields=["deal", "lastupdate"], values=["changed", datetime.now()])
                 if not _rs5 or not _rs51:
                     gen_log.info("Change classes failed when update select records. "
                                  "select_id=[%s]", selected_row.id)
@@ -974,20 +975,26 @@ class MidStudentSelected(BaseDBModel):
     def del_by_id(self, select_id):
         return self.db.execute_rowcount("delete from mid_student_selected where id=%s", select_id)
 
-    def list_selected(self, p_no=0, size=p_size, deal="payed"):
+    def count_selected(self, where, params):
+        sql = "select count(ss.id) as count " \
+              "from mid_student_selected ss " \
+              "join mid_workroom wr on wr.id=ss.workroom " \
+              "join mid_course mc on ss.cla_id=mc.claId " \
+              "join mid_teacher t on t.id=wr.teacher "
+        return self.db.get(sql + where, *params)
+
+    def list_selected(self, p_no=0, size=p_size, where="", params=list()):
         """分页查询"""
-        # if kwargs:
-        #     where, param = self.get_and_where((" limit "), **kwargs)
         sql = "select ss.*, t.id as teacher, t.shortname, t.fullname," \
               " mc.class_name, wr.description, wr.virtual_student " \
               "from mid_student_selected ss " \
               "join mid_workroom wr on wr.id=ss.workroom " \
               "join mid_course mc on ss.cla_id=mc.claId " \
               "join mid_teacher t on t.id=wr.teacher"
-
-        # counts = self.db.get(sql % "count(*) as count")
-        #TODO, 完善分页，条件等查询
-        return self.db.query(sql + " where ss.deal='selected' or ss.deal=%s", deal)
+        params.append((p_no - 1) * size)
+        params.append(size)
+        order = " order by ss.lastupdate desc "
+        return self.db.query(sql + where + order + " limit %s, %s" , *params)
 
 
 class MidStudentClasses(BaseDBModel):

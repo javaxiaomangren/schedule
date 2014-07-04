@@ -94,10 +94,64 @@ class WorkRoomSingeHandle(BaseHandler):
 
 @Route("/admin/query/student/class", name="Student select class")
 class QueryStudentSelectedHandle(BaseHandler):
+    """
+    查询选课学生
+    """
     @tornado.web.authenticated
     def get(self):
-        select_list = self.db_model.models.mss.list_selected()
-        self.render("admin/list_student_class.html", entries=select_list, login_url=config.moodle_url)
+        uid = self.get_argument("uid", "")
+        uname = self.get_argument("uname", u'')
+        deal = self.get_argument("deal", "")
+        page_no = self.get_argument("pageNo", 1)
+        teacher = self.get_argument("teacher", "")
+        grade = self.get_argument("grade", "")
+        where = " where 1=1 "
+        params = []
+        if uid:
+            where += " and ss.uid=%s "
+            params.append(uid)
+        if uname:
+            where += " and ss.uname=%s "
+            params.append(uname)
+        if teacher:
+            where += " and t.id=%s "
+            params.append(teacher)
+        if grade:
+            where += " and mc.claId=%s "
+            params.append(grade)
+        if deal:
+            where += " and ss.deal=%s"
+            params.append(deal)
+        elif not uid and not uname and not teacher and not grade:
+            where += " and (ss.deal=%s or ss.deal=%s) "
+            params.append("selected")
+            params.append("payed")
+
+        teachers = self.db.query("select id, shortname from mid_teacher")
+
+        total_count = self.db_model.models.mss.count_selected(where, params)
+        page_count = (total_count.count + p_size - 1) / p_size
+        page_no = int(page_no)
+        if page_no > page_count:
+            page_no = page_count
+        elif page_no < 1:
+            page_no = 1
+        if page_count == 0:
+            select_list = []
+        else:
+            select_list = self.db_model.models.mss.list_selected(p_no=page_no, where=where, params=params)
+        self.render("admin/list_student_class.html",
+                    entries=select_list,
+                    teachers=teachers,
+                    login_url=config.moodle_url,
+                    page_count=page_count,
+                    page_no=page_no,
+                    teacher=teacher,
+                    deal=deal,
+                    uname=uname,
+                    uid=uid,
+                    counts=total_count.count
+        )
 
 
 @Route("/admin/query/student/classtable", name="Student Class Table")

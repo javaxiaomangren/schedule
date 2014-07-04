@@ -4,18 +4,34 @@
 {% end %}
 {% block main %}
 <div id="Main">
-    <form action="">
-        学生id<input type="text"/>
-        学生名字<input type="text"/>
-        操作时间<input type="text"/>
-        <select name="" id="">
-            <option value="">预选</option>
-            <option value="">支付</option>
-            <option value="">转班</option>
+    <form action="/admin/query/student/class" class="form-group">
+        <input type="hidden" name="pageNo" id="pageNo" value="{{ page_no }}"/>
+        学生id: <input type="text" name="uid" value="{{uid}}"/>
+       &nbsp;&nbsp; 学生名字: <input type="text" name="uname" value="{{uname}}"/>
+        &nbsp;老师：&nbsp;
+        <select name="teacher" class="span2">
+            <option value=""></option>
+            {% for t in teachers %}
+                 <option value="{{t.id}}">{{t.shortname}}-{{t.id}}</option>
+            {% end %}
         </select>
-        <button type="submit">查询</button>
+       &nbsp; &nbsp;支付状态:&nbsp;
+        <select name="deal">
+            <option value=""></option>
+            <option value="selected">预选</option>
+            <option value="payed">已支付</option>
+            <option value="refund">已退费</option>
+        </select>
+           &nbsp; &nbsp;年级:&nbsp;
+        <select name="grade">
+            <option value=""></option>
+            <option value="ff80808146fa1f720146fb638c3e0824">一年级</option>
+            <option value="ff808081468666ee01468f7ee78d1142">二年级</option>
+        </select>&nbsp;
+
+        <button type="submit" class="btn btn-info btn-sm">查询</button>
     </form>
-    <hr />
+    <div class="alert alert-danger">一共{{counts}}条记录</div>
   <table class="table table-hover">
     <!--<colgroup>-->
       <!--<col class="col-xs-1">-->
@@ -26,12 +42,11 @@
     <tbody>
     <thead>
     <tr>
-      <th>学生ID</th>
+      <!--<th>学生ID</th>-->
       <th>学生姓名</th>
       <th>老师</th>
       <th>班级</th>
       <th>WorkRoom</th>
-      <th>VirtualStu</th>
       <th>上课时间</th>
       <th>课表</th>
       <th>转班</th>
@@ -41,16 +56,17 @@
     </tr>
     </thead>
        {% for entry in entries %}
-           <tr>
-               <td><a target="_blank" href="/api/class/manage?uid={{ entry.uid }}&claId={{entry.cla_id }}">{{ entry.uid}}</a></td>
-               <td><a href="{{login_url}}/speiyou/auto_login.php?uname={{ entry.uname}}&user={{ entry.uid}}" target="_blank">{{ entry.uname}}</a></td>
+           <tr class="success">
+               <!--<td><a target="_blank" href="/api/class/manage?uid={{ entry.uid }}&claId={{entry.cla_id }}">{{ entry.uid}}</a></td>-->
+               <td><a  href="{{login_url}}/speiyou/auto_login.php?uname={{ entry.uname}}&user={{ entry.uid}}" title="{{ entry.uid }}" target="_blank">{{ entry.uname}}</a></td>
                <td>{{ entry.shortname }}</td>
-               <td><a href="javascript:void(0)" title="{{ entry.class_name }}">{{ entry.class_name[0:6] }}</a></td>
+               <td><a href="javascript:void(0)" title="{{ entry.class_name }}">{{ entry.class_name[0:6] + "......" }}</a></td>
                <td>{{ entry.workroom }}</td>
-               <td>{{ entry.virtual_student }}</td>
-               <td><a href="javascript:void(0)" title="{{ entry.description}}">{{ entry.description[0:6] }}</a></td>
+               <td><a href="javascript:void(0)" title="{{ entry.description}}">{{ entry.description[0:6] + "......" }}</a></td>
                {% if entry.deal == 'selected' %}
                     <td>待支付</td>
+               {% elif entry.deal == 'refund' %}
+                    <td>已退费</td>
                {% else %}
                     <td><a href="/admin/query/student/classtable?uid={{entry.uid}}&cla_id={{entry.cla_id}}">课表</a></td>
                {% end %}
@@ -66,5 +82,18 @@
         {% end %}
     </tbody>
   </table>
+    {% include pager.html%}
 </div> <!-- Mian -->
 {% end %}
+{% block extra_js %}
+<script type="text/javascript">
+
+    function search2(page) {
+        document.getElementById("pageNo").value = page
+        document.forms[0].submit()
+        return true
+    }
+
+</script>
+{% end %}
+
