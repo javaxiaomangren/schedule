@@ -269,11 +269,9 @@ class BakTimeListHandle(BaseHandler):
                     args=args_value(self.request.query_arguments))
 
 
-@Route("/teacher", name="class time list")
+@Route("/teacher", name="get teacher")
 class BakTimeListHandle(BaseHandler):
     """
-    查询可调课列表
-    /timetable/change/time/list?planId=&uid=&claId=
     """
 
     def get(self):

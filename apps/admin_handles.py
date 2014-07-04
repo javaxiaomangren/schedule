@@ -15,7 +15,7 @@ class UserHandle(BaseHandler):
         self.render("admin/add_user.html")
 
 
-@Route("/user/add/save", name="Add User Add")
+@Route("/user/add/save", name="Save User Add")
 class UserHandle(BaseHandler):
     @tornado.web.authenticated
     def post(self):
