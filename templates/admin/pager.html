@@ -1,0 +1,20 @@
+<div class="pagination-fy container">
+{% if page_count > 1%}
+     <ul class="pager">
+        {% if page_no > 1 %}
+            <li><a  href='javascript:;' onclick='search2({{ page_no - 1 }})' class="prev-page" title="上一页">上一页</a></li>
+        {% end %}
+
+            {% for p in get_pages(10, page_count, page_no) %}
+                {% if p == page_no %}
+                    <li class="disabled"><a href="#">{{ page_no }} <span class="sr-only">(current)</span></a></li>
+                {% else %}
+                    <li><a  href='javascript:;' onclick='search2({{ p }})'>{{ p }}</a></li>
+                {% end %}
+            {% end %}
+         {% if page_no < page_count %}
+            <li><a href='javascript:;' onclick='search2({{ page_no + 1 }})' class="next-page" title="下一页">下一页</a></li>
+         {% end %}
+    </ul>
+{% end %} <!-- end if page else -->
+</div> <!-- end page div -->
