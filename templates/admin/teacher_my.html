@@ -1,0 +1,44 @@
+{% extends "base_teacher.html" %}
+{% block location_title %}
+<h4>My Classes</h4>
+{% end %}
+{% block main %}
+<div id="Main">
+  <table class="table table-hover">
+    <!--<colgroup>-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-1">-->
+      <!--<col class="col-xs-9">-->
+    <!--</colgroup>-->
+    <tbody>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Class Date</th>
+        <th>Class Time</th>
+        <th>Student Id</th>
+        <th>Student Name</th>
+        <th>Check Roll </th>
+    </tr>
+    </thead>
+       {% for entry in entries %}
+           <tr>
+               <td>{{ entry.fullname }}</td>
+               <td>{{ entry.class_date }}</td>
+               <td>{{ entry.start_time }}</td>
+               <td>{{ entry.uid }}</td>
+               <td>{{ entry.uname }}</td>
+               <td>
+                    <a target="_blank" onclick="return window.confirm('Did the student really not join this class ? ')" class="btn btn-danger btn-sm" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.ABSENT}}">ABSENT</a>
+                    &nbsp;<a target="_blank" onclick="return window.confirm('Did the student really late for this class ? ')" class="btn btn-warning btn-sm" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LATE}}">LATE</a>
+                    &nbsp;<a target="_blank" onclick="return window.confirm('Do we finished this class ? ')"   class="btn btn-success btn-sm" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.FINISHED}}">FINISHED</a>
+                    <!--<a target="_blank" href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.LOCKED}}">预约考勤</a>-->
+                    <!--<a target="_blank"  href="/timetable/notify?uid={{entry.uid}}&cla_id={{entry.cla_id}}&time_id={{entry.time_id}}&check_roll={{ CheckRoll.NORMAL}}">正常</a>-->
+               </td>
+           </tr>
+        {% end %}
+    </tbody>
+  </table>
+</div> <!-- Mian -->
+{% end %}
