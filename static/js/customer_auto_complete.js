@@ -219,7 +219,7 @@ return window.autoComplete = autoComplete;/* 暴露方法给全局对象 */
 /* 调用 */
 addEvent.call(null,'load',function(){
     autoComplete.call( getElementsByClassName('autoComplete'), {/* 使用call或apply调用此方法 */
-            source:["Jane","Aissa","Alexa","Shammy","Jay","Meca","Cely","Lora","Ruth","Roda","Claude","Angel","Eri","Aileen","Era","Aileen"],
+            source:["Jane","Anna","Alexa","Shammy","Jay","Meca","Cely","Lora","Ruth","Roda","Claude","Angel","Eri","Aileen","Era","Aileen"],
             // source:['Ana','Anna','Bob','Sumi','Suze','Angel','Jay','Jom','Janice','Cely',],/* 提示时在此数组中搜索 */
             //ajax:{ type:'post',url:'./php/fetch.php?search=' },/* 如果使用ajax则远程返回的数据格式要与source相同 */
             elemCSS:{ focus:{'color':'black','background':'#ccc'}, blur:{'color':'black','background':'transparent'} },/* 些对象中的key要js对象中的style属性支持 */
