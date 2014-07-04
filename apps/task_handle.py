@@ -69,6 +69,10 @@ def get_course(idnumber):
     return db.get("select id from mdl_course where idnumber=%s", idnumber)
 
 
+def get_course_url(idnumber):
+    return "%s/course/view.php?id=%s" % (config.moodle_url, get_course(idnumber).id)
+
+
 def get_section(idnumber):
     course = get_course(idnumber)
     section = db.get("select id from  mdl_course_sections cs "

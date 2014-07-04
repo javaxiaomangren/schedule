@@ -609,33 +609,26 @@ class LogicModel(BaseDBModel):
                     src_teacher = self.models.mss.get_teacher_number(src_data[0].teacher)
                     target_teacher = self.models.mss.get_teacher_number(target_data[0].teacher)
                     line = "del, teacher, %s, %s\n" \
-                           "add, teacher, %s, %s\n" \
-                           "add, student, %s, %s\n" \
-                           "del, student, %s, %s" \
+                           "add, teacher, %s, %s" \
                            % (src_teacher, target_wr,
-                              target_teacher, target_wr,
-                              uid, target_data[0].teacher.upper(),
-                              uid, src_data[0].teacher.upper())
+                              target_teacher, target_wr)
                     write_to_file(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher, line)
                     enrol_file = set_file_url(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher)
                     cron = get_cron_url()
-                    src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
-                    src_lab_edit = get_edit_label(src_lab.edit)
-                    target_lab_edit = get_edit_label(target_lab.edit)
-                    src_vc = src_lab.intro
-                    target_vc = target_lab.intro
+                    course_url_1 = get_course_url(target_wr)
+                    course_url_2 = get_course_url(selected_row.workroom)
+                    # src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
+                    # src_lab_edit = get_edit_label(src_lab.edit)
+                    # target_lab_edit = get_edit_label(target_lab.edit)
+                    # src_vc = src_lab.intro
+                    # target_vc = target_lab.intro
 
                     email = "Student Change Teacher From LJL id=%s\n" \
-                            "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\nVC Content:\n " \
-                            "============================================================================\n" \
-                            " %s\n============================================================================\n" \
-                            "Step 4:\n Change Teacher ID as: %s\n" \
-                            "Step 5:\n     %s\nVC Content:\n" \
-                            "============================================================================\n" \
-                            " %s\n============================================================================\n" \
-                            "Step 6:\n Change Teacher ID as: %s\n" \
-                            % (uid, enrol_file, cron, src_lab_edit, target_vc,
-                               target_data[0].teacher, target_lab_edit, src_vc, src_data[0].teacher)
+                            "Step 1:\n    %s\nStep 2:\n    %s\n" \
+                            "Step 3:\n Change Teacher ID as: %s\n    %s\n" \
+                            "Step 4:\n Change Teacher ID as: %s\n    %s\n" \
+                            % (uid, enrol_file, cron, target_data[0].teacher,
+                               course_url_1, src_data[0].teacher, course_url_2)
 
                 except:
                     gen_log.info("Failed set Email info")
