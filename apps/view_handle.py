@@ -227,15 +227,15 @@ class ClassChangeQueryHandle(BaseHandler):
                 h_s = courses(uid, cla_id, rs.msg)
                 if h_s.rlt:
                     self.commit()
-                    email = "\n\n\n\nThis is For Schedule"
-                    x = 1
-                    for l in rs.msg:
-                        email += str(x) + ". src workroom: %s, src date: %s--> " \
-                                          "target workroom %s, target date %s\n\n" \
-                                 % (l.get("sourceClassroom"), l.get("sourceCourseDate"),
-                                    l.get("targetClassroom"), l.get("targetCourseDate"))
-                        x += 1
-                    sendmail(msg=rs.email + email, subject="%sStudent=%s Changed WorkRoom" % (str(datetime.now()), uid))
+                    # email = "\n\n\n\nThis is For Schedule"
+                    # x = 1
+                    # for l in rs.msg:
+                    #     email += str(x) + ". src workroom: %s, src date: %s--> " \
+                    #                       "target workroom %s, target date %s\n\n" \
+                    #              % (l.get("sourceClassroom"), l.get("sourceCourseDate"),
+                    #                 l.get("targetClassroom"), l.get("targetCourseDate"))
+                    #     x += 1
+                    sendmail(msg=rs.email, subject="%sStudent=%s Changed WorkRoom" % (str(datetime.now()), uid))
                     print msg()
                     self.render("200.html", entry=msg())
                 else:
