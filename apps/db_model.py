@@ -616,20 +616,25 @@ class LogicModel(BaseDBModel):
                     write_to_file(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher, line)
                     enrol_file = set_file_url(uid, cla_id + "_change" + src_data[0].teacher + target_data[0].teacher)
                     cron = get_cron_url()
-                    course_url_1 = get_course_url(target_wr)
-                    course_url_2 = get_course_url(selected_row.workroom)
-                    # src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
-                    # src_lab_edit = get_edit_label(src_lab.edit)
-                    # target_lab_edit = get_edit_label(target_lab.edit)
-                    # src_vc = src_lab.intro
-                    # target_vc = target_lab.intro
+                    if src_data[0].teacher == target_data[0].teacher:
+                        email = "Student Change Teacher From LJL id=%s\n" \
+                                "Step 1:\n    %s\nStep 2:\n    %s\n" \
+                                % (uid, enrol_file, cron)
+                    else:
+                        course_url_1 = get_course_url(target_wr)
+                        course_url_2 = get_course_url(selected_row.workroom)
+                        # src_lab, target_lab = get_labels(selected_row.workroom, target_wr)
+                        # src_lab_edit = get_edit_label(src_lab.edit)
+                        # target_lab_edit = get_edit_label(target_lab.edit)
+                        # src_vc = src_lab.intro
+                        # target_vc = target_lab.intro
 
-                    email = "Student Change Teacher From LJL id=%s\n" \
-                            "Step 1:\n    %s\nStep 2:\n    %s\n" \
-                            "Step 3:\n Change Teacher ID as: %s\n    %s\n" \
-                            "Step 4:\n Change Teacher ID as: %s\n    %s\n" \
-                            % (uid, enrol_file, cron, target_data[0].teacher,
-                               course_url_1, src_data[0].teacher, course_url_2)
+                        email = "Student Change Teacher From LJL id=%s\n" \
+                                "Step 1:\n    %s\nStep 2:\n    %s\n" \
+                                "Step 3:\n Change Teacher ID as: %s\n    %s\n" \
+                                "Step 4:\n Change Teacher ID as: %s\n    %s\n" \
+                                % (uid, enrol_file, cron, target_data[0].teacher,
+                                   course_url_1, src_data[0].teacher, course_url_2)
 
                 except:
                     gen_log.info("Failed set Email info")
