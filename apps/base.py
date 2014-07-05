@@ -78,7 +78,7 @@ class LoginHandle(BaseHandler):
         row = self.db.get("SELECT role, password FROM user where username=%s", user)
         md5 = mk_md5(passwd)
         if row and row.password == unicode(md5):
-            self.set_secure_cookie("user_speiyou", user)
+            self.set_secure_cookie("user_speiyou", user, expires_days=1)
             if row.role == "teacher":
                 self.render("admin/base_teacher.html", tid=user)
             else:
