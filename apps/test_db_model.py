@@ -113,7 +113,7 @@ def test_load_from_text():
             # A-1200-K1-c101
             # a-1200-k1-c101
             tt = str(string.replace(time, ":", ''))
-            room_id = term + "-" + tt + "-" + grade + "-" + t_id
+            room_id = term + "-" + tt + "-" + grade + "-" + t_id.upper()
             l_term = term.lower()
             u_id = l_term + "-" + tt + "-" + grade.lower() + "-" + t_id
             workroom.append((room_id, term, t_id, time, u_id, "normal", desc % time))
@@ -143,7 +143,7 @@ def test_load_from_text2():
             if len(time) == 4:
                 time = '0' + time
             tt = str(string.replace(time, ":", ''))
-            _id = "T" + "-0818-" + tt + "-" + tid + "-" + grade
+            _id = "T" + "-0818-" + tt + "-" + tid.upper() + "-" + grade
             v_id = "t" + "-0818-" + tt + "-" + tid + "-" + grade.lower()
             param.append((_id, '', m_time, 'A', tid, "2014-08-18", time, 2, v_id, "normal", u'2014年8月10日 %s上课' % time))
             m_time += 1
