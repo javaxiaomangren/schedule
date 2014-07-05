@@ -46,7 +46,11 @@ class BaseHandler(tornado.web.RequestHandler):
         return ns
 
     def get_current_user(self):
-        return self.get_secure_cookie("user")
+        user = self.get_secure_cookie("user_speiyou")
+        row = self.db.get("SELECT role, password FROM user where username=%s", user)
+        if row:
+            return user
+        return None
 
     def write_error(self, status_code, **kwargs):
 
@@ -74,7 +78,7 @@ class LoginHandle(BaseHandler):
         row = self.db.get("SELECT role, password FROM user where username=%s", user)
         md5 = mk_md5(passwd)
         if row and row.password == unicode(md5):
-            self.set_secure_cookie("user", user)
+            self.set_secure_cookie("user_speiyou", user)
             if row.role == "teacher":
                 self.render("admin/base_teacher.html", tid=user)
             else:
@@ -86,7 +90,7 @@ class LoginHandle(BaseHandler):
 @Route("/logout", name="Log Out")
 class LogoutHandler(BaseHandler):
     def get(self):
-        self.clear_cookie("user")
+        self.clear_cookie("user_speiyou")
         self.redirect(self.get_argument("next", "/login"))
 
 

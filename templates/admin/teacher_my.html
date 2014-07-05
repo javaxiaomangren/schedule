@@ -1,11 +1,11 @@
 {% extends "base_teacher.html" %}
 {% block location_title %}
-<h4>My Classes</h4>
+<h4>My Students</h4>
 {% end %}
 {% block main %}
 <div id="Main">
     <form action="" class="form-group">
-        <input type="date"  name="date"/>
+        Date: <input type="date"  name="date"/>
         <input type="hidden"  name="tid" value="{{tid}}"/>
         <input type="submit"/>
     </form>
