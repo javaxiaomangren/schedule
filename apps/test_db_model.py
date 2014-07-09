@@ -130,6 +130,40 @@ def test_load_from_text():
         ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)[:-2]), teacher))
 # test_load_from_text()
 
+def test_load_from_text01():
+    x_dates = ["2014-07-10", "2014-07-11", "2014-07-12", "2014-07-14",
+           "2014-07-15", "2014-07-16", "2014-07-17", "2014-07-18",
+           "2014-07-19", "2014-07-21"]
+
+    with open("class_table.txt") as src:
+        workroom = []
+        desc = u'2014年7月10 到 7月21号, 周一至周六, %s 上课'
+        wd_datas = []
+        teacher = {}
+        for l in src:
+            term, time, t_id, tname, grade = l[:-1].split("\t")
+            if len(time) == 4:
+                time = '0' + time
+            # A-1200-K1-c101
+            # a-1200-k1-c101
+            tt = str(string.replace(time, ":", ''))
+            room_id = term + "-" + tt + "-" + grade + "-" + t_id.upper()
+            l_term = term.lower()
+            u_id = l_term + "-" + tt + "-" + grade.lower() + "-" + t_id
+            workroom.append((room_id, term, t_id, time, u_id, "normal", desc % time))
+            teacher[t_id] = tname
+            for dt in x_dates:
+                class_type = 2
+                # if dt == "2014-07-23":
+                #     class_type = 7
+                wd_datas.append((room_id, dt, class_type))
+
+        print workroom_model.add(workroom)
+        print workroom_dates_model.add(wd_datas)
+        print db.executemany_rowcount("replace into mid_teacher (id, shortname, fullname) values(%s, %s, %s)"
+        ,map(lambda _x: (_x, teacher.get(_x)[:-2], teacher.get(_x)[:-2]), teacher))
+
+
 def test_load_from_text2():
     with open("T_class_table.txt", 'r') as tl:
         m_time = db.get("select max(time_id) as mt from mid_workroom_single")
