@@ -54,6 +54,8 @@
                <td>
                    <a href="/timetable/change/time/list?uid={{entry.uid}}&claId={{entry.cla_id}}&oldTimeId={{entry.time_id}}">请假</a>
                </td>
+               {% else %}
+               <td>&nbsp;</td>
                {% end %}
            </tr>
         {% end %}
