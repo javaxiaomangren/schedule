@@ -112,6 +112,9 @@ def update_class_table(url, idnumber):
 
 
 def update_moodle_course_name(src, target):
+    if config.url_prefix == "http://ft.speiyou.com":
+        gen_log.info("Skip Update coures name in moodle ")
+        return True
     src_c = get_course(src)
     target_c = get_course(target)
     try:
