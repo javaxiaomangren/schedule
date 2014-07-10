@@ -6,11 +6,11 @@
           <input type="hidden" id="uid" name="uid" value="{{ args.get('uid') }}"/>
           <input type="hidden" id="pageNo" name="pageNo" value="{{ args.get('pageNo', 1)}}"/>
           <input type="hidden" id="action" name="action" value="{{ action }}"/>
-          <div class="form-group" style="margin-top:8px; margin-left:10px; ">
+          <div class="form-group" style="padding-top:8px; margin-left:5px;">
              <!--<input type="text" class="form-control  input-sm " id="txt_auto" name="teacherName" placeholder="Teacher Name" autocomplete="off">-->
-            <div class="autoComplete"><input type="text" name="teacherName" placeholder="Teacher Name"  class="form-control  input-sm " value="" /><ul><li></li></ul></div>
+            <div class="autoComplete" style="float:left; padding-left:5px;"><input type="text"  class="form-control  input-sm " value="input" style="width:152px;" /><ul><li></li></ul></li></div>
           </div>
-          <div class="form-group"  style="margin-top:8px;margin-left:5px;">
+          <div class="form-group"  style="float:left;padding-left:8px; width:120px;">
             <select name="timeInterval" id="timeInterval" class="form-control input-sm">
             <option value="0" selected>----全天----</option>
             <option value="05:00-09:00" disabled>----上午----</option>
@@ -23,7 +23,7 @@
             <option value="20:00-23:00">20:00-23:00</option>
            </select>
           </div>
-          <div class="form-group" style="margin-top:8px;margin-left:5px;"><button type="submit" class="btn btn-info btn-xs">查询</button></div>
+         <div class="form-group" style=" margin-top:4px;float:left;padding-left:8px;"><button type="submit" class="btn btn-info btn-xs">查询</button></div>
         </form>
         <script language="JavaScript" type="text/javascript">
           value = "{{ args.get('timeInterval', '') }}"
@@ -37,7 +37,7 @@
 {% end %}
 
 {% block content %}
-   <div class="container">
+   <div class="container width">
     {% if selected %}
         <div style="text-align: center;font-size: 15px; margin-top: 5px; margin-bottom: 5px">
             您已经选了：{{ selected.shortname}}老师 {{ selected.description }}
@@ -48,7 +48,7 @@
             <center><h3>没有可选课表</h3></center>
         </div>
     {% else %}
-      <table class="table table-bordered table-striped" style="width:96%; margin-left:2%; margin-top:10px;">
+       <table class="table table-bordered table-striped" style="width:98.4%; margin-left:0.8%; margin-top:10px;">
       <thead>
         <tr style="height:70px; background-color:#333;">
           <th><span class="glyphicon glyphicon-user" style="margin-right:5px;"></span>老师<br>Teacher</th>
