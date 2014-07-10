@@ -70,6 +70,8 @@ def get_course(idnumber):
 
 
 def get_course_url(idnumber):
+    if config.url_prefix == "http://ft.speiyou.com":
+        return "Test"
     return "%s/course/view.php?id=%s" % (config.moodle_url, get_course(idnumber).id)
 
 
