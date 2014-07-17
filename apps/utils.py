@@ -61,6 +61,19 @@ def nice_bool(value):
     return str(value).lower().strip() not in false
 
 
+def http_post(host, api, method, param, headers):
+    try:
+        conn = httplib.HTTPConnection(host)
+        conn.request(method, api, param, headers)
+        res = conn.getresponse()
+        data = res.read()
+        conn.close()
+        return data
+    except:
+        gen_log.info(traceback.format_exc())
+        return False
+
+
 def post_u8(url, data, headers):
     data = urllib.urlencode(data)
     req = Request(url, data=data, headers=headers)
