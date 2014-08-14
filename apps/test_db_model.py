@@ -100,10 +100,10 @@ def test_add_workroom_and_dates():
 # test_add_workroom_and_dates()
 
 
-def test_load_from_text():
+def test_load_from_text(cid):
     with open("class_table.txt") as src:
         workroom = []
-        desc = u'2014年8月6 到 8月16号, 周一至周六, %s 上课'
+        desc = u'2014年8月18 到 8月22号,每天 %s 上课'
         wd_datas = []
         teacher = {}
         for l in src:
@@ -118,7 +118,7 @@ def test_load_from_text():
             u_id = l_term + "-" + tt + "-" + grade.lower() + "-" + t_id
             workroom.append((room_id, term, t_id, time, u_id, "normal", desc % time))
             teacher[t_id] = tname
-            for dt in b_dates:
+            for dt in c_dates:
                 class_type = 2
                 # if dt == "2014-07-23":
                 #     class_type = 7
@@ -127,8 +127,8 @@ def test_load_from_text():
         print workroom_model.add(workroom)
         print workroom_dates_model.add(wd_datas)
         print db.executemany_rowcount("insert into mid_course_workroom (cla_id, workroom) values(%s, %s)"
-        ,map(lambda _x: ('B', _x[0]), workroom))
-
+        ,map(lambda _x: (cid, _x[0]), workroom))
+# test_load_from_text()
 def test_load_from_text01():
     x_dates = ["2014-07-11", "2014-07-12", "2014-07-13",
            "2014-07-14", "2014-07-15", "2014-07-16", "2014-07-18",
