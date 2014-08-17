@@ -69,7 +69,7 @@ def attendances(uid, cla_id, cuc_id, status):
     """
     # status = '0'
     # cuc_id = "16"
-    summary = uid + cuc_id + status
+    summary = str(uid) + str(cuc_id) + str(status)
     md5 = mk_md5(summary)
     url = url_prefix + "/huanxun/v1/attendances.json?uid=%s&cucId=%s&claId=%s&Status=%s"
     logger.info("Invoke %s ", url)
