@@ -77,7 +77,7 @@ class APIAddClassHandle(BaseHandler):
 @Route("/", name="index")
 class IndexHandler(BaseHandler):
     def get(self):
-        self.db.execute("update mid_workroom set description='2014年8月18 到 8月22号, 每天09:00 上课' where id='A-0900-k2-M202'")
+        # self.db.execute("update mid_workroom set description='2014年8月18 到 8月22号, 每天09:00 上课' where id='A-0900-k2-M202'")
         self.render("index-base.html")
 
 
