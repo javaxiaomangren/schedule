@@ -446,10 +446,28 @@ class APIClassRefundHandle(BaseHandler):
 class NotifyHandle(BaseHandler):
     def get(self):
         try:
-            cla_id = self.get_argument("cla_id")
-            uid = self.get_argument("uid")
-            time_id = self.get_argument("time_id")
-            check_roll = self.get_argument("check_roll")
+            cla_id = self.get_argument("cla_id", None)
+            uid = self.get_argument("uid", None)
+            time_id = self.get_argument("time_id", None)
+            check_roll = self.get_argument("check_roll", None)
+            workroom = self.get_argument("workroom", None)
+            sdate = self.get_argument("sdate", None)
+            if workroom and sdate:
+                try:
+                    cla_id = self.db.get("Select cla_id from mid_course_workroom"
+                                         " where workroom=%s limit 1", workroom).cla_id
+                    print "select time_id from mid_workroom_dates where workroom=%s and class_date=%s" % \
+                    (workroom, sdate)
+                    time_id = self.db.get("select time_id from mid_workroom_dates "
+                                          "where workroom=%s and class_date=%s",
+                                          workroom, sdate).time_id
+
+                    uid = self.db.get("select uid from mid_student_selected"
+                                      " where workroom=%s limit 1", workroom).uid
+                except:
+                    logger.info(traceback.format_exc())
+                    pass
+
             self.auto_commit(False)
             rs = self.db_model.models.msc.update_check_roll(uid=uid, cla_id=cla_id, time_id=time_id,
                                                             check_roll=check_roll)
