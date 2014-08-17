@@ -469,8 +469,8 @@ class NotifyHandle(BaseHandler):
                     pass
 
             self.auto_commit(False)
-            rs = self.db_model.models.msc.update_check_roll(uid=uid, cla_id=cla_id, time_id=time_id,
-                                                            check_roll=check_roll)
+            rs = self.db_model.models.msc.update_check_roll(uid=str(uid), cla_id=cla_id, time_id=time_id,
+                                                            check_roll=str(check_roll))
             if rs:
                 mg = attendances(uid, cla_id, time_id, check_roll)
                 if mg.rlt:
