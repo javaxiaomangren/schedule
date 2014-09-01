@@ -424,30 +424,30 @@ class LogicModel(BaseDBModel):
                         if isinstance(uname, unicode):
                             uname = uname.encode("utf-8")
                         sso = single_login(uid, uname)
-                        teacher_number = self.models.mss.get_teacher_number(rows[0].teacher)
-                        #set flat enrol file
-                        line = "add, student, %s, %s\nadd, teacher, %s, %s"\
-                               % (uid, selected.workroom,
-                                  # uid, rows[0].teacher.upper(),
-                                  teacher_number, selected.workroom
-                                  # teacher_number, rows[0].teacher.upper()
-                                  )
-                        write_to_file(uid, cla_id, line)
-                        enrol_file = set_file_url(uid, cla_id)
-                        #get moodle cron exe url
-                        cron = get_cron_url()
-                        edit_url = get_edit_classtable(selected.workroom)
+                        # teacher_number = self.models.mss.get_teacher_number(rows[0].teacher)
+                        # #set flat enrol file
+                        # line = "add, student, %s, %s\nadd, teacher, %s, %s"\
+                        #        % (uid, selected.workroom,
+                        #           # uid, rows[0].teacher.upper(),
+                        #           teacher_number, selected.workroom
+                        #           # teacher_number, rows[0].teacher.upper()
+                        #           )
+                        # write_to_file(uid, cla_id, line)
+                        # enrol_file = set_file_url(uid, cla_id)
+                        # #get moodle cron exe url
+                        # cron = get_cron_url()
+                        # edit_url = get_edit_classtable(selected.workroom)
                         classtable = get_classtable_url(uid=uid, cla_id=cla_id)
                         #update class table
-                        update_class_table(classtable, selected.workroom)
-                        update_course_shortname(selected.workroom, uname)
+                        # update_class_table(classtable, selected.workroom)
+                        # update_course_shortname(selected.workroom, uname)
                         # set_when_payed(uid, cla_id, uname, selected.workroom)
                         email = "Student From LJL id=%s, name=%s\n" \
                                 "Payed for:%s \n" \
                                 "Class Table Link:\n %s \n" \
                                 "Step 1:\n    %s\nStep 2:\n    %s\nStep 3:\n    %s\n"\
                                 "Step 4(Open is different Browser):\n %s" \
-                                % (uid, uname, rows[0].workroom, classtable, enrol_file, cron, edit_url, sso)
+                                % (uid, uname, rows[0].workroom, classtable, "Handler", "Handler", "Handler", sso)
                         sendmail(msg=email, subject="%s Student Pay For Class" % datetime.now())
                     except:
                         gen_log.info(traceback.format_exc())
