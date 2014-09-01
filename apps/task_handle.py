@@ -59,7 +59,7 @@ def get_classtable_url(uid='981495', cla_id='ff808081468666ee01468f7ee78d1142'):
     """
     url = "%s/timetable/list/moodle?uid=%s&claId=%s" % (config.mid_url, uid, cla_id)
     template = '<p style="margin: 0 0 0 0;">' \
-               '<iframe scrolling="no" width="%s" height="250px" ' \
+               '<iframe scrolling="no" width="%s" height="350px" ' \
                'src="%s" frameborder="0"></p>'
 
     return template % ("100%", url)
