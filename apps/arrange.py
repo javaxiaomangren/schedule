@@ -5,6 +5,7 @@ from utils import get_mysql
 from db_model import *
 import traceback
 import string
+import sys
 
 db = get_mysql()
 db_model = BaseDBModel(db)
@@ -73,7 +74,8 @@ def arrange(f):
                 for d in dt_list:
                     wr_dates.append((wr_name, d, 2))
                 #设置workroom 和class_id的关系
-                c_w.append((cla_id, wr_name))
+                for cid in cla_id.split(','):
+                    c_w.append((cid, wr_name))
 
             if workroom and wr_dates and c_w:
                 #保存workroom
@@ -87,5 +89,29 @@ def arrange(f):
         print traceback.format_exc()
         rollback()
 
-#TODO Reset Unused
-arrange('table')
+# select w.id mid_workroom w
+#     join mid_course_workroom cd on cd.workroom=w.id
+#    where cd.cla_id='ff808081480e8a3d0148112893e00be3' and w.status='normal'
+#
+# 1616,1618,1619,1620,1621,1622,1623,1624,1625,1626,1627,1658,1659,1660,1661,1662,1673,1674,,1675,1676
+# ('B-0900-M202','B-0930-M202','B-1000-M202','B-1030-M202','B-1100-M202','B-1330-C105','B-1330-C109','B-1400-C109','B-1430-C105','B-1430-C109','B-1500-C105','B-1500-C109','B-1530-C105','B-1600-C105','B-1630-C105','B-1700-C105','B-1730-C105','B-1800-C105','B-1830-C105','B-1900-C105')
+#
+#
+
+#
+# K5-27
+# ff8080814815034601481573eb9d030b
+# select group_concat(wd.time_id), group_concat(w.id) from mid_course_workroom cw
+#    join mid_workroom w on w.id=cw.workroom
+#    join mid_workroom_dates wd on wd.workroom=w.id
+#    where cw.cla_id='ff808081480e8a3d01481120a3500b87' and w.status='normal'
+#  1799,1800,1801,1802,1803,1804,1805,1806,1807,1809
+# 'B-ANGEL-M206-17','B-ANGEL-M206-18','B-ANGEL-M206-19','B-ANGEL-M206-20','B-ANGEL-M206-21','B-ANGEL-M206-22','B-ANGEL-M206-23','B-ANGEL-M206-24','B-ANGEL-M206-25','B-ANGEL-M206-27',
+#
+# delete from mid_workroom_dates where time_id in(1799,1800,1801,1802,1803,1804,1805,1806,1807,1809);
+# delete from mid_workroom where id in ('B-ANGEL-M206-17','B-ANGEL-M206-18','B-ANGEL-M206-19','B-ANGEL-M206-20','B-ANGEL-M206-21','B-ANGEL-M206-22','B-ANGEL-M206-23','B-ANGEL-M206-24','B-ANGEL-M206-25','B-ANGEL-M206-27');
+# delete from mid_course_workroom where workroom in('B-ANGEL-M206-17','B-ANGEL-M206-18','B-ANGEL-M206-19','B-ANGEL-M206-20','B-ANGEL-M206-21','B-ANGEL-M206-22','B-ANGEL-M206-23','B-ANGEL-M206-24','B-ANGEL-M206-25','B-ANGEL-M206-27',);
+
+
+if __name__ == "__main__":
+    arrange(sys.argv[1])
