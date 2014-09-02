@@ -24,7 +24,7 @@
             <option value="20:00-23:00">20:00-23:00</option>
            </select>
           </div>
-          <div class="form-group" style=" margin-top:4px;float:left;padding-left:8px;padding-top:8px;"><button type="submit" class="btn btn-info btn-xs">查询</button></div>
+          <div class="form-group" style=" margin-top:4px;float:left;padding-left:8px;padding-top:8px;"><button type="submit" class="btn btn-info btn-xs" onclick="init_page()">查询</button></div>
         </form>
         <script language="JavaScript" type="text/javascript">
           value = "{{ args.get('timeInterval', '') }}"
@@ -120,6 +120,9 @@
         $('#myModal').modal({
             keyboard:false
         })
+    }
+    function init_page() {
+        $("#pageNo").val(1)
     }
    function show_model2(msg, uid, claId, planId) {
         document.getElementById("s_uid").value= uid
